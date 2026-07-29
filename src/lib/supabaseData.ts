@@ -166,6 +166,7 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
       linkedin: p.linkedin ?? null,
       instagram: p.instagram ?? null,
       urutan: idx,
+      updatedAt: new Date().toISOString(),
     }));
 
     const res = await fetch(`${SUPABASE_URL}/rest/v1/Pengurus`, {
@@ -275,6 +276,7 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
       deskripsi: e.deskripsi,
       bannerUrl: e.bannerUrl ?? null,
       linkPendaftaran: e.linkPendaftaran ?? null,
+      updatedAt: new Date().toISOString(),
     }));
 
     const res = await fetch(`${SUPABASE_URL}/rest/v1/Event`, {
@@ -334,6 +336,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
 export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boolean> {
   try {
     const row = {
+      id: item.id || `asp_${Date.now()}`,
       pesan: item.pesan,
       isAnonim: item.isAnonim,
       nama: item.isAnonim ? null : item.nama ?? null,

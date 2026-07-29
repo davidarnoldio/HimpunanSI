@@ -229,7 +229,7 @@ export const store = {
     }
     supabase
       .from("settings")
-      .upsert({ key: "is_maintenance", value: enabled, updated_at: new Date().toISOString() })
+      .upsert({ key: "is_maintenance", value: enabled, updatedAt: new Date().toISOString() })
       .then(
         ({ error }) => {
           if (error) console.warn("[HIMSI Store] Supabase settings update warning:", error.message);
