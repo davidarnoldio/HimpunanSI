@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
-import { MaintenanceToggle } from "@/components/admin/MaintenanceToggle";
 import { useSharedStore } from "@/lib/sharedStore";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -121,8 +120,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Footer Actions */}
         <div className="p-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
-          <MaintenanceToggle />
-
           <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/60">
             <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300">Mode Tampilan</span>
             <div className="shrink-0 scale-90 origin-right">

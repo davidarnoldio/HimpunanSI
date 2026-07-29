@@ -114,13 +114,3 @@ export async function triggerRevalidateAspirasi() {
     return { success: false };
   }
 }
-
-export async function triggerRevalidateMaintenance() {
-  try {
-    revalidatePath("/", "layout");
-    return { success: true };
-  } catch (error) {
-    console.error("[Revalidate Maintenance] Error:", error);
-    return { success: false };
-  }
-}

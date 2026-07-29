@@ -2,7 +2,6 @@
 // Keeps Admin CMS & Public Pages in sync live
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import {
   triggerRevalidateDivisi,
   triggerRevalidateMerchandise,
@@ -11,7 +10,6 @@ import {
   triggerRevalidateVisiMisi,
   triggerRevalidatePengurus,
   triggerRevalidateAspirasi,
-  triggerRevalidateMaintenance,
 } from "@/app/actions/revalidateActions";
 import {
   syncPengurusToDB,
@@ -65,7 +63,6 @@ const STORAGE_KEYS = {
   BADGE_WORDS: "himsi_badge_words_v3",
   SUBHEADLINE_WORDS: "himsi_subheadline_words_v3",
   HERO_CONTENT: "himsi_hero_content_v3",
-  MAINTENANCE: "himsi_maintenance_mode",
 };
 
 /**
@@ -220,23 +217,6 @@ export const store = {
 
   getHeroContent: (): HeroContentData => getStoredData(STORAGE_KEYS.HERO_CONTENT, INITIAL_HERO_CONTENT),
   setHeroContent: (data: HeroContentData) => setStoredData(STORAGE_KEYS.HERO_CONTENT, data),
-
-  getMaintenance: (): boolean => getStoredData(STORAGE_KEYS.MAINTENANCE, false),
-  setMaintenance: (enabled: boolean) => {
-    setStoredData(STORAGE_KEYS.MAINTENANCE, enabled);
-    if (typeof document !== "undefined") {
-      document.cookie = `himsi_maintenance_mode=${enabled}; path=/; max-age=31536000; SameSite=Lax`;
-    }
-    supabase
-      .from("settings")
-      .upsert({ key: "is_maintenance", value: enabled, updatedAt: new Date().toISOString() })
-      .then(
-        ({ error }) => {
-          if (error) console.warn("[HIMSI Store] Supabase settings update warning:", error.message);
-        },
-        (err) => console.warn("[HIMSI Store] Supabase error:", err)
-      );
-  },
 };
 
 /**
@@ -260,7 +240,6 @@ export function useSharedStore() {
   const [badgeWords, setBadgeWordsState] = useState<string[]>(INITIAL_BADGE_WORDS);
   const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(INITIAL_SUBHEADLINE_WORDS);
   const [heroContent, setHeroContentState] = useState<HeroContentData>(INITIAL_HERO_CONTENT);
-  const [isMaintenance, setIsMaintenanceState] = useState<boolean>(false);
   // mounted = true setelah localStorage dibaca (bukan untuk gating render)
   const [mounted, setMounted] = useState(false);
 
@@ -277,7 +256,6 @@ export function useSharedStore() {
     setBadgeWordsState(store.getBadgeWords());
     setSubheadlineWordsState(store.getSubheadlineWords());
     setHeroContentState(store.getHeroContent());
-    setIsMaintenanceState(store.getMaintenance());
   };
 
   useEffect(() => {
@@ -299,8 +277,7 @@ export function useSharedStore() {
       fetchDivisiFromDB(),
       fetchAnggotaDivisiFromDB(),
       fetchAspirasiFromDB(),
-      supabase.from("settings").select("value").eq("key", "is_maintenance").maybeSingle(),
-    ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi, maintenanceRes]) => {
+    ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
       // Update localStorage and state with fresh DB data
       if (pengurus.length > 0) {
         store.setPengurus(pengurus);
@@ -335,13 +312,6 @@ export function useSharedStore() {
         store.setAspirasi(aspirasi);
         setAspirasiState(aspirasi);
       }
-
-      // Maintenance status from Supabase settings
-      const maintenanceData = maintenanceRes?.data;
-      if (maintenanceData && typeof maintenanceData.value === "boolean") {
-        store.setMaintenance(maintenanceData.value);
-        setIsMaintenanceState(maintenanceData.value);
-      }
     }).catch((err) => {
       console.warn("[HIMSI Store] Supabase primary sync error:", err);
     });
@@ -373,12 +343,6 @@ export function useSharedStore() {
     badgeWords,
     subheadlineWords,
     heroContent,
-    isMaintenance,
-    setMaintenance: (enabled: boolean) => {
-      store.setMaintenance(enabled);
-      setIsMaintenanceState(enabled);
-      triggerRevalidateMaintenance().catch(() => {});
-    },
     setPengurus: (data: PengurusItem[]) => {
       store.setPengurus(data);
       setPengurusState(data);
