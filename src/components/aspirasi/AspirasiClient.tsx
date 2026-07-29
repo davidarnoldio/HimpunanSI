@@ -17,7 +17,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Navbar, Footer } from "@/components/landing";
-import { insertAspirasiToDB } from "@/lib/supabaseData";
+import { submitAspirasiAction } from "@/app/actions/aspirasiActions";
 import { type AspirasiAdminItem } from "@/data/adminMockData";
 
 const CATEGORIES = ["Akademik", "Fasilitas Kampus", "Event & Proker", "Kritik & Saran", "Lainnya"];
@@ -44,31 +44,29 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
 
     setIsSubmitting(true);
 
-    const today = new Date().toISOString().split("T")[0];
-    const newAspirasi: AspirasiAdminItem = {
-      id: `asp_${Date.now()}`,
+    const res = await submitAspirasiAction({
       pesan: pesan.trim(),
       isAnonim,
       nama: isAnonim ? undefined : nama.trim() || "Mahasiswa SI",
       npm: isAnonim ? undefined : npm.trim() || undefined,
-      tanggal: today,
-      status: "Baru",
-    };
+    });
 
-    // Insert directly to Supabase DB (POST to REST API)
-    await insertAspirasiToDB(newAspirasi);
+    if (res.success && res.data) {
+      setAspirasiList([res.data, ...aspirasi]);
+      setIsSubmitted(true);
 
-    setAspirasiList([newAspirasi, ...aspirasi]);
+      // Reset form
+      setPesan("");
+      setNama("");
+      setNpm("");
+
+      // Hide success message after 5 seconds
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } else {
+      alert("Gagal mengirim aspirasi ke database. Silakan coba lagi.");
+    }
+
     setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    // Reset form
-    setPesan("");
-    setNama("");
-    setNpm("");
-
-    // Hide success message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000);
   };
 
   const filteredAspirasi = aspirasi.filter((item) => {

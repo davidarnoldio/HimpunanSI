@@ -1,22 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
   Trash2,
   ShieldAlert,
+  RefreshCw,
 } from "lucide-react";
-import { useSharedStore } from "@/lib/sharedStore";
+import {
+  getLatestAspirasiAction,
+  updateAspirasiStatusAction,
+  deleteAspirasiAction,
+} from "@/app/actions/aspirasiActions";
+import { type AspirasiAdminItem } from "@/data/adminMockData";
 import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
 
 export default function AdminAspirasiPage() {
-  const { aspirasi, setAspirasi } = useSharedStore();
+  const [aspirasi, setAspirasi] = useState<AspirasiAdminItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("Semua");
 
   // Custom Delete Modal State
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    const data = await getLatestAspirasiAction();
+    setAspirasi(data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const filteredItems = aspirasi.filter((item) => {
     const matchSearch =
@@ -26,16 +44,18 @@ export default function AdminAspirasiPage() {
     return matchSearch && matchStatus;
   });
 
-  const handleUpdateStatus = (id: string, status: "Baru" | "Diproses" | "Selesai") => {
-    const updated = aspirasi.map((i) => (i.id === id ? { ...i, status } : i));
-    setAspirasi(updated);
+  const handleUpdateStatus = async (id: string, status: "Baru" | "Diproses" | "Selesai") => {
+    // Optimistic update
+    setAspirasi((prev) => prev.map((i) => (i.id === id ? { ...i, status } : i)));
+    await updateAspirasiStatusAction(id, status);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteTargetId) {
-      const updated = aspirasi.filter((i) => i.id !== deleteTargetId);
-      setAspirasi(updated);
+      const targetId = deleteTargetId;
+      setAspirasi((prev) => prev.filter((i) => i.id !== targetId));
       setDeleteTargetId(null);
+      await deleteAspirasiAction(targetId);
     }
   };
 
@@ -48,9 +68,17 @@ export default function AdminAspirasiPage() {
             Aspirasi & Masukan Mahasiswa
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Kelola masukan, kritik, dan aspirasi anonim dari mahasiswa Sistem Informasi (Tersinkronisasi otomatis dengan /aspirasi).
+            Kelola masukan, kritik, dan aspirasi anonim dari mahasiswa Sistem Informasi (Tersinkronisasi otomatis 100% dengan Supabase DB & /aspirasi).
           </p>
         </div>
+
+        <button
+          onClick={loadData}
+          disabled={isLoading}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-400 transition-colors shadow-sm cursor-pointer shrink-0"
+        >
+          <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh Data
+        </button>
       </div>
 
       {/* Filter Bar */}
@@ -84,7 +112,12 @@ export default function AdminAspirasiPage() {
       </div>
 
       {/* List Aspirasi */}
-      {filteredItems.length === 0 ? (
+      {isLoading ? (
+        <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+          <div className="w-8 h-8 rounded-full border-4 border-red-600 border-t-transparent animate-spin mx-auto" />
+          <p className="text-xs font-bold text-slate-500 mt-3">Memuat data dari Supabase DB...</p>
+        </div>
+      ) : filteredItems.length === 0 ? (
         <div className="p-8 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-center space-y-2">
           <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Belum ada aspirasi masuk</p>
           <p className="text-xs text-slate-500">Mahasiswa belum mengirimkan aspirasi atau telah dihapus.</p>
@@ -158,7 +191,7 @@ export default function AdminAspirasiPage() {
       <ConfirmDeleteModal
         isOpen={Boolean(deleteTargetId)}
         title="Hapus Pesan Aspirasi"
-        description="Apakah Anda yakin ingin menghapus masukan aspirasi ini secara permanen?"
+        description="Apakah Anda yakin ingin menghapus masukan aspirasi ini secara permanen dari Supabase DB?"
         onClose={() => setDeleteTargetId(null)}
         onConfirm={confirmDelete}
       />

@@ -2,7 +2,7 @@
  * supabaseData.ts
  * ─────────────────────────────────────────────────────────────────────────────
  * Single Source of Truth — Server-side Supabase data access layer.
- * Gunakan fungsi ini di Server Components (halaman publik) dan admin setters.
+ * Gunakan fungsi ini di Server Components (halaman publik), Server Actions, & Admin setters.
  *
  * Semua fetch memakai cache: 'no-store' untuk memastikan data selalu fresh
  * dari database di setiap request (zero Vercel Edge Cache stale data).
@@ -28,8 +28,11 @@ import {
   INITIAL_ASPIRASI,
 } from "@/data/adminMockData";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const SUPABASE_URL =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://avkfevavjdgcbfleqxmn.supabase.co";
+const SUPABASE_ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2a2ZldmF2amRnY2JmbGVxeG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDY0MjksImV4cCI6MjEwMDgyMjQyOX0.Ds5dLTviUjvQOfaeDK3zur3K0zl5i_Qjd-Dsp7KT79g";
 
 const COMMON_HEADERS = {
   apikey: SUPABASE_ANON_KEY,
@@ -88,7 +91,7 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
       body: JSON.stringify({
         key,
         value: data,
-        updatedAt: new Date().toISOString(), // Diubah ke updatedAt
+        updatedAt: new Date().toISOString(),
       }),
     });
     if (!res.ok) {
@@ -107,7 +110,6 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
  */
 export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
   try {
-    // FIX: created_at -> createdAt
     const url = `${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH&order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) {
@@ -142,8 +144,7 @@ export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
 }
 
 /**
- * Bulk-replace all BPH pengurus in Supabase.
- * Deletes existing BPH records, then inserts the new list.
+ * Bulk-replace all BPH pengurus in Supabase `Pengurus` table.
  */
 export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
   try {
@@ -155,7 +156,7 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
 
     if (data.length === 0) return;
 
-    // Step 2: Insert new list (strip temp IDs that start with "bph_")
+    // Step 2: Insert new list
     const rows = data.map((p, idx) => ({
       ...(p.id.startsWith("bph_") ? {} : { id: p.id }),
       nama: p.nama,
@@ -207,7 +208,6 @@ const EVENT_STATUS_REVERSE: Record<string, string> = {
  */
 export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
   try {
-    // FIX: created_at -> createdAt
     const url = `${SUPABASE_URL}/rest/v1/Event?order=createdAt.desc&select=id,title,kategori,tanggal,waktu,lokasi,isOnline,status,deskripsi,bannerUrl,linkPendaftaran`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) {
@@ -248,17 +248,14 @@ export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
 }
 
 /**
- * Bulk-replace all events in Supabase.
+ * Bulk-replace all events in Supabase `Event` table.
  */
 export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
   try {
-    // FIX: created_at -> createdAt
-    await fetch(`${SUPABASE_URL}/rest/v1/Event?createdAt=gte.2000-01-01`, {
+    // Step 1: Delete existing events
+    await fetch(`${SUPABASE_URL}/rest/v1/Event?id=not.is.null`, {
       method: "DELETE",
-      headers: {
-        ...COMMON_HEADERS,
-        Prefer: "return=minimal",
-      },
+      headers: COMMON_HEADERS,
     });
 
     if (data.length === 0) return;
@@ -300,7 +297,6 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
 
 export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
   try {
-    // FIX: created_at -> createdAt pada URL query dan mapping data
     const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,email,status,createdAt`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) return INITIAL_ASPIRASI;
@@ -311,7 +307,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       nama?: string | null;
       email?: string | null;
       status: string;
-      createdAt: string; // Diubah ke createdAt
+      createdAt: string;
     }> = await res.json();
 
     return rows.map((row) => ({
@@ -320,7 +316,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       isAnonim: row.isAnonim,
       nama: row.nama ?? undefined,
       email: row.email ?? undefined,
-      tanggal: row.createdAt ? row.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10), // Diubah ke createdAt
+      tanggal: row.createdAt ? row.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
       status: (row.status === "BARU"
         ? "Baru"
         : row.status === "DIPROSES"
@@ -348,7 +344,7 @@ export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boole
       method: "POST",
       headers: {
         ...COMMON_HEADERS,
-        Prefer: "return=minimal",
+        Prefer: "return=representation",
       },
       body: JSON.stringify(row),
     });
@@ -356,6 +352,48 @@ export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boole
     return res.ok;
   } catch (err) {
     console.warn("[supabaseData] insertAspirasiToDB error:", err);
+    return false;
+  }
+}
+
+export async function updateAspirasiStatusInDB(
+  id: string,
+  status: "Baru" | "Diproses" | "Selesai"
+): Promise<boolean> {
+  try {
+    const statusMap: Record<string, string> = {
+      Baru: "BARU",
+      Diproses: "DIPROSES",
+      Selesai: "SELESAI",
+    };
+    const dbStatus = statusMap[status] ?? "BARU";
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Aspirasi?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: {
+        ...COMMON_HEADERS,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({ status: dbStatus }),
+    });
+
+    return res.ok;
+  } catch (err) {
+    console.warn("[supabaseData] updateAspirasiStatusInDB error:", err);
+    return false;
+  }
+}
+
+export async function deleteAspirasiFromDB(id: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Aspirasi?id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: COMMON_HEADERS,
+    });
+
+    return res.ok;
+  } catch (err) {
+    console.warn("[supabaseData] deleteAspirasiFromDB error:", err);
     return false;
   }
 }
