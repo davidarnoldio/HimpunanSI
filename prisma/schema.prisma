@@ -1,0 +1,108 @@
+// Prisma Schema for HIMSI UG Website Portal & CMS Dashboard
+// Database: PostgreSQL / Supabase
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN_DIVISI
+  EDITOR
+}
+
+enum Divisi {
+  BPH
+  AKADEMIK
+  MEDINFO
+  PSDM
+  HUMAS
+}
+
+enum EventStatus {
+  PENDAFTARAN_DIBUKA
+  SEGERA_HADIR
+  BERLANGSUNG
+  SELESAI
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(EDITOR)
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Pengurus {
+  id        String   @id @default(cuid())
+  nama      String
+  jabatan   String
+  divisi    Divisi   @default(BPH)
+  periode   String   @default("2025/2026")
+  fotoUrl   String?
+  linkedin  String?
+  instagram String?
+  email     String?
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id               String      @id @default(cuid())
+  title            String
+  kategori         String
+  tanggal          String
+  waktu            String
+  lokasi           String
+  isOnline         Boolean     @default(false)
+  status           EventStatus @default(PENDAFTARAN_DIBUKA)
+  deskripsi        String      @db.Text
+  bannerUrl        String?
+  linkPendaftaran  String?
+  kuota            Int?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model ModulKuliah {
+  id          String   @id @default(cuid())
+  kodeMatkul  String
+  namaMatkul  String
+  semester    Int      // 1 sampai 8
+  dosen       String?
+  sks         Int      @default(3)
+  kategori    String   @default("Modul & Bank Soal")
+  fileUrl     String
+  deskripsi   String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Aspirasi {
+  id        String   @id @default(cuid())
+  pesan     String   @db.Text
+  isAnonim  Boolean  @default(true)
+  nama      String?
+  email     String?
+  status    String   @default("BARU") // BARU, DIPROSES, SELESAI
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("settings")
+}

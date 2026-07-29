@@ -1,0 +1,405 @@
+/**
+ * supabaseData.ts
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Single Source of Truth — Server-side Supabase data access layer.
+ * Gunakan fungsi ini di Server Components (halaman publik) dan admin setters.
+ *
+ * Semua fetch memakai cache: 'no-store' untuk memastikan data selalu fresh
+ * dari database di setiap request (zero Vercel Edge Cache stale data).
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+import {
+  type PengurusItem,
+  type EventAdminItem,
+  type MerchandiseAdminItem,
+  type DivisiAdminItem,
+  type VisiMisiData,
+  type AnggotaDivisiItem,
+  type HeroContentData,
+  type AspirasiAdminItem,
+  INITIAL_PENGURUS,
+  INITIAL_EVENTS,
+  INITIAL_MERCHANDISE,
+  INITIAL_DIVISI_FULL,
+  INITIAL_VISI_MISI,
+  INITIAL_ANGGOTA_DIVISI,
+  INITIAL_HERO_CONTENT,
+  INITIAL_ASPIRASI,
+} from "@/data/adminMockData";
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+const COMMON_HEADERS = {
+  apikey: SUPABASE_ANON_KEY,
+  Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+  "Content-Type": "application/json",
+  "Cache-Control": "no-cache, no-store, must-revalidate",
+  Pragma: "no-cache",
+};
+
+const FETCH_NO_STORE: RequestInit = {
+  cache: "no-store",
+  headers: COMMON_HEADERS,
+};
+
+// ─── SETTINGS JSON KEYS ───────────────────────────────────────────────────────
+const SETTINGS_KEYS = {
+  MERCHANDISE: "cms_merchandise_data",
+  HERO_CONTENT: "cms_hero_content",
+  VISI_MISI: "cms_visi_misi",
+  DIVISI_DATA: "cms_divisi_data",
+  ANGGOTA_DIVISI: "cms_anggota_divisi",
+} as const;
+
+// ─── GENERIC SETTINGS JSON HELPERS ───────────────────────────────────────────
+
+/**
+ * Fetch a JSON blob from the `settings` table by key.
+ * Falls back to `fallback` if key not found or on error.
+ */
+export async function fetchSettingJSON<T>(key: string, fallback: T): Promise<T> {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/settings?select=value&key=eq.${encodeURIComponent(key)}`;
+    const res = await fetch(url, FETCH_NO_STORE);
+    if (!res.ok) return fallback;
+    const rows: { value: unknown }[] = await res.json();
+    if (!rows || rows.length === 0) return fallback;
+    return rows[0].value as T;
+  } catch (err) {
+    console.warn(`[supabaseData] fetchSettingJSON(${key}) error:`, err);
+    return fallback;
+  }
+}
+
+/**
+ * Upsert a JSON blob into the `settings` table.
+ */
+export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/settings`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        ...COMMON_HEADERS,
+        Prefer: "resolution=merge-duplicates",
+      },
+      body: JSON.stringify({
+        key,
+        value: data,
+        updated_at: new Date().toISOString(),
+      }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      console.warn(`[supabaseData] upsertSettingJSON(${key}) failed:`, text);
+    }
+  } catch (err) {
+    console.warn(`[supabaseData] upsertSettingJSON(${key}) error:`, err);
+  }
+}
+
+// ─── PENGURUS ─────────────────────────────────────────────────────────────────
+
+/**
+ * Fetch all BPH pengurus from Supabase `Pengurus` table.
+ */
+export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH&order=urutan.asc,created_at.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
+    const res = await fetch(url, FETCH_NO_STORE);
+    if (!res.ok) {
+      console.warn("[supabaseData] fetchPengurusFromDB failed:", res.status);
+      return INITIAL_PENGURUS;
+    }
+    const rows: Array<{
+      id: string;
+      nama: string;
+      jabatan: string;
+      divisi: string;
+      periode: string;
+      fotoUrl?: string | null;
+      linkedin?: string | null;
+      instagram?: string | null;
+    }> = await res.json();
+
+    return rows.map((row) => ({
+      id: row.id,
+      nama: row.nama,
+      jabatan: row.jabatan,
+      divisi: row.divisi,
+      periode: row.periode ?? "2025/2026",
+      fotoUrl: row.fotoUrl ?? "",
+      linkedin: row.linkedin ?? "",
+      instagram: row.instagram ?? "",
+    }));
+  } catch (err) {
+    console.warn("[supabaseData] fetchPengurusFromDB error:", err);
+    return INITIAL_PENGURUS;
+  }
+}
+
+/**
+ * Bulk-replace all BPH pengurus in Supabase.
+ * Deletes existing BPH records, then inserts the new list.
+ */
+export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
+  try {
+    // Step 1: Delete all current BPH pengurus
+    await fetch(`${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH`, {
+      method: "DELETE",
+      headers: COMMON_HEADERS,
+    });
+
+    if (data.length === 0) return;
+
+    // Step 2: Insert new list (strip temp IDs that start with "bph_")
+    const rows = data.map((p, idx) => ({
+      ...(p.id.startsWith("bph_") ? {} : { id: p.id }),
+      nama: p.nama,
+      jabatan: p.jabatan,
+      divisi: "BPH",
+      periode: p.periode ?? "2025/2026",
+      fotoUrl: p.fotoUrl ?? null,
+      linkedin: p.linkedin ?? null,
+      instagram: p.instagram ?? null,
+      urutan: idx,
+    }));
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Pengurus`, {
+      method: "POST",
+      headers: {
+        ...COMMON_HEADERS,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(rows),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      console.warn("[supabaseData] syncPengurusToDB insert failed:", text);
+    }
+  } catch (err) {
+    console.warn("[supabaseData] syncPengurusToDB error:", err);
+  }
+}
+
+// ─── EVENT ────────────────────────────────────────────────────────────────────
+
+const EVENT_STATUS_MAP: Record<string, EventAdminItem["status"]> = {
+  PENDAFTARAN_DIBUKA: "Pendaftaran Dibuka",
+  SEGERA_HADIR: "Segera Hadir",
+  BERLANGSUNG: "Berlangsung",
+  SELESAI: "Selesai",
+};
+
+const EVENT_STATUS_REVERSE: Record<string, string> = {
+  "Pendaftaran Dibuka": "PENDAFTARAN_DIBUKA",
+  "Segera Hadir": "SEGERA_HADIR",
+  Berlangsung: "BERLANGSUNG",
+  Selesai: "SELESAI",
+};
+
+/**
+ * Fetch all events from Supabase `Event` table.
+ */
+export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/Event?order=created_at.desc&select=id,title,kategori,tanggal,waktu,lokasi,isOnline,status,deskripsi,bannerUrl,linkPendaftaran`;
+    const res = await fetch(url, FETCH_NO_STORE);
+    if (!res.ok) {
+      console.warn("[supabaseData] fetchEventsFromDB failed:", res.status);
+      return INITIAL_EVENTS;
+    }
+    const rows: Array<{
+      id: string;
+      title: string;
+      kategori: string;
+      tanggal: string;
+      waktu: string;
+      lokasi: string;
+      isOnline: boolean;
+      status: string;
+      deskripsi: string;
+      bannerUrl?: string | null;
+      linkPendaftaran?: string | null;
+    }> = await res.json();
+
+    return rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      kategori: row.kategori,
+      tanggal: row.tanggal,
+      waktu: row.waktu,
+      lokasi: row.lokasi,
+      isOnline: row.isOnline,
+      status: EVENT_STATUS_MAP[row.status] ?? "Pendaftaran Dibuka",
+      deskripsi: row.deskripsi,
+      bannerUrl: row.bannerUrl ?? "",
+      linkPendaftaran: row.linkPendaftaran ?? "",
+    }));
+  } catch (err) {
+    console.warn("[supabaseData] fetchEventsFromDB error:", err);
+    return INITIAL_EVENTS;
+  }
+}
+
+/**
+ * Bulk-replace all events in Supabase.
+ */
+export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
+  try {
+    // Step 1: Delete all events (need gt=0 trick for Supabase REST to delete all)
+    await fetch(`${SUPABASE_URL}/rest/v1/Event?created_at=gte.2000-01-01`, {
+      method: "DELETE",
+      headers: {
+        ...COMMON_HEADERS,
+        Prefer: "return=minimal",
+      },
+    });
+
+    if (data.length === 0) return;
+
+    // Step 2: Insert new list
+    const rows = data.map((e) => ({
+      ...(e.id.startsWith("e_") ? {} : { id: e.id }),
+      title: e.title,
+      kategori: e.kategori,
+      tanggal: e.tanggal,
+      waktu: e.waktu,
+      lokasi: e.lokasi,
+      isOnline: e.isOnline,
+      status: EVENT_STATUS_REVERSE[e.status] ?? "PENDAFTARAN_DIBUKA",
+      deskripsi: e.deskripsi,
+      bannerUrl: e.bannerUrl ?? null,
+      linkPendaftaran: e.linkPendaftaran ?? null,
+    }));
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Event`, {
+      method: "POST",
+      headers: {
+        ...COMMON_HEADERS,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(rows),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      console.warn("[supabaseData] syncEventsToDB insert failed:", text);
+    }
+  } catch (err) {
+    console.warn("[supabaseData] syncEventsToDB error:", err);
+  }
+}
+
+// ─── ASPIRASI ─────────────────────────────────────────────────────────────────
+
+export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=created_at.desc&select=id,pesan,isAnonim,nama,email,status,created_at`;
+    const res = await fetch(url, FETCH_NO_STORE);
+    if (!res.ok) return INITIAL_ASPIRASI;
+    const rows: Array<{
+      id: string;
+      pesan: string;
+      isAnonim: boolean;
+      nama?: string | null;
+      email?: string | null;
+      status: string;
+      created_at: string;
+    }> = await res.json();
+
+    return rows.map((row) => ({
+      id: row.id,
+      pesan: row.pesan,
+      isAnonim: row.isAnonim,
+      nama: row.nama ?? undefined,
+      email: row.email ?? undefined,
+      tanggal: row.created_at ? row.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+      status: (row.status === "BARU"
+        ? "Baru"
+        : row.status === "DIPROSES"
+        ? "Diproses"
+        : "Selesai") as AspirasiAdminItem["status"],
+    }));
+  } catch (err) {
+    console.warn("[supabaseData] fetchAspirasiFromDB error:", err);
+    return INITIAL_ASPIRASI;
+  }
+}
+
+export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boolean> {
+  try {
+    const row = {
+      pesan: item.pesan,
+      isAnonim: item.isAnonim,
+      nama: item.isAnonim ? null : item.nama ?? null,
+      email: item.email ?? null,
+      status: "BARU",
+    };
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Aspirasi`, {
+      method: "POST",
+      headers: {
+        ...COMMON_HEADERS,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(row),
+    });
+
+    return res.ok;
+  } catch (err) {
+    console.warn("[supabaseData] insertAspirasiToDB error:", err);
+    return false;
+  }
+}
+
+// ─── MERCHANDISE ──────────────────────────────────────────────────────────────
+
+export async function fetchMerchandiseFromDB(): Promise<MerchandiseAdminItem[]> {
+  return fetchSettingJSON<MerchandiseAdminItem[]>(SETTINGS_KEYS.MERCHANDISE, INITIAL_MERCHANDISE);
+}
+
+export async function syncMerchandiseToDB(data: MerchandiseAdminItem[]): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.MERCHANDISE, data);
+}
+
+// ─── HERO CONTENT ─────────────────────────────────────────────────────────────
+
+export async function fetchHeroContentFromDB(): Promise<HeroContentData> {
+  return fetchSettingJSON<HeroContentData>(SETTINGS_KEYS.HERO_CONTENT, INITIAL_HERO_CONTENT);
+}
+
+export async function syncHeroContentToDB(data: HeroContentData): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.HERO_CONTENT, data);
+}
+
+// ─── VISI MISI ────────────────────────────────────────────────────────────────
+
+export async function fetchVisiMisiFromDB(): Promise<VisiMisiData> {
+  return fetchSettingJSON<VisiMisiData>(SETTINGS_KEYS.VISI_MISI, INITIAL_VISI_MISI);
+}
+
+export async function syncVisiMisiToDB(data: VisiMisiData): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.VISI_MISI, data);
+}
+
+// ─── DIVISI DATA ──────────────────────────────────────────────────────────────
+
+export async function fetchDivisiFromDB(): Promise<DivisiAdminItem[]> {
+  return fetchSettingJSON<DivisiAdminItem[]>(SETTINGS_KEYS.DIVISI_DATA, INITIAL_DIVISI_FULL);
+}
+
+export async function syncDivisiToDB(data: DivisiAdminItem[]): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.DIVISI_DATA, data);
+}
+
+// ─── ANGGOTA DIVISI ───────────────────────────────────────────────────────────
+
+export async function fetchAnggotaDivisiFromDB(): Promise<AnggotaDivisiItem[]> {
+  return fetchSettingJSON<AnggotaDivisiItem[]>(SETTINGS_KEYS.ANGGOTA_DIVISI, INITIAL_ANGGOTA_DIVISI);
+}
+
+export async function syncAnggotaDivisiToDB(data: AnggotaDivisiItem[]): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.ANGGOTA_DIVISI, data);
+}

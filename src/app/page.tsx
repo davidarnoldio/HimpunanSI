@@ -1,0 +1,60 @@
+import {
+  Navbar,
+  HeroSection,
+  KabinetSection,
+  DivisiSection,
+  EventSection,
+  Footer,
+} from "@/components/landing";
+import {
+  fetchPengurusFromDB,
+  fetchEventsFromDB,
+  fetchDivisiFromDB,
+  fetchAnggotaDivisiFromDB,
+  fetchVisiMisiFromDB,
+  fetchHeroContentFromDB,
+} from "@/lib/supabaseData";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+/**
+ * Halaman Utama — Portal Landing Page HIMSI UG
+ * Murni Server Component (RSC).
+ * Data di-fetch dari Supabase secara paralel di server (no-store) dan dialirkan via props.
+ */
+export default async function HomePage() {
+  const [pengurus, events, divisiData, anggotaDivisi, visiMisi, heroContent] =
+    await Promise.all([
+      fetchPengurusFromDB(),
+      fetchEventsFromDB(),
+      fetchDivisiFromDB(),
+      fetchAnggotaDivisiFromDB(),
+      fetchVisiMisiFromDB(),
+      fetchHeroContentFromDB(),
+    ]);
+
+  return (
+    <>
+      {/* Sticky top navbar */}
+      <Navbar />
+
+      <main id="main-content">
+        {/* 1. Hero & Live Text */}
+        <HeroSection heroContent={heroContent} />
+
+        {/* 2. Pimpinan Kabinet BPH */}
+        <KabinetSection pengurus={pengurus} visiMisi={visiMisi} />
+
+        {/* 3. Overview Divisi */}
+        <DivisiSection divisiData={divisiData} anggotaDivisi={anggotaDivisi} />
+
+        {/* 4. Upcoming Events & Proker */}
+        <EventSection events={events} />
+      </main>
+
+      {/* 5. Footer */}
+      <Footer />
+    </>
+  );
+}
