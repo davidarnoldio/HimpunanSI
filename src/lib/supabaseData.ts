@@ -88,7 +88,7 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
       body: JSON.stringify({
         key,
         value: data,
-        updated_at: new Date().toISOString(),
+        updatedAt: new Date().toISOString(), // Diubah ke updatedAt
       }),
     });
     if (!res.ok) {
@@ -107,7 +107,8 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
  */
 export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH&order=urutan.asc,created_at.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
+    // FIX: created_at -> createdAt
+    const url = `${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH&order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) {
       console.warn("[supabaseData] fetchPengurusFromDB failed:", res.status);
@@ -205,7 +206,8 @@ const EVENT_STATUS_REVERSE: Record<string, string> = {
  */
 export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/Event?order=created_at.desc&select=id,title,kategori,tanggal,waktu,lokasi,isOnline,status,deskripsi,bannerUrl,linkPendaftaran`;
+    // FIX: created_at -> createdAt
+    const url = `${SUPABASE_URL}/rest/v1/Event?order=createdAt.desc&select=id,title,kategori,tanggal,waktu,lokasi,isOnline,status,deskripsi,bannerUrl,linkPendaftaran`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) {
       console.warn("[supabaseData] fetchEventsFromDB failed:", res.status);
@@ -249,8 +251,8 @@ export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
  */
 export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
   try {
-    // Step 1: Delete all events (need gt=0 trick for Supabase REST to delete all)
-    await fetch(`${SUPABASE_URL}/rest/v1/Event?created_at=gte.2000-01-01`, {
+    // FIX: created_at -> createdAt
+    await fetch(`${SUPABASE_URL}/rest/v1/Event?createdAt=gte.2000-01-01`, {
       method: "DELETE",
       headers: {
         ...COMMON_HEADERS,
@@ -296,7 +298,8 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
 
 export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=created_at.desc&select=id,pesan,isAnonim,nama,email,status,created_at`;
+    // FIX: created_at -> createdAt pada URL query dan mapping data
+    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,email,status,createdAt`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) return INITIAL_ASPIRASI;
     const rows: Array<{
@@ -306,7 +309,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       nama?: string | null;
       email?: string | null;
       status: string;
-      created_at: string;
+      createdAt: string; // Diubah ke createdAt
     }> = await res.json();
 
     return rows.map((row) => ({
@@ -315,12 +318,12 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       isAnonim: row.isAnonim,
       nama: row.nama ?? undefined,
       email: row.email ?? undefined,
-      tanggal: row.created_at ? row.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+      tanggal: row.createdAt ? row.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10), // Diubah ke createdAt
       status: (row.status === "BARU"
         ? "Baru"
         : row.status === "DIPROSES"
-        ? "Diproses"
-        : "Selesai") as AspirasiAdminItem["status"],
+          ? "Diproses"
+          : "Selesai") as AspirasiAdminItem["status"],
     }));
   } catch (err) {
     console.warn("[supabaseData] fetchAspirasiFromDB error:", err);
