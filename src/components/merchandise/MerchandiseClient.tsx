@@ -65,27 +65,27 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
 
   const modalItem: MerchandiseItem | null = selectedModalProduct
     ? {
-        id: selectedModalProduct.id,
-        name: selectedModalProduct.title || "Merchandise HIMSI",
-        category: (selectedModalProduct.category.toLowerCase() === "apparel" ? "apparel" : "accessories") as MerchandiseCategory,
-        price: parseInt((selectedModalProduct.price || "0").replace(/[^0-9]/g, ""), 10) || 50000,
-        images: [getValidImageUrl(selectedModalProduct.image, selectedModalProduct.title)],
-        status: selectedModalProduct.status === "READY" ? "available" : selectedModalProduct.status === "PRE-ORDER" ? "pre-order" : "sold-out",
-        badge: selectedModalProduct.badge || "Eksklusif",
-        description: selectedModalProduct.description || "Official Merchandise HIMSI UG.",
-        sizes: [
-          { label: "S", available: true },
-          { label: "M", available: true },
-          { label: "L", available: true },
-          { label: "XL", available: true },
-          { label: "XXL", available: true },
-        ],
-        colors: ["#0f172a", "#dc2626", "#ffffff"],
-        whatsappNumber: selectedModalProduct.whatsappNumber || "6281234567890",
-        tags: ["HIMSI", "SI", "Gunadarma"],
-        tagline: "Official Merchandise HIMSI UG",
-        details: ["Bahan High Quality", "Desain Eksklusif HIMSI UG", "Tahan Lama & Nyaman Dipakai"],
-      }
+      id: selectedModalProduct.id,
+      name: selectedModalProduct.title || "Merchandise HIMSI",
+      category: (selectedModalProduct.category.toLowerCase() === "apparel" ? "apparel" : "accessories") as MerchandiseCategory,
+      price: parseInt((selectedModalProduct.price || "0").replace(/[^0-9]/g, ""), 10) || 50000,
+      images: [getValidImageUrl(selectedModalProduct.image, selectedModalProduct.title)],
+      status: selectedModalProduct.status === "READY" ? "available" : selectedModalProduct.status === "PRE-ORDER" ? "pre-order" : "sold-out",
+      badge: selectedModalProduct.badge || "Eksklusif",
+      description: selectedModalProduct.description || "Official Merchandise HIMSI UG.",
+      sizes: [
+        { label: "S", available: true },
+        { label: "M", available: true },
+        { label: "L", available: true },
+        { label: "XL", available: true },
+        { label: "XXL", available: true },
+      ],
+      colors: ["#0f172a", "#dc2626", "#ffffff"],
+      whatsappNumber: selectedModalProduct.whatsappNumber || "6281234567890",
+      tags: ["HIMSI", "SI", "Gunadarma"],
+      tagline: "Official Merchandise HIMSI UG",
+      details: ["Bahan High Quality", "Desain Eksklusif HIMSI UG", "Tahan Lama & Nyaman Dipakai"],
+    }
     : null;
 
   return (
@@ -130,11 +130,10 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer border ${
-                    isSelected
+                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer border ${isSelected
                       ? "bg-gradient-to-r from-red-600 to-rose-600 text-white border-transparent shadow-lg shadow-red-900/20 scale-105"
                       : "bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-red-500/40 hover:text-red-600 dark:hover:text-red-400"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>
@@ -192,13 +191,12 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                       {/* Status Badge */}
                       <div className="absolute top-3.5 left-3.5">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase border shadow-md ${
-                            isReady
+                          className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase border shadow-md ${isReady
                               ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40 backdrop-blur-md"
                               : isPreOrder
-                              ? "bg-amber-500/20 text-amber-400 border-amber-500/40 backdrop-blur-md"
-                              : "bg-red-500/20 text-red-400 border-red-500/40 backdrop-blur-md"
-                          }`}
+                                ? "bg-amber-500/20 text-amber-400 border-amber-500/40 backdrop-blur-md"
+                                : "bg-red-500/20 text-red-400 border-red-500/40 backdrop-blur-md"
+                            }`}
                         >
                           {item.status}
                         </span>
@@ -269,7 +267,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
             </div>
 
             <a
-              href="https://wa.me/6281234567890?text=Halo%20Admin%20Merchandise%20HIMSI%20UG"
+              href="https://wa.me/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-2xl bg-white text-slate-950 font-black text-xs sm:text-sm hover:bg-slate-100 transition-colors shrink-0 shadow-lg"

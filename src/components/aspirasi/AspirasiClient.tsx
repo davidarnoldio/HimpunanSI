@@ -10,21 +10,14 @@ import {
   Send,
   Lock,
   CheckCircle2,
-  Filter,
-  Inbox,
-  Clock,
-  CheckCheck,
   ShieldCheck,
 } from "lucide-react";
 import { Navbar, Footer } from "@/components/landing";
 import { submitAspirasiAction } from "@/app/actions/aspirasiActions";
-import { type AspirasiAdminItem } from "@/data/adminMockData";
 
 const CATEGORIES = ["Akademik", "Fasilitas Kampus", "Event & Proker", "Kritik & Saran", "Lainnya"];
 
-export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiAdminItem[] }) {
-  const [aspirasi, setAspirasiList] = useState<AspirasiAdminItem[]>(initialAspirasi);
-
+export function AspirasiClient() {
   // Form State
   const [kategori, setKategori] = useState(CATEGORIES[0]);
   const [isAnonim, setIsAnonim] = useState(false);
@@ -35,9 +28,6 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Filter feed
-  const [filterStatus, setFilterStatus] = useState("Semua");
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pesan.trim()) return;
@@ -45,14 +35,13 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
     setIsSubmitting(true);
 
     const res = await submitAspirasiAction({
-      pesan: pesan.trim(),
+      pesan: `[${kategori}] ${pesan.trim()}`,
       isAnonim,
       nama: isAnonim ? undefined : nama.trim() || "Mahasiswa SI",
       npm: isAnonim ? undefined : npm.trim() || undefined,
     });
 
-    if (res.success && res.data) {
-      setAspirasiList([res.data, ...aspirasi]);
+    if (res.success) {
       setIsSubmitted(true);
 
       // Reset form
@@ -60,19 +49,14 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
       setNama("");
       setNpm("");
 
-      // Hide success message after 5 seconds
-      setTimeout(() => setIsSubmitted(false), 5000);
+      // Hide success message after 6 seconds
+      setTimeout(() => setIsSubmitted(false), 6000);
     } else {
       alert("Gagal mengirim aspirasi ke database. Silakan coba lagi.");
     }
 
     setIsSubmitting(false);
   };
-
-  const filteredAspirasi = aspirasi.filter((item) => {
-    if (filterStatus === "Semua") return true;
-    return item.status === filterStatus;
-  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
@@ -128,13 +112,13 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
                   <h2 className="font-extrabold text-base text-slate-900 dark:text-slate-100">
                     Formulir Aspirasi
                   </h2>
-                  <p className="text-xs text-slate-500">Langsung tersampaikan ke Supabase DB & Pengurus HIMSI UG.</p>
+                  <p className="text-xs text-slate-500">Langsung tersampaikan secara rahasia ke Pengurus HIMSI UG.</p>
                 </div>
               </div>
 
               {/* Status Indicator */}
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800">
-                <ShieldCheck size={13} /> Live System Active
+                <ShieldCheck size={13} /> Secure Submission
               </div>
             </div>
 
@@ -149,7 +133,7 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
                 >
                   <CheckCircle2 size={20} className="shrink-0 text-emerald-500" />
                   <span>
-                    Aspirasi kamu berhasil dikirim ke database Supabase! Data langsung masuk ke Admin CMS & akan segera diproses oleh tim terkait.
+                    Aspirasi Anda telah berhasil dikirimkan secara aman ke Admin & Pengurus HIMSI UG! Terima kasih atas partisipasi Anda.
                   </span>
                 </motion.div>
               )}
@@ -274,102 +258,6 @@ export function AspirasiClient({ initialAspirasi }: { initialAspirasi: AspirasiA
               </button>
             </form>
           </motion.div>
-
-          {/* ── PUBLIC ASPIRASI FEED & STATUS ── */}
-          <div className="space-y-6 max-w-4xl mx-auto pt-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-              <div>
-                <h2 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-slate-100">
-                  Tanggapan Aspirasi Terkini
-                </h2>
-                <p className="text-xs text-slate-500">Transparansi tindak lanjut aspirasi oleh pengurus HIMSI UG.</p>
-              </div>
-
-              {/* Status Filter Pills */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-slate-400 text-xs font-bold mr-1 flex items-center gap-1">
-                  <Filter size={12} /> Status:
-                </span>
-                {["Semua", "Baru", "Diproses", "Selesai"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => setFilterStatus(status)}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                      filterStatus === status
-                        ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm"
-                        : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                    }`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Aspirasi List Cards */}
-            {filteredAspirasi.length === 0 ? (
-              <div className="p-12 text-center space-y-3 rounded-3xl bg-slate-50 dark:bg-slate-900/40 border border-dashed border-slate-200 dark:border-slate-800">
-                <Inbox size={40} className="mx-auto text-slate-400" />
-                <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
-                  Belum ada aspirasi untuk status ini.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredAspirasi.map((asp) => {
-                  const isBaru = asp.status === "Baru";
-                  const isDiproses = asp.status === "Diproses";
-                  const isSelesai = asp.status === "Selesai";
-
-                  return (
-                    <motion.div
-                      key={asp.id}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3"
-                    >
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-red-600 dark:text-red-400">
-                            {asp.isAnonim ? "🔒 Anonim" : asp.nama || "Mahasiswa SI"}
-                          </span>
-                          {asp.npm && !asp.isAnonim && (
-                            <span className="text-[11px] font-semibold text-slate-400 font-mono">
-                              ({asp.npm})
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <span className="text-slate-400 font-medium">{asp.tanggal}</span>
-
-                          {/* Status Pill */}
-                          <span
-                            className={`px-3 py-1 rounded-full text-[11px] font-extrabold flex items-center gap-1 border ${
-                              isBaru
-                                ? "bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
-                                : isDiproses
-                                ? "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800"
-                                : "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
-                            }`}
-                          >
-                            {isBaru && <Clock size={11} />}
-                            {isDiproses && <Clock size={11} />}
-                            {isSelesai && <CheckCheck size={11} />}
-                            {asp.status}
-                          </span>
-                        </div>
-                      </div>
-
-                      <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                        &ldquo;{asp.pesan}&rdquo;
-                      </p>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
         </div>
       </main>
 

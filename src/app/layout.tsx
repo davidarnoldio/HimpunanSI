@@ -64,7 +64,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${plusJakarta.className} min-h-full bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300`}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <SplashScreen />
           <SmoothScrolling>{children}</SmoothScrolling>
         </ThemeProvider>
