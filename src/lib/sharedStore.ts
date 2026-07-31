@@ -279,18 +279,15 @@ export function useSharedStore() {
       fetchAspirasiFromDB(),
     ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
       // Update localStorage and state with fresh DB data
-      if (pengurus.length > 0) {
-        store.setPengurus(pengurus);
-        setPengurusState(pengurus);
-      }
-      if (events.length > 0) {
-        store.setEvents(events);
-        setEventsState(events);
-      }
-      if (merchandise.length > 0) {
-        store.setMerchandise(merchandise);
-        setMerchandiseState(merchandise);
-      }
+      store.setPengurus(pengurus);
+      setPengurusState(pengurus);
+
+      store.setEvents(events);
+      setEventsState(events);
+
+      store.setMerchandise(merchandise);
+      setMerchandiseState(merchandise);
+
       store.setHeroContent(heroContent);
       setHeroContentState(heroContent);
       if (heroContent.headlineDynamicWords) setHeadlineWordsState(heroContent.headlineDynamicWords);
@@ -300,18 +297,14 @@ export function useSharedStore() {
       store.setVisiMisi(visiMisi);
       setVisiMisiState(visiMisi);
 
-      if (divisi.length > 0) {
-        store.setDivisiFull(divisi);
-        setDivisiDataState(divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph"));
-      }
-      if (anggota.length > 0) {
-        store.setAnggotaDivisi(anggota);
-        setAnggotaDivisiState(anggota);
-      }
-      if (aspirasi.length > 0) {
-        store.setAspirasi(aspirasi);
-        setAspirasiState(aspirasi);
-      }
+      store.setDivisiFull(divisi);
+      setDivisiDataState(divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph"));
+
+      store.setAnggotaDivisi(anggota);
+      setAnggotaDivisiState(anggota);
+
+      store.setAspirasi(aspirasi);
+      setAspirasiState(aspirasi);
     }).catch((err) => {
       console.warn("[HIMSI Store] Supabase primary sync error:", err);
     });

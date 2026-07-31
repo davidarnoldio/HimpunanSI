@@ -14,9 +14,11 @@ import {
   deleteAspirasiAction,
 } from "@/app/actions/aspirasiActions";
 import { type AspirasiAdminItem } from "@/data/adminMockData";
+import { useSharedStore } from "@/lib/sharedStore";
 import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
 
 export default function AdminAspirasiPage() {
+  const { setAspirasi: setStoreAspirasi } = useSharedStore();
   const [aspirasi, setAspirasi] = useState<AspirasiAdminItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -29,12 +31,23 @@ export default function AdminAspirasiPage() {
     setIsLoading(true);
     const data = await getLatestAspirasiAction();
     setAspirasi(data);
+    setStoreAspirasi(data);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    let isMounted = true;
+    getLatestAspirasiAction().then((data) => {
+      if (isMounted) {
+        setAspirasi(data);
+        setStoreAspirasi(data);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [setStoreAspirasi]);
 
   const filteredItems = aspirasi.filter((item) => {
     const matchSearch =
@@ -46,14 +59,22 @@ export default function AdminAspirasiPage() {
 
   const handleUpdateStatus = async (id: string, status: "Baru" | "Diproses" | "Selesai") => {
     // Optimistic update
-    setAspirasi((prev) => prev.map((i) => (i.id === id ? { ...i, status } : i)));
+    setAspirasi((prev) => {
+      const updated = prev.map((i) => (i.id === id ? { ...i, status } : i));
+      setStoreAspirasi(updated);
+      return updated;
+    });
     await updateAspirasiStatusAction(id, status);
   };
 
   const confirmDelete = async () => {
     if (deleteTargetId) {
       const targetId = deleteTargetId;
-      setAspirasi((prev) => prev.filter((i) => i.id !== targetId));
+      setAspirasi((prev) => {
+        const updated = prev.filter((i) => i.id !== targetId);
+        setStoreAspirasi(updated);
+        return updated;
+      });
       setDeleteTargetId(null);
       await deleteAspirasiAction(targetId);
     }
