@@ -34,11 +34,18 @@ export function FormAspirasi() {
   // Anti-lag instant toggle handler
   const handleToggleAnonim = () => {
     setIsAnonim((prev) => !prev);
+    setErrorMessage(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pesan.trim() || !turnstileToken || isLoading) return;
+
+    // Validasi Wajib Nama & NPM jika TIDAK memilih anonim
+    if (!isAnonim && (!nama.trim() || !npm.trim())) {
+      setErrorMessage("Nama Lengkap dan NPM wajib diisi jika tidak memilih Kirim secara Anonim.");
+      return;
+    }
 
     setIsLoading(true);
     setErrorMessage(null);
@@ -48,8 +55,8 @@ export function FormAspirasi() {
       const res = await submitAspirasiAction({
         pesan: `[${kategori}] ${pesan.trim()}`,
         isAnonim,
-        nama: isAnonim ? undefined : nama.trim() || "Mahasiswa SI",
-        npm: isAnonim ? undefined : npm.trim() || undefined,
+        nama: isAnonim ? undefined : nama.trim(),
+        npm: isAnonim ? undefined : npm.trim(),
         turnstileToken,
       });
 
@@ -72,6 +79,11 @@ export function FormAspirasi() {
       setIsLoading(false);
     }
   };
+
+  const isFormValid =
+    Boolean(pesan.trim()) &&
+    Boolean(turnstileToken) &&
+    (isAnonim || (Boolean(nama.trim()) && Boolean(npm.trim())));
 
   return (
     <motion.div
@@ -165,7 +177,7 @@ export function FormAspirasi() {
                 Kirim secara Anonim
               </span>
               <span className="text-[11px] text-slate-500">
-                Identitas nama & NPM kamu akan disembunyikan.
+                Aktifkan jika tidak ingin mencantumkan Nama & NPM.
               </span>
             </div>
           </div>
@@ -181,7 +193,7 @@ export function FormAspirasi() {
           </button>
         </div>
 
-        {/* Optional Name & NPM Input */}
+        {/* Name & NPM Input (Mandatory when not anonymous) */}
         <AnimatePresence>
           {!isAnonim && (
             <motion.div
@@ -191,23 +203,25 @@ export function FormAspirasi() {
               className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1"
             >
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
-                  <User size={13} className="text-red-500" /> Nama Lengkap
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+                  <User size={13} className="text-red-500" /> Nama Lengkap *
                 </label>
                 <input
                   type="text"
+                  required={!isAnonim}
                   value={nama}
                   onChange={(e) => setNama(e.target.value)}
                   placeholder="e.g. Fikri Ardiansyah"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
                 />
               </div>
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
-                  <Hash size={13} className="text-red-500" /> NPM
+                <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+                  <Hash size={13} className="text-red-500" /> NPM *
                 </label>
                 <input
                   type="text"
+                  required={!isAnonim}
                   value={npm}
                   onChange={(e) => setNpm(e.target.value)}
                   placeholder="e.g. 14121900"
@@ -233,7 +247,7 @@ export function FormAspirasi() {
           />
         </div>
 
-        {/* ATURAN 1 (4): Cloudflare Turnstile Anti-Spam Widget (Tepat di Atas Tombol Submit) */}
+        {/* Cloudflare Turnstile Anti-Spam Widget */}
         <div className="flex justify-center py-2 overflow-hidden">
           <Turnstile
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
@@ -243,10 +257,10 @@ export function FormAspirasi() {
           />
         </div>
 
-        {/* ATURAN 1 (5): Tombol Submit WAJIB Disabled Jika turnstileToken Masih Kosong */}
+        {/* Protected Submit Button */}
         <button
           type="submit"
-          disabled={isLoading || !pesan.trim() || !turnstileToken}
+          disabled={isLoading || !isFormValid}
           className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 text-white font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-red-900/20 transition-all cursor-pointer text-sm"
         >
           {isLoading ? (

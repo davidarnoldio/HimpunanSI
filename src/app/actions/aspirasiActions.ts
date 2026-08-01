@@ -55,7 +55,17 @@ export async function submitAspirasiAction(payload: {
       };
     }
 
-    // 2. Jika validasi manusia berhasil, simpan ke database Supabase
+    // 2. Validasi Nama & NPM jika tidak anonim
+    if (!payload.isAnonim) {
+      if (!payload.nama?.trim() || !payload.npm?.trim()) {
+        return {
+          success: false,
+          error: "Nama Lengkap dan NPM wajib diisi jika tidak memilih Kirim secara Anonim.",
+        };
+      }
+    }
+
+    // 3. Jika validasi manusia berhasil, simpan ke database Supabase
     const today = new Date().toISOString().slice(0, 10);
     const newAspirasi: AspirasiAdminItem = {
       id: `asp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
