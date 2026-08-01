@@ -10,7 +10,9 @@ import {
   Lock,
   CheckCircle2,
   ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { submitAspirasiAction } from "@/app/actions/aspirasiActions";
 
 const CATEGORIES = ["Akademik", "Fasilitas Kampus", "Event & Proker", "Kritik & Saran", "Lainnya"];
@@ -21,6 +23,9 @@ export function FormAspirasi() {
   const [nama, setNama] = useState("");
   const [npm, setNpm] = useState("");
   const [pesan, setPesan] = useState("");
+
+  // Turnstile Token State
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -33,7 +38,7 @@ export function FormAspirasi() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pesan.trim() || isLoading) return;
+    if (!pesan.trim() || !turnstileToken || isLoading) return;
 
     setIsLoading(true);
     setErrorMessage(null);
@@ -45,6 +50,7 @@ export function FormAspirasi() {
         isAnonim,
         nama: isAnonim ? undefined : nama.trim() || "Mahasiswa SI",
         npm: isAnonim ? undefined : npm.trim() || undefined,
+        turnstileToken,
       });
 
       if (res.success) {
@@ -52,9 +58,12 @@ export function FormAspirasi() {
         setPesan("");
         setNama("");
         setNpm("");
+        setTurnstileToken(null);
         setTimeout(() => setIsSuccess(false), 6000);
       } else {
-        setErrorMessage("Gagal mengirim aspirasi ke database. Silakan coba beberapa saat lagi.");
+        setErrorMessage(
+          res.error || "Gagal mengirim aspirasi ke database. Silakan coba beberapa saat lagi."
+        );
       }
     } catch (err) {
       console.error("[FormAspirasi] Submit error:", err);
@@ -85,7 +94,7 @@ export function FormAspirasi() {
         </div>
 
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800">
-          <ShieldCheck size={13} /> Secure Submission
+          <ShieldCheck size={13} /> Cloudflare Protected
         </div>
       </div>
 
@@ -115,6 +124,7 @@ export function FormAspirasi() {
             exit={{ opacity: 0, y: -10 }}
             className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 flex items-center gap-3 text-xs sm:text-sm font-bold shadow-sm"
           >
+            <ShieldAlert size={20} className="shrink-0 text-red-500" />
             <span>{errorMessage}</span>
           </motion.div>
         )}
@@ -223,10 +233,20 @@ export function FormAspirasi() {
           />
         </div>
 
-        {/* Protected Submit Button */}
+        {/* ATURAN 1 (4): Cloudflare Turnstile Anti-Spam Widget (Tepat di Atas Tombol Submit) */}
+        <div className="flex justify-center py-2 overflow-hidden">
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+            onSuccess={(token) => setTurnstileToken(token)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+          />
+        </div>
+
+        {/* ATURAN 1 (5): Tombol Submit WAJIB Disabled Jika turnstileToken Masih Kosong */}
         <button
           type="submit"
-          disabled={isLoading || !pesan.trim()}
+          disabled={isLoading || !pesan.trim() || !turnstileToken}
           className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 text-white font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-red-900/20 transition-all cursor-pointer text-sm"
         >
           {isLoading ? (

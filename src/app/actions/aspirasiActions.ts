@@ -9,14 +9,53 @@ import {
 import { revalidatePath } from "next/cache";
 import type { AspirasiAdminItem } from "@/data/adminMockData";
 
+/**
+ * Validasi Token Cloudflare Turnstile di Server-Side
+ */
+async function verifyTurnstile(token: string): Promise<boolean> {
+  if (!token) return false;
+
+  const secretKey =
+    process.env.TURNSTILE_SECRET_KEY || "1x0000000000000000000000000000000AA"; // Dummy testing fallback
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append("secret", secretKey);
+    formData.append("response", token);
+
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: formData,
+    });
+
+    const outcome = await res.json();
+    return Boolean(outcome.success);
+  } catch (err) {
+    console.error("[Turnstile Backend Verification Error]:", err);
+    return false;
+  }
+}
+
 export async function submitAspirasiAction(payload: {
   pesan: string;
   isAnonim: boolean;
   nama?: string;
   npm?: string;
   email?: string;
+  turnstileToken: string;
 }): Promise<{ success: boolean; data?: AspirasiAdminItem; error?: string }> {
   try {
+    // ATURAN 2: BACKEND SERVER SIDE VALIDATION (WAJIB)
+    // 1. Verifikasi token Turnstile ke Cloudflare siteverify API
+    const isValidHuman = await verifyTurnstile(payload.turnstileToken);
+    if (!isValidHuman) {
+      return {
+        success: false,
+        error: "Verifikasi keamanan Turnstile gagal. Akses bot/spam ditolak.",
+      };
+    }
+
+    // 2. Jika validasi manusia berhasil, simpan ke database Supabase
     const today = new Date().toISOString().slice(0, 10);
     const newAspirasi: AspirasiAdminItem = {
       id: `asp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
