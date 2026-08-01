@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ExternalLink, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_LINKS } from "@/data/landingPage";
@@ -134,17 +134,22 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
 
-            <Link
-              href="/aspirasi"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-sm font-bold font-mono shadow-lg shadow-red-900/20 dark:shadow-red-900/30 transition-colors duration-200"
-              aria-label="Sampaikan aspirasi mahasiswa"
-            >
-              Aspirasi <ExternalLink size={13} />
-            </Link>
+            <div className="flex items-center pl-1">
+              <img
+                src="/logogundar.png"
+                alt="Logo Universitas Gunadarma"
+                className="h-9 sm:h-10 w-auto object-contain transition-transform hover:scale-105"
+              />
+            </div>
           </div>
 
-          {/* Mobile Actions (ThemeToggle + Hamburger) */}
+          {/* Mobile Actions (Gunadarma Logo + ThemeToggle + Hamburger) */}
           <div className="flex items-center gap-2 md:hidden">
+            <img
+              src="/logogundar.png"
+              alt="Logo Gunadarma"
+              className="h-7 w-auto object-contain mr-1"
+            />
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -206,15 +211,16 @@ export function Navbar() {
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: NAV_LINKS.length * 0.04 }}
-                className="pt-2 border-t border-slate-200/80 dark:border-slate-800/60 mt-2"
+                className="pt-3 border-t border-slate-200/80 dark:border-slate-800/60 mt-2 flex items-center justify-center gap-2.5 py-2"
               >
-                <Link
-                  href="/aspirasi"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white text-sm font-bold shadow-md shadow-red-900/20"
-                >
-                  Aspirasi Mahasiswa <ExternalLink size={13} />
-                </Link>
+                <img
+                  src="/logogundar.png"
+                  alt="Logo Universitas Gunadarma"
+                  className="h-8 w-auto object-contain"
+                />
+                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 font-heading">
+                  Universitas Gunadarma
+                </span>
               </motion.div>
             </nav>
           </motion.div>
