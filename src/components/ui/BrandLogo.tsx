@@ -26,7 +26,7 @@ export function BrandLogo({ size = "md", className = "" }: { size?: "sm" | "md" 
   return (
     <div className={`relative ${currentDim} rounded-xl overflow-hidden shadow-md shrink-0 bg-transparent flex items-center justify-center ${className}`}>
       <img
-        src="/himsigundar.webp"
+        src="/himsigundar.png"
         alt="Logo HIMSI UG"
         className="w-full h-full object-contain"
         onError={() => setImgError(true)}
