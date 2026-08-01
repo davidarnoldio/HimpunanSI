@@ -114,4 +114,4 @@ Buka [http://localhost:3000](http://localhost:3000) di browser.
 
 ---
 
-**Dibuat dengan ❤️ oleh Tim Pengembang HIMSI UG**
+
