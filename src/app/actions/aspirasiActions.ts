@@ -13,21 +13,22 @@ import { revalidatePath } from "next/cache";
 import type { AspirasiAdminItem } from "@/data/adminMockData";
 
 // ─── INSTANCE RATE LIMITER (UPSTASH REDIS) ─────────────────────────────────
-// Inisialisasi di luar fungsi utama dengan slidingWindow: Maksimal 3 request per 1 menit
-const redis =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-    ? new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN,
-      })
-    : Redis.fromEnv();
+// Hanya dibuat jika env var tersedia — mencegah error "Failed to parse URL from /pipeline"
+// saat UPSTASH_REDIS_REST_URL tidak dikonfigurasi (dev lokal tanpa Redis).
+const hasRedisConfig =
+  !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
 
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(3, "1 m"),
-  analytics: true,
-  prefix: "himsi_ratelimit_aspirasi",
-});
+const ratelimit = hasRedisConfig
+  ? new Ratelimit({
+      redis: new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      }),
+      limiter: Ratelimit.slidingWindow(3, "1 m"),
+      analytics: true,
+      prefix: "himsi_ratelimit_aspirasi",
+    })
+  : null; // Redis tidak dikonfigurasi — rate limiting di-skip (dev mode)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -71,13 +72,15 @@ export async function submitAspirasiAction(payload: {
     const rawIp = headerList.get("x-forwarded-for") ?? "127.0.0.1";
     const ip = rawIp.split(",")[0].trim();
 
-    // 2. Rate Limiting Check SEBELUM Turnstile & DB Query
-    const { success: isRateLimitOk } = await ratelimit.limit(ip);
-    if (!isRateLimitOk) {
-      return {
-        success: false,
-        error: "Sabar bos! Kamu terlalu banyak mengirim aspirasi. Tunggu 1 menit lagi ya.",
-      };
+    // 2. Rate Limiting Check (hanya jika Redis dikonfigurasi)
+    if (ratelimit) {
+      const { success: isRateLimitOk } = await ratelimit.limit(ip);
+      if (!isRateLimitOk) {
+        return {
+          success: false,
+          error: "Sabar bos! Kamu terlalu banyak mengirim aspirasi. Tunggu 1 menit lagi ya.",
+        };
+      }
     }
 
     // 3. Verifikasi token Turnstile ke Cloudflare siteverify API
