@@ -2,38 +2,42 @@
 
 Selamat datang di repository resmi **Website Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma (HIMSI UG)**! 
 
-Website ini dibangun menggunakan **Next.js 16 (App Router)** dengan arsitektur **Pure Server Components (RSC)** dan **Client Components** yang terpisah secara ketat, terintegrasi 100% dengan **Supabase Database (PostgreSQL / Prisma ORM)**, serta dilindungi oleh sistem keamanan **Cloudflare Turnstile Anti-Spam** dan **Auth Guard Middleware**.
+Website ini dibangun menggunakan **Next.js 16 (App Router)** dengan arsitektur **Pure Server Components (RSC)** dan **Client Components** yang terpisah secara ketat, terintegrasi 100% dengan **Supabase Database (PostgreSQL / Prisma ORM)**, serta dilindungi oleh sistem keamanan berlapis **Upstash Redis Rate Limiting**, **Cloudflare Turnstile Anti-Spam**, dan **Auth Guard Middleware**.
 
 ---
 
-## 🌟 Arsitektur & Fitur Utama
+##  Arsitektur & Fitur Utama
 
-### 1. ⚡ Murni Server Components (RSC) & Direct Supabase Fetch
+### 1.  Murni Server Components (RSC) & Direct Supabase Fetch
 - **Zero LocalStorage Dependency:** Halaman publik membaca data utama secara langsung dari database Supabase di Server Side ([src/lib/supabaseData.ts](file:///c:/Users/lenovo/Projects/WebHimpunan/himsi-web/src/lib/supabaseData.ts)), menjamin konsistensi data yang sama di seluruh browser & perangkat (HP/Laptop).
 - **Arsitektur Halaman `page.tsx`:** Seluruh file `page.tsx` di halaman publik dan panel admin murni berstatus Server Component tanpa `"use client"`. Data di-fetch secara paralel via `Promise.all` dan dialirkan sebagai props ke Client Component yang interaktif.
 - **Default Light Theme:** Menyesuaikan standar tampilan UI awal yang segar dan profesional saat pengguna pertama kali membuka website.
 
-### 2. 🛡️ Keamanan Cloudflare Turnstile & Anti-Spam
-- **Frontend Protection:** Mengintegrasikan widget `@marsidev/react-turnstile` di atas tombol submit formulir aspirasi. Tombol submit secara otomatis terkunci (`disabled`) hingga verifikasi manusia selesai.
-- **Backend Verification:** Validasi server-side wajib via API Cloudflare `https://challenges.cloudflare.com/turnstile/v0/siteverify`. Jika verifikasi gagal (success: false), request akan ditolak dan query ke Supabase tidak akan dieksekusi.
+### 2.  Rate Limiting (Upstash Redis)
+- **IP-Based Protection:** Menggunakan `@upstash/redis` dan `@upstash/ratelimit` untuk membatasi pengiriman formulir aspirasi maksimal **3 request per 1 menit** per IP address.
+- **Performa Server Optimal:** Pengecekan rate limit dievaluasi di paling awal pada Server Action (`submitAspirasiAction`), mencegah kelebihan beban server sebelum mengeksekusi verifikasi Turnstile atau query database.
 
-### 3. 💬 Portal Aspirasi Mahasiswa (`/aspirasi`)
+### 3.  Keamanan Cloudflare Turnstile & Anti-Spam
+- **Frontend Protection:** Widget `@marsidev/react-turnstile` diletakkan tepat di atas tombol submit formulir aspirasi. Tombol submit secara otomatis terkunci (`disabled`) hingga verifikasi manusia selesai.
+- **Backend Verification:** Validasi server-side wajib via API Cloudflare `https://challenges.cloudflare.com/turnstile/v0/siteverify`. Request bot/spam akan ditolak secara otomatis.
+
+### 4.  Portal Aspirasi Mahasiswa (`/aspirasi`)
 - **Validasi Identitas:** Pengguna dapat memilih untuk **Kirim secara Anonim** atau mencantumkan identitas. Jika tidak memilih anonim, pengguna **WAJIB** mengisikan **Nama Lengkap** dan **NPM**.
-- **Realtime DB Sync:** Aspirasi yang dikirimkan publik tidak ditampilkan secara terbuka di halaman utama publik, melainkan langsung masuk dan hanya dapat dipantau & dikelola oleh pengurus di Admin Panel CMS.
+- **Realtime DB Sync:** Aspirasi yang dikirimkan publik disimpan secara aman di database Supabase dan hanya dapat dipantau & dikelola oleh pengurus di Admin Panel CMS.
 
-### 4. 🌐 Branding & Navbar Modern (`/`)
+### 5.  Branding & Navbar Modern (`/`)
 - **Branding Logo Terbaru:** Menggunakan `himsigundar.png` pada brand logo kiri dan logo Universitas Gunadarma (`logogundar.png`) pada bagian kanan navbar.
-- **Dynamic Hero Section:** Teks running animasi (*typewriter*), subheadline, badge, dan 4 kartu statistik pencapaian di kelola 100% dari Admin Panel CMS.
+- **Dynamic Hero Section:** Teks running animasi (*typewriter*), subheadline, badge, dan 4 kartu statistik pencapaian dikelola 100% dari Admin Panel CMS.
 - **Struktur Pimpinan Kabinet & Divisi:** Menampilkan jajaran BPH dan divisi secara dinamis langsung dari database.
 
-### 5. 🛍️ Katalog Merchandise Official (`/merchandise`)
+### 6.  Katalog Merchandise Official (`/merchandise`)
 - Kartu 3D interaktif (*hover tilt & glow effect*).
 - Filter kategori produk (Apparel, Accessories, dll) & status stok.
 - Ordering via Direct WhatsApp link terformat otomatis.
 
 ---
 
-## 🔐 Keamanan Admin Panel CMS (`/admin/*`)
+## pKeamanan Admin Panel CMS (`/admin/*`)
 
 Seluruh rute panel admin dilindungi oleh **Next.js Auth Guard Middleware** ([src/middleware.ts](file:///c:/Users/lenovo/Projects/WebHimpunan/himsi-web/src/middleware.ts)).
 
@@ -69,6 +73,10 @@ DIRECT_URL="postgresql://postgres:password@host:5432/postgres"
 NEXT_PUBLIC_TURNSTILE_SITE_KEY="your-turnstile-site-key"
 TURNSTILE_SECRET_KEY="your-turnstile-secret-key"
 
+# Upstash Redis Rate Limiting Keys
+UPSTASH_REDIS_REST_URL="https://your-redis-url.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="your-redis-token"
+
 # Admin Credentials Fallback (Optional)
 NEXT_PUBLIC_ADMIN_EMAIL="admin@himsiug.ac.id"
 NEXT_PUBLIC_ADMIN_PASSWORD="your-admin-password"
@@ -94,7 +102,7 @@ Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
 
 ---
 
-## 🚀 Build Production & Deployment
+## Build Production & Deployment
 
 Untuk menguji kompilasi produksi dan tipe TypeScript:
 
@@ -108,13 +116,14 @@ npm run start
 
 ---
 
-## ⚡ Stack Teknologi
+## Stack Teknologi
 
 - **Framework:** [Next.js 16 (App Router)](https://nextjs.org/)
 - **UI & Logic:** [React 19](https://react.dev/)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
 - **Animation:** [Framer Motion](https://www.framer.com/motion/)
 - **Database & ORM:** [Supabase (PostgreSQL)](https://supabase.com/) & [Prisma ORM](https://www.prisma.io/)
+- **Rate Limiting:** [Upstash Redis](https://upstash.com/) (`@upstash/redis` & `@upstash/ratelimit`)
 - **Anti-Spam Security:** [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) (`@marsidev/react-turnstile`)
 - **Iconography:** [Lucide React](https://lucide.dev/)
 - **Theme Manager:** [next-themes](https://github.com/pacocoursey/next-themes) (Light & Dark Mode)

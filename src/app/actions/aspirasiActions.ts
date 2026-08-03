@@ -1,5 +1,8 @@
 "use server";
 
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
+import { headers } from "next/headers";
 import {
   insertAspirasiToDB,
   fetchAspirasiFromDB,
@@ -8,6 +11,24 @@ import {
 } from "@/lib/supabaseData";
 import { revalidatePath } from "next/cache";
 import type { AspirasiAdminItem } from "@/data/adminMockData";
+
+// ─── INSTANCE RATE LIMITER (UPSTASH REDIS) ─────────────────────────────────
+// Inisialisasi di luar fungsi utama dengan slidingWindow: Maksimal 3 request per 1 menit
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      })
+    : Redis.fromEnv();
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  analytics: true,
+  prefix: "himsi_ratelimit_aspirasi",
+});
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * Validasi Token Cloudflare Turnstile di Server-Side
@@ -45,8 +66,21 @@ export async function submitAspirasiAction(payload: {
   turnstileToken: string;
 }): Promise<{ success: boolean; data?: AspirasiAdminItem; error?: string }> {
   try {
-    // ATURAN 2: BACKEND SERVER SIDE VALIDATION (WAJIB)
-    // 1. Verifikasi token Turnstile ke Cloudflare siteverify API
+    // 1. Tangkap IP Pengguna dari headers
+    const headerList = await headers();
+    const rawIp = headerList.get("x-forwarded-for") ?? "127.0.0.1";
+    const ip = rawIp.split(",")[0].trim();
+
+    // 2. Rate Limiting Check SEBELUM Turnstile & DB Query
+    const { success: isRateLimitOk } = await ratelimit.limit(ip);
+    if (!isRateLimitOk) {
+      return {
+        success: false,
+        error: "Sabar bos! Kamu terlalu banyak mengirim aspirasi. Tunggu 1 menit lagi ya.",
+      };
+    }
+
+    // 3. Verifikasi token Turnstile ke Cloudflare siteverify API
     const isValidHuman = await verifyTurnstile(payload.turnstileToken);
     if (!isValidHuman) {
       return {
@@ -55,7 +89,7 @@ export async function submitAspirasiAction(payload: {
       };
     }
 
-    // 2. Validasi Nama & NPM jika tidak anonim
+    // 4. Validasi Nama & NPM jika tidak anonim
     if (!payload.isAnonim) {
       if (!payload.nama?.trim() || !payload.npm?.trim()) {
         return {
@@ -65,7 +99,7 @@ export async function submitAspirasiAction(payload: {
       }
     }
 
-    // 3. Jika validasi manusia berhasil, simpan ke database Supabase
+    // 5. Simpan ke database Supabase
     const today = new Date().toISOString().slice(0, 10);
     const newAspirasi: AspirasiAdminItem = {
       id: `asp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
