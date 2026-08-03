@@ -269,14 +269,14 @@ export function useSharedStore() {
     // PRIMARY SYNC: Fetch latest data from Supabase (overrides localStorage)
     // This ensures cross-device/cross-browser sync when admin panel changes data
     Promise.all([
-      fetchPengurusFromDB(),
-      fetchEventsFromDB(),
-      fetchMerchandiseFromDB(),
-      fetchHeroContentFromDB(),
-      fetchVisiMisiFromDB(),
-      fetchDivisiFromDB(),
-      fetchAnggotaDivisiFromDB(),
-      fetchAspirasiFromDB(),
+      fetchPengurusFromDB(),     // [0] → pengurus
+      fetchEventsFromDB(),       // [1] → events
+      fetchMerchandiseFromDB(),  // [2] → merchandise
+      fetchHeroContentFromDB(),  // [3] → heroContent
+      fetchVisiMisiFromDB(),     // [4] → visiMisi
+      fetchDivisiFromDB(),       // [5] → divisi
+      fetchAnggotaDivisiFromDB(), // [6] → anggota
+      fetchAspirasiFromDB(),     // [7] → aspirasi
     ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
       // Update localStorage and state with fresh DB data
       store.setPengurus(pengurus);

@@ -87,25 +87,25 @@ export function FormAspirasi() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.5 }}
-      className="p-6 sm:p-8 rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-slate-800/80 shadow-2xl space-y-6 max-w-2xl mx-auto"
+      className="p-6 sm:p-8 rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-xl shadow-slate-900/5 dark:shadow-none space-y-6 max-w-2xl mx-auto"
     >
-      <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-600 to-rose-600 flex items-center justify-center text-white shadow-md shadow-red-900/20">
-            <MessageSquare size={20} />
+            <MessageSquare size={18} />
           </div>
           <div>
-            <h2 className="font-extrabold text-base text-slate-900 dark:text-slate-100">
+            <h2 className="font-extrabold font-heading text-base text-slate-900 dark:text-slate-100">
               Formulir Aspirasi
             </h2>
-            <p className="text-xs text-slate-500">Langsung tersampaikan secara rahasia ke Pengurus HIMSI UG.</p>
+            <p className="text-xs text-slate-500 font-medium">Langsung tersampaikan secara rahasia ke Pengurus HIMSI UG.</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800">
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold font-mono border border-emerald-200 dark:border-emerald-800/80">
           <ShieldCheck size={13} /> Cloudflare Protected
         </div>
       </div>
@@ -154,10 +154,10 @@ export function FormAspirasi() {
                 key={cat}
                 type="button"
                 onClick={() => setKategori(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                   kategori === cat
-                    ? "bg-red-600 text-white shadow-md shadow-red-900/20"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    ? "bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-900/20 scale-[1.02]"
+                    : "bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/80 border border-slate-200/60 dark:border-slate-700/60"
                 }`}
               >
                 {cat}
@@ -167,16 +167,16 @@ export function FormAspirasi() {
         </div>
 
         {/* Instant Anonymous Toggle Switch */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/70 flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/70 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400">
-              <Lock size={16} />
+            <div className="p-2 rounded-xl bg-red-100/80 dark:bg-red-950/80 text-red-600 dark:text-red-400">
+              <Lock size={15} />
             </div>
             <div>
               <span className="font-extrabold text-slate-900 dark:text-slate-100 text-xs sm:text-sm block">
                 Kirim secara Anonim
               </span>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-slate-500 font-medium">
                 Aktifkan jika tidak ingin mencantumkan Nama & NPM.
               </span>
             </div>
@@ -212,7 +212,7 @@ export function FormAspirasi() {
                   value={nama}
                   onChange={(e) => setNama(e.target.value)}
                   placeholder="e.g. Fikri Ardiansyah"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
                 />
               </div>
               <div>
@@ -225,7 +225,7 @@ export function FormAspirasi() {
                   value={npm}
                   onChange={(e) => setNpm(e.target.value)}
                   placeholder="e.g. 14121900"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono"
                 />
               </div>
             </motion.div>
@@ -243,7 +243,7 @@ export function FormAspirasi() {
             value={pesan}
             onChange={(e) => setPesan(e.target.value)}
             placeholder="Tuliskan ide, kritik, keluhan, atau harapan kamu secara jelas..."
-            className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 resize-none font-medium leading-relaxed"
+            className="w-full px-4 py-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 resize-none font-medium leading-relaxed"
           />
         </div>
 
@@ -261,7 +261,7 @@ export function FormAspirasi() {
         <button
           type="submit"
           disabled={isLoading || !isFormValid}
-          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 text-white font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-red-900/20 transition-all cursor-pointer text-sm"
+          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 via-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 text-white font-extrabold font-mono flex items-center justify-center gap-2 shadow-lg shadow-red-900/20 transition-all cursor-pointer text-sm"
         >
           {isLoading ? (
             <>

@@ -19,6 +19,9 @@ export function SmoothScrolling({ children }: SmoothScrollingProps) {
       touchMultiplier: 1.5,
     });
 
+    // Expose lenis to window object for smooth navbar anchor navigation without jitter
+    (window as unknown as Record<string, unknown>).lenis = lenis;
+
     let animationFrameId: number;
 
     function raf(time: number) {
@@ -30,6 +33,7 @@ export function SmoothScrolling({ children }: SmoothScrollingProps) {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      delete (window as unknown as Record<string, unknown>).lenis;
       lenis.destroy();
     };
   }, []);

@@ -132,13 +132,13 @@ export function LayananSection() {
               </p>
             </div>
             <motion.a
-              href="#quick-links"
+              href="/aspirasi"
               whileHover={{ scale: 1.05, boxShadow: "0 0 28px rgba(220,38,38,0.4)" }}
               whileTap={{ scale: 0.97 }}
               className="flex-shrink-0 flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm shadow-xl shadow-red-900/20 dark:shadow-red-900/30 transition-colors duration-200"
-              aria-label="Buka semua quick links HIMSI UG"
+              aria-label="Buka portal Aspirasi HIMSI UG"
             >
-              Buka Quick Links
+              Kirim Aspirasi
               <ArrowRight size={17} />
             </motion.a>
           </div>

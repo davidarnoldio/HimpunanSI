@@ -89,17 +89,24 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
     : null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-20 relative overflow-hidden">
-        {/* Ambient background glows */}
+        {/* Ambient Subtle Grid & Background Mask */}
         <div className="pointer-events-none absolute inset-0 select-none">
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-red-600/10 dark:bg-red-900/15 blur-[140px] rounded-full" />
-          <div className="absolute top-1/3 -right-20 w-[400px] h-[400px] bg-rose-500/10 dark:bg-rose-900/10 blur-[120px] rounded-full" />
+          <div
+            className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
+            style={{
+              backgroundImage:
+                "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
+            }}
+          />
+          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-red-600/10 dark:bg-red-900/12 blur-[140px] rounded-full" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 z-10">
           {/* Header & Title */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -107,17 +114,17 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
             transition={{ duration: 0.5 }}
             className="text-center space-y-4 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-950/70 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 text-xs font-bold tracking-wide backdrop-blur-md shadow-sm">
-              <Sparkles size={13} className="animate-spin" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/60 text-red-600 dark:text-red-400 text-xs font-bold font-mono tracking-wide backdrop-blur-md shadow-sm">
+              <Sparkles size={13} className="animate-spin text-red-500" />
               Official Merchandise HIMSI UG
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100 leading-[1.15]">
+            <h1 className="text-3xl sm:text-5xl font-black font-heading tracking-tight text-slate-900 dark:text-slate-100 leading-[1.15]">
               Official Catalog <br className="hidden sm:inline" />
               <LiveText />
             </h1>
 
-            <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-medium">
+            <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-medium max-w-2xl mx-auto">
               Tampil bangga dengan identitas Sistem Informasi Gunadarma. Temukan hoodie, kaos, totebag, lanyard, dan stiker berkualitas tinggi dengan desain eksklusif.
             </p>
           </motion.div>
@@ -130,9 +137,9 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer border ${isSelected
-                      ? "bg-gradient-to-r from-red-600 to-rose-600 text-white border-transparent shadow-lg shadow-red-900/20 scale-105"
-                      : "bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-red-500/40 hover:text-red-600 dark:hover:text-red-400"
+                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold font-mono transition-all cursor-pointer border ${isSelected
+                      ? "bg-gradient-to-r from-red-600 to-rose-600 text-white border-transparent shadow-md shadow-red-900/20 scale-105"
+                      : "bg-white/90 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-800 hover:border-red-500/40 hover:text-red-600 dark:hover:text-red-400"
                     }`}
                 >
                   {category}
@@ -146,13 +153,13 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="py-16 px-6 text-center space-y-3 rounded-3xl bg-white/60 dark:bg-slate-900/50 border border-dashed border-slate-300 dark:border-slate-800 max-w-md mx-auto"
+              className="py-16 px-6 text-center space-y-3 rounded-3xl bg-white/70 dark:bg-slate-900/60 border border-dashed border-slate-300 dark:border-slate-800 max-w-md mx-auto"
             >
               <PackageOpen size={48} className="mx-auto text-slate-400" />
               <h3 className="font-extrabold text-slate-800 dark:text-slate-200">
                 Produk Tidak Ditemukan
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 font-medium">
                 Belum ada merchandise yang sesuai dengan kategori ini saat ini.
               </p>
             </motion.div>
@@ -172,10 +179,10 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 return (
                   <motion.div
                     key={item.id}
-                    initial={{ opacity: 0, y: 28 }}
+                    initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.08, duration: 0.4 }}
-                    className="group relative flex flex-col justify-between rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800/80 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
+                    className="group relative flex flex-col justify-between rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
                   >
                     {/* Card Image Container */}
                     <div className="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden">
@@ -191,7 +198,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                       {/* Status Badge */}
                       <div className="absolute top-3.5 left-3.5">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase border shadow-md ${isReady
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold font-mono tracking-wider uppercase border shadow-sm ${isReady
                               ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40 backdrop-blur-md"
                               : isPreOrder
                                 ? "bg-amber-500/20 text-amber-400 border-amber-500/40 backdrop-blur-md"
@@ -204,7 +211,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
 
                       {/* Price Tag Overlay */}
                       <div className="absolute bottom-3.5 right-3.5">
-                        <span className="px-3.5 py-1.5 rounded-2xl bg-slate-900/90 text-white text-xs font-black tracking-tight border border-slate-700/60 backdrop-blur-md shadow-lg">
+                        <span className="px-3.5 py-1.5 rounded-2xl bg-slate-900/90 text-white text-xs font-mono font-bold tracking-tight border border-slate-700/60 backdrop-blur-md shadow-lg">
                           {price}
                         </span>
                       </div>
@@ -213,10 +220,10 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                     {/* Card Body */}
                     <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                       <div className="space-y-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-red-600 dark:text-red-400">
+                        <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-red-600 dark:text-red-400">
                           {category}
                         </span>
-                        <h3 className="font-extrabold text-lg text-slate-900 dark:text-slate-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-1">
+                        <h3 className="font-extrabold font-heading text-lg text-slate-900 dark:text-slate-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-1">
                           {title}
                         </h3>
                         <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
@@ -228,7 +235,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                       <div className="grid grid-cols-2 gap-2.5 pt-2">
                         <button
                           onClick={() => setSelectedModalProduct(item)}
-                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-extrabold transition-colors cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold font-mono transition-colors cursor-pointer"
                         >
                           <Eye size={14} /> Detail
                         </button>
@@ -240,7 +247,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-extrabold shadow-md shadow-red-900/20 transition-all cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold font-mono shadow-md shadow-red-900/20 transition-all cursor-pointer"
                         >
                           <ShoppingBag size={14} /> Pesan WA
                         </a>
@@ -253,15 +260,15 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
           )}
 
           {/* Bottom Banner */}
-          <div className="p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-950 to-red-950 border border-slate-800 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-950 to-red-950 border border-slate-800/80 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
             <div className="space-y-2 text-center sm:text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/30 text-red-400 text-[10px] font-black uppercase tracking-wider border border-red-500/30">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/30 text-red-400 text-[10px] font-bold font-mono uppercase tracking-wider border border-red-500/30">
                 <Flame size={12} /> Custom Orders
               </span>
-              <h3 className="text-xl font-black tracking-tight">
+              <h3 className="text-xl font-black font-heading tracking-tight">
                 Punya Pertanyaan Seputar Merchandise?
               </h3>
-              <p className="text-xs text-slate-300 max-w-xl">
+              <p className="text-xs text-slate-300 max-w-xl font-medium leading-relaxed">
                 Hubungi tim Merchandise HIMSI UG untuk info ukuran, custom nama, atau status ketersediaan stok barang.
               </p>
             </div>
@@ -270,7 +277,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
               href="https://wa.me/"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-2xl bg-white text-slate-950 font-black text-xs sm:text-sm hover:bg-slate-100 transition-colors shrink-0 shadow-lg"
+              className="px-6 py-3 rounded-2xl bg-white text-slate-950 font-bold font-mono text-xs sm:text-sm hover:bg-slate-100 transition-colors shrink-0 shadow-lg"
             >
               Hubungi Admin via WA →
             </a>

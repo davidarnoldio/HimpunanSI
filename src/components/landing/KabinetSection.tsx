@@ -58,11 +58,6 @@ function getNameColorByRole(jabatan: string): string {
   return "text-slate-900 dark:text-slate-100";
 }
 
-/**
- * 3D Double-Click Flip Card Component for Kabinet
- * STRICT RULE: Flip Card 100% via React State + onDoubleClick. HOVER FLIP REMOVED.
- * FONT Times New Roman applied to name element only.
- */
 export function KabinetCard3D({ item }: { item: PengurusItem }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -127,48 +122,48 @@ export function KabinetCard3D({ item }: { item: PengurusItem }) {
           {/* Bottom Card Footer: Nama Pengurus & Global Periode */}
           <div className="mt-3 flex flex-col justify-center text-center space-y-1.5 w-full">
             <h3 className={`text-xl sm:text-2xl font-bold font-heading tracking-tight truncate px-1 ${nameColorClass}`}>
-            {isTBA ? "TBA (To Be Announced)" : item.nama}
-          </h3>
-          <p className="text-[11px] font-bold font-mono text-slate-500 dark:text-slate-400">
-            {TAHUN_KEPENGURUSAN}
-          </p>
+              {isTBA ? "TBA (To Be Announced)" : item.nama}
+            </h3>
+            <p className="text-[11px] font-bold font-mono text-slate-500 dark:text-slate-400">
+              {TAHUN_KEPENGURUSAN}
+            </p>
 
-          {/* Social links (Instagram & LinkedIn HARUS ADA DI DEPAN) */}
-          {!isTBA && (
-            <div className="flex items-center justify-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-              <SocialIcon href={item.linkedin} type="linkedin" />
-              <SocialIcon href={item.instagram} type="instagram" />
-            </div>
-          )}
+            {/* Social links */}
+            {!isTBA && (
+              <div className="flex items-center justify-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                <SocialIcon href={item.linkedin} type="linkedin" />
+                <SocialIcon href={item.instagram} type="instagram" />
+              </div>
+            )}
+          </div>
         </div>
-    </div>
 
         {/* ── BAGIAN BELAKANG (BACK FACE) ── */}
-  <div className="absolute inset-0 w-full h-full liquid-glass-card p-6 flex flex-col items-center justify-between text-center [transform:rotateY(180deg)] [backface-visibility:hidden] overflow-hidden">
-    <div className="p-3 rounded-2xl bg-red-600/10 text-red-500 border border-red-500/20 mt-2">
-      <Quote size={28} />
-    </div>
+        <div className="absolute inset-0 w-full h-full liquid-glass-card p-6 flex flex-col items-center justify-between text-center [transform:rotateY(180deg)] [backface-visibility:hidden] overflow-hidden">
+          <div className="p-3 rounded-2xl bg-red-600/10 text-red-500 border border-red-500/20 mt-2">
+            <Quote size={28} />
+          </div>
 
-    {/* Center Quotes dengan LiveText Animation */}
-    <div className="flex-1 flex flex-col justify-center items-center px-2 py-4 space-y-3">
-      <LiveText
-        text={`"${item.visiMotto || "Mewujudkan HIMSI UG yang solid, unggul, dan berdaya saing tinggi dalam era digital."}"`}
-        className="text-slate-200 text-sm sm:text-base font-semibold leading-relaxed italic text-center"
-        wordDelay={0.06}
-      />
-    </div>
+          {/* Center Quotes */}
+          <div className="flex-1 flex flex-col justify-center items-center px-2 py-4 space-y-3">
+            <LiveText
+              text={`"${item.visiMotto || "Mewujudkan HIMSI UG yang solid, unggul, dan berdaya saing tinggi dalam era digital."}"`}
+              className="text-slate-200 text-sm sm:text-base font-semibold leading-relaxed italic text-center"
+              wordDelay={0.06}
+            />
+          </div>
 
-    <div className="w-full pt-4 border-t border-slate-800 space-y-1">
-      <h4 className={`text-lg font-bold tracking-tight ${nameColorClass}`}>
-      {item.nama}
-    </h4>
-    <p className="text-[11px] text-slate-400 font-semibold truncate">
-      {item.jabatan} • {TAHUN_KEPENGURUSAN}
-    </p>
-  </div>
-        </div >
-      </motion.div >
-    </div >
+          <div className="w-full pt-4 border-t border-slate-800 space-y-1">
+            <h4 className={`text-lg font-bold tracking-tight ${nameColorClass}`}>
+              {item.nama}
+            </h4>
+            <p className="text-[11px] text-slate-400 font-semibold truncate">
+              {item.jabatan} • {TAHUN_KEPENGURUSAN}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -185,8 +180,7 @@ export function KabinetSection({
 
   return (
     <section
-      id="kabinet"
-      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-300 scroll-mt-28"
+      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-300"
       aria-label="Pimpinan Kabinet HIMSI UG"
     >
       {/* Ambient background glows */}
@@ -196,10 +190,10 @@ export function KabinetSection({
       </div>
 
       <div className="relative max-w-7xl mx-auto space-y-16">
-        {/* ── BOX VISI & MISI HIMPUNAN (GRID 2 KOLOM) ── */}
+        {/* ── BOX VISI & MISI HIMPUNAN ── */}
         <div className="space-y-6">
           <div className="text-center space-y-2">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold tracking-widest uppercase">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold font-mono tracking-widest uppercase">
               <Sparkles size={11} /> Visi & Misi HIMSI UG
             </span>
           </div>
@@ -219,10 +213,10 @@ export function KabinetSection({
                     <Target size={26} />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h3 className="text-2xl font-black font-heading text-slate-900 dark:text-white tracking-tight">
                       <LiveText text="VISI HIMPUNAN" />
                     </h3>
-                    <span className="text-xs font-bold text-red-600 dark:text-red-400">{TAHUN_KEPENGURUSAN}</span>
+                    <span className="text-xs font-bold font-mono text-red-600 dark:text-red-400">{TAHUN_KEPENGURUSAN}</span>
                   </div>
                 </div>
 
@@ -246,10 +240,10 @@ export function KabinetSection({
                     <Compass size={26} />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h3 className="text-2xl font-black font-heading text-slate-900 dark:text-white tracking-tight">
                       <LiveText text="MISI UTAMA" />
                     </h3>
-                    <span className="text-xs font-bold text-rose-600 dark:text-rose-400">4 Pilar Gerakan</span>
+                    <span className="text-xs font-bold font-mono text-rose-600 dark:text-rose-400">4 Pilar Gerakan</span>
                   </div>
                 </div>
 
@@ -266,7 +260,11 @@ export function KabinetSection({
           </div>
         </div>
 
-        {/* Section Header Kabinet */}
+        {/* ── ANCHOR TERSEMBUNYI UNTUK SCROLL TEPAT KE "PIMPINAN HIMPUNAN" ── */}
+        {/* Diletakkan tepat di atas heading agar klik "Kabinet" di navbar mendarat akurat */}
+        <div id="kabinet" className="scroll-mt-24 sm:scroll-mt-28 block" aria-hidden="true" />
+
+        {/* ── SECTION HEADER KABINET ── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -274,11 +272,11 @@ export function KabinetSection({
           transition={{ duration: 0.55, ease: "easeOut" }}
           className="text-center space-y-3 pt-6"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-semibold tracking-widest uppercase">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-semibold font-mono tracking-widest uppercase">
             <Sparkles size={11} />
             Kabinet HIMSI UG {TAHUN_KEPENGURUSAN}
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-heading text-slate-900 dark:text-slate-100 tracking-tight">
             Pimpinan{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500 dark:from-red-500 dark:to-rose-400">
               Himpunan
@@ -289,7 +287,7 @@ export function KabinetSection({
           </p>
         </motion.div>
 
-        {/* ── KONDISI EMPTY STATE ATAU GRID KABINET ── */}
+        {/* KONDISI EMPTY STATE ATAU GRID KABINET */}
         {isDataEmpty ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -306,7 +304,7 @@ export function KabinetSection({
             </motion.div>
 
             <div className="space-y-2">
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-black font-heading text-slate-900 dark:text-white tracking-tight">
                 Kabinet Sedang Dalam Masa Formatur
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium">

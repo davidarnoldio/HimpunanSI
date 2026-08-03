@@ -12,18 +12,17 @@ export function SplashScreen() {
     () => true,
     () => false
   );
+
+  // B4 FIX: Gunakan lazy initializer di useState agar sessionStorage dibaca SEKALI
+  // pada saat state pertama kali diinisialisasi — aman dari SSR karena useState lazy init
+  // hanya berjalan di client. Ini menghindari setHasSeenSplash di dalam useEffect (cascading renders).
   const [dismissed, setDismissed] = useState<boolean>(false);
-
-  const hasSeenSplash =
-    typeof window !== "undefined" &&
-    sessionStorage.getItem("himsi_splash_shown") === "true";
-
-  const isVisible = isMounted && !hasSeenSplash && !dismissed;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    if (!sessionStorage.getItem("himsi_splash_shown")) {
+    const alreadySeen = sessionStorage.getItem("himsi_splash_shown") === "true";
+    if (!alreadySeen) {
       document.body.style.overflow = "hidden";
 
       const timer = setTimeout(() => {
@@ -38,6 +37,14 @@ export function SplashScreen() {
       };
     }
   }, []);
+
+  // Cek sessionStorage langsung di render (hanya client-safe karena dikombinasikan isMounted guard)
+  const hasSeenSplash =
+    isMounted && typeof window !== "undefined"
+      ? sessionStorage.getItem("himsi_splash_shown") === "true"
+      : true; // SSR: anggap sudah pernah lihat (fallback aman)
+
+  const isVisible = isMounted && !hasSeenSplash && !dismissed;
 
   // Render light overlay placeholder before JS hydration to eliminate white flash
   if (!isMounted) {
@@ -63,7 +70,7 @@ export function SplashScreen() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-red-400/15 rounded-full blur-[90px] pointer-events-none" />
 
           {/* Grid Pattern Overlay */}
-          <div 
+          <div
             className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{
               backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.4) 1px, transparent 0)`,

@@ -105,8 +105,10 @@ export async function submitAspirasiAction(payload: {
       id: `asp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       pesan: payload.pesan.trim(),
       isAnonim: payload.isAnonim,
-      nama: payload.isAnonim ? undefined : payload.nama?.trim() || "Mahasiswa SI",
+      // B3 FIX: nama tidak boleh fallback ke hardcoded string jika sudah divalidasi
+      nama: payload.isAnonim ? undefined : payload.nama?.trim() || undefined,
       npm: payload.isAnonim ? undefined : payload.npm?.trim() || undefined,
+      // B3 FIX: email field selalu dimasukkan agar ter-insert ke Supabase
       email: payload.email?.trim() || undefined,
       tanggal: today,
       status: "Baru",
