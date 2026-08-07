@@ -28,10 +28,10 @@ export function AdminAnggotaDivisiClient({
   initialAnggota,
   initialDivisi,
 }: AdminAnggotaDivisiClientProps) {
-  const { anggotaDivisi, setAnggotaDivisi, divisiData } = useSharedStore();
+  const { anggotaDivisi, setAnggotaDivisi, divisiData, mounted } = useSharedStore();
 
-  const activeAnggotaList = anggotaDivisi.length > 0 ? anggotaDivisi : initialAnggota;
-  const activeDivisiList = divisiData.length > 0 ? divisiData : initialDivisi;
+  const activeAnggotaList = mounted ? anggotaDivisi : initialAnggota;
+  const activeDivisiList = mounted ? divisiData : initialDivisi;
 
   const [selectedDivisiFilter, setSelectedDivisiFilter] = useState<string>("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);

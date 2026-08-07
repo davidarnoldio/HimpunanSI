@@ -23,6 +23,8 @@ import type {
 export async function savePengurusAction(data: PengurusItem[]): Promise<{ success: boolean }> {
   try {
     await syncPengurusToDB(data);
+    // Revalidate di level layout agar Server Component halaman utama ikut ter-refresh
+    revalidatePath("/", "layout");
     revalidatePath("/");
     revalidatePath("/admin/pengurus");
     return { success: true };

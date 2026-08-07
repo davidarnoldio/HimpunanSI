@@ -33,12 +33,12 @@ export function AdminDashboardClient({
   initialMerchandise,
   initialAspirasi,
 }: AdminDashboardClientProps) {
-  const { pengurus, events, aspirasi, merchandise } = useSharedStore();
+  const { pengurus, events, aspirasi, merchandise, mounted } = useSharedStore();
 
-  const activePengurus = pengurus.length > 0 ? pengurus : initialPengurus;
-  const activeEvents = events.length > 0 ? events : initialEvents;
-  const activeMerchandise = merchandise.length > 0 ? merchandise : initialMerchandise;
-  const activeAspirasi = aspirasi.length > 0 ? aspirasi : initialAspirasi;
+  const activePengurus = mounted ? pengurus : initialPengurus;
+  const activeEvents = mounted ? events : initialEvents;
+  const activeMerchandise = mounted ? merchandise : initialMerchandise;
+  const activeAspirasi = mounted ? aspirasi : initialAspirasi;
 
   const stats = [
     {

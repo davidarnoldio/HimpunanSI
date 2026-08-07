@@ -55,11 +55,9 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
   const handleUpdateStatus = async (id: string, status: "Baru" | "Diproses" | "Selesai") => {
     setIsLoading(true);
     try {
-      setAspirasi((prev) => {
-        const updated = prev.map((i) => (i.id === id ? { ...i, status } : i));
-        setStoreAspirasi(updated);
-        return updated;
-      });
+      const updated = aspirasi.map((i) => (i.id === id ? { ...i, status } : i));
+      setAspirasi(updated);
+      setStoreAspirasi(updated);
       await updateAspirasiStatusAction(id, status);
     } catch (err) {
       console.error("[AdminAspirasi] Update status error:", err);
@@ -75,11 +73,9 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
     setIsLoading(true);
 
     try {
-      setAspirasi((prev) => {
-        const updated = prev.filter((i) => i.id !== targetId);
-        setStoreAspirasi(updated);
-        return updated;
-      });
+      const updated = aspirasi.filter((i) => i.id !== targetId);
+      setAspirasi(updated);
+      setStoreAspirasi(updated);
       setDeleteTargetId(null);
       await deleteAspirasiAction(targetId);
     } catch (err) {

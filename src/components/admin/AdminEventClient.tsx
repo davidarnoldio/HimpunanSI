@@ -24,9 +24,8 @@ interface AdminEventClientProps {
 }
 
 export function AdminEventClient({ initialEvents }: AdminEventClientProps) {
-  const { events, setEvents } = useSharedStore();
-
-  const activeEvents = events.length > 0 ? events : initialEvents;
+  const { events, setEvents, mounted } = useSharedStore();
+  const activeEvents = mounted ? events : initialEvents;
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("Semua");
@@ -322,185 +321,195 @@ export function AdminEventClient({ initialEvents }: AdminEventClientProps) {
       {/* CREATE / EDIT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 my-8"
+              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-                  {editingItem ? "Edit Data Event" : "Tambah Event Baru"}
-                </h2>
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <div>
+                  <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
+                    {editingItem ? "Edit Data Event" : "Tambah Event Baru"}
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Data event akan langsung disinkronkan ke database Supabase.
+                  </p>
+                </div>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer"
+                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer transition-colors ml-3 shrink-0"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              <form onSubmit={handleSave} className="space-y-4 text-xs sm:text-sm">
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Judul Event / Proker *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g. Workshop AI & Machine Learning 2025"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Modal Form */}
+              <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0">
+                {/* Scrollable Fields */}
+                <div className="overflow-y-auto flex-1 px-6 py-5 space-y-4">
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Kategori Event
-                    </label>
-                    <select
-                      value={formData.kategori}
-                      onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
-                    >
-                      <option value="Workshop">Workshop</option>
-                      <option value="Webinar">Webinar</option>
-                      <option value="Lomba">Lomba</option>
-                      <option value="Seminar">Seminar</option>
-                      <option value="Internal Proker">Internal Proker</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Status Event
-                    </label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          status: e.target.value as EventAdminItem["status"],
-                        })
-                      }
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
-                    >
-                      <option value="Pendaftaran Dibuka">Pendaftaran Dibuka</option>
-                      <option value="Segera Hadir">Segera Hadir</option>
-                      <option value="Berlangsung">Berlangsung</option>
-                      <option value="Selesai">Selesai</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Tanggal Kegiatan *
+                    <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                      Judul Event / Proker *
                     </label>
                     <input
                       type="text"
                       required
-                      value={formData.tanggal}
-                      onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
-                      placeholder="e.g. 15 Oktober 2025"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="e.g. Workshop AI & Machine Learning 2025"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                        Kategori Event
+                      </label>
+                      <select
+                        value={formData.kategori}
+                        onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
+                      >
+                        <option value="Workshop">Workshop</option>
+                        <option value="Webinar">Webinar</option>
+                        <option value="Lomba">Lomba</option>
+                        <option value="Seminar">Seminar</option>
+                        <option value="Internal Proker">Internal Proker</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                        Status Event
+                      </label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            status: e.target.value as EventAdminItem["status"],
+                          })
+                        }
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
+                      >
+                        <option value="Pendaftaran Dibuka">Pendaftaran Dibuka</option>
+                        <option value="Segera Hadir">Segera Hadir</option>
+                        <option value="Berlangsung">Berlangsung</option>
+                        <option value="Selesai">Selesai</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                        Tanggal Kegiatan *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.tanggal}
+                        onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
+                        placeholder="e.g. 15 Oktober 2025"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                        Waktu (Opsional)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.waktu}
+                        onChange={(e) => setFormData({ ...formData, waktu: e.target.value })}
+                        placeholder="e.g. 09:00 - 12:00 WIB"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                        Lokasi Kegiatan
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.lokasi}
+                        onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
+                        placeholder="e.g. Zoom Meeting / Auditorium Kampus J"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
+                      />
+                    </div>
+
+                    {/* Instant Online Checkbox Toggle */}
+                    <div className="pt-4 sm:pt-5">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={formData.isOnline}
+                          onChange={(e) => setFormData({ ...formData, isOnline: e.target.checked })}
+                          className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300 dark:border-slate-700 cursor-pointer"
+                        />
+                        <span className="font-extrabold text-xs text-slate-700 dark:text-slate-300">
+                          Event Online
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                      URL Banner Image
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.bannerUrl}
+                      onChange={(e) => setFormData({ ...formData, bannerUrl: e.target.value })}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-mono text-xs transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Waktu (Opsional)
+                    <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                      Link Pendaftaran / Form (Opsional)
                     </label>
                     <input
-                      type="text"
-                      value={formData.waktu}
-                      onChange={(e) => setFormData({ ...formData, waktu: e.target.value })}
-                      placeholder="e.g. 09:00 - 12:00 WIB"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      type="url"
+                      value={formData.linkPendaftaran}
+                      onChange={(e) => setFormData({ ...formData, linkPendaftaran: e.target.value })}
+                      placeholder="https://forms.gle/..."
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-mono text-xs transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">
+                      Deskripsi Event
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={formData.deskripsi}
+                      onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
+                      placeholder="Penjelasan singkat mengenai acara, pembicara, materi, atau benefit..."
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-medium text-sm leading-relaxed resize-none transition-colors"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-                  <div className="sm:col-span-2">
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Lokasi Kegiatan
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.lokasi}
-                      onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
-                      placeholder="e.g. Zoom Meeting / Auditoium Kampus J"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
-                    />
-                  </div>
-
-                  {/* Instant Online Checkbox Toggle */}
-                  <div className="pt-5">
-                    <label className="flex items-center gap-2 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        checked={formData.isOnline}
-                        onChange={(e) => setFormData({ ...formData, isOnline: e.target.checked })}
-                        className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300 dark:border-slate-700 cursor-pointer"
-                      />
-                      <span className="font-extrabold text-xs text-slate-700 dark:text-slate-300">
-                        Event Online
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    URL Banner Image
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.bannerUrl}
-                    onChange={(e) => setFormData({ ...formData, bannerUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Link Pendaftaran / Form (Opsional)
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.linkPendaftaran}
-                    onChange={(e) => setFormData({ ...formData, linkPendaftaran: e.target.value })}
-                    placeholder="https://forms.gle/..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Deskripsi Event
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={formData.deskripsi}
-                    onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
-                    placeholder="Penjelasan singkat mengenai acara, pembicara, materi, atau benefit..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-medium leading-relaxed resize-none"
-                  />
-                </div>
-
-                {/* Modal Buttons with Loading State & Disabled Guard */}
-                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                {/* Sticky Footer */}
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-3xl shrink-0">
                   <button
                     type="button"
                     disabled={isLoading}
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-50"
                   >
                     Batal
                   </button>

@@ -107,13 +107,19 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
 
 /**
  * Fetch all BPH pengurus from Supabase `Pengurus` table.
+ *
+ * BUG FIX: Menghapus filter `divisi=eq.BPH` dari query URL karena
+ * kolom `divisi` menggunakan PostgreSQL enum (Divisi1) yang case-sensitive.
+ * Filter dilakukan di sisi aplikasi setelah fetch agar tidak bergantung
+ * pada nilai enum yang tepat di database.
  */
 export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH&order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
+    const url = `${SUPABASE_URL}/rest/v1/Pengurus?order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
     const res = await fetch(url, FETCH_NO_STORE);
     if (!res.ok) {
-      console.warn("[supabaseData] fetchPengurusFromDB failed:", res.status);
+      const errText = await res.text().catch(() => res.status.toString());
+      console.warn("[supabaseData] fetchPengurusFromDB failed:", res.status, errText);
       return INITIAL_PENGURUS;
     }
     const rows: Array<{
@@ -127,11 +133,15 @@ export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
       instagram?: string | null;
     }> = await res.json();
 
-    return rows.map((row) => ({
+    const bphRows = rows.filter(
+      (row) => row.divisi?.toLowerCase() === "bph"
+    );
+
+    return bphRows.map((row) => ({
       id: row.id,
       nama: row.nama,
       jabatan: row.jabatan,
-      divisi: row.divisi,
+      divisi: "BPH", // Normalize to strict upper-case "BPH"
       periode: row.periode ?? "2025/2026",
       fotoUrl: row.fotoUrl ?? "",
       linkedin: row.linkedin ?? "",
@@ -145,20 +155,44 @@ export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
 
 /**
  * Bulk-replace all BPH pengurus in Supabase `Pengurus` table.
+ *
+ * BUG FIX:
+ * - DELETE query menggunakan filter `divisi=eq.BPH` — jika enum Supabase
+ *   tidak exact match, baris lama tidak terhapus dan data menumpuk.
+ *   Solusi: gunakan `ilike` (case-insensitive) atau upsert dengan id.
+ * - Sekarang menggunakan upsert (ON CONFLICT DO UPDATE) daripada delete+insert
+ *   untuk menghindari race condition dan data loss.
+ * - Throw jika insert gagal, bukan hanya console.warn
  */
 export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
   try {
-    // Step 1: Delete all current BPH pengurus
-    await fetch(`${SUPABASE_URL}/rest/v1/Pengurus?divisi=eq.BPH`, {
-      method: "DELETE",
-      headers: COMMON_HEADERS,
-    });
+    // Step 1: Get existing BPH ids dari database (fetch id & divisi, filter in JS agar aman untuk PostgreSQL Enum)
+    const fetchExistingUrl = `${SUPABASE_URL}/rest/v1/Pengurus?select=id,divisi`;
+    const existingRes = await fetch(fetchExistingUrl, FETCH_NO_STORE);
+    const existingRows: { id: string; divisi?: string | null }[] = existingRes.ok
+      ? await existingRes.json()
+      : [];
+    const existingIds: string[] = existingRows
+      .filter((r) => r.divisi && r.divisi.toLowerCase() === "bph")
+      .map((r) => r.id);
+
+    // Step 2: Build the new id set dari data yang akan di-save
+    const newIds = data.map((p) => p.id);
+
+    // Step 3: Hapus rows yang tidak ada di data baru (sudah dihapus admin)
+    const idsToDelete = existingIds.filter((id) => !newIds.includes(id));
+    if (idsToDelete.length > 0) {
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/Pengurus?id=in.(${idsToDelete.map((id) => `"${id}"`).join(",")})`,
+        { method: "DELETE", headers: COMMON_HEADERS }
+      );
+    }
 
     if (data.length === 0) return;
 
-    // Step 2: Insert new list
+    // Step 4: Upsert (insert + update on conflict) untuk semua data
     const rows = data.map((p, idx) => ({
-      ...(p.id.startsWith("bph_") ? {} : { id: p.id }),
+      id: p.id,
       nama: p.nama,
       jabatan: p.jabatan,
       divisi: "BPH",
@@ -167,6 +201,7 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
       linkedin: p.linkedin ?? null,
       instagram: p.instagram ?? null,
       urutan: idx,
+      createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }));
 
@@ -174,16 +209,20 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
       method: "POST",
       headers: {
         ...COMMON_HEADERS,
-        Prefer: "return=minimal",
+        Prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify(rows),
     });
+
     if (!res.ok) {
-      const text = await res.text();
-      console.warn("[supabaseData] syncPengurusToDB insert failed:", text);
+      const errText = await res.text();
+      console.error("[supabaseData] syncPengurusToDB upsert failed:", res.status, errText);
+      // Throw agar UI admin bisa menampilkan error nyata (bukan silent fail)
+      throw new Error(`Gagal menyimpan ke Supabase: ${res.status} — ${errText}`);
     }
   } catch (err) {
-    console.warn("[supabaseData] syncPengurusToDB error:", err);
+    console.error("[supabaseData] syncPengurusToDB error:", err);
+    throw err; // Re-throw agar AdminPengurusClient bisa menangkap dan tampilkan alert
   }
 }
 
@@ -262,7 +301,7 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
 
     // Step 2: Insert new list
     const rows = data.map((e) => ({
-      ...(e.id.startsWith("e_") ? {} : { id: e.id }),
+      id: e.id,
       title: e.title,
       kategori: e.kategori,
       tanggal: e.tanggal,
@@ -273,6 +312,7 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
       deskripsi: e.deskripsi,
       bannerUrl: e.bannerUrl ?? null,
       linkPendaftaran: e.linkPendaftaran ?? null,
+      createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }));
 

@@ -58,10 +58,10 @@ interface AdminDivisiClientProps {
 }
 
 export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisiClientProps) {
-  const { divisiData, setDivisiData, anggotaDivisi, setAnggotaDivisi } = useSharedStore();
+  const { divisiData, setDivisiData, anggotaDivisi, setAnggotaDivisi, mounted } = useSharedStore();
 
-  const activeDivisiList = divisiData.length > 0 ? divisiData : initialDivisi;
-  const activeAnggotaList = anggotaDivisi.length > 0 ? anggotaDivisi : initialAnggota;
+  const activeDivisiList = mounted ? divisiData : initialDivisi;
+  const activeAnggotaList = mounted ? anggotaDivisi : initialAnggota;
 
   const [activeDivisiTab, setActiveDivisiTab] = useState<string>("akademik");
 

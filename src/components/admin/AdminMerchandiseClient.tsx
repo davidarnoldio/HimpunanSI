@@ -23,8 +23,8 @@ interface AdminMerchandiseClientProps {
 }
 
 export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseClientProps) {
-  const { merchandise, setMerchandise } = useSharedStore();
-  const activeMerchandise = merchandise.length > 0 ? merchandise : initialMerchandise;
+  const { merchandise, setMerchandise, mounted } = useSharedStore();
+  const activeMerchandise = mounted ? merchandise : initialMerchandise;
 
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("Semua");
