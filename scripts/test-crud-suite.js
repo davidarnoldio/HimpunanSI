@@ -158,13 +158,13 @@ async function runTddSuite() {
     status: 'BARU',
   };
 
-  // 3.1 INSERT ASPIRASI
+  // 3.1 INSERT ASPIRASI (Public anon submission with Prefer: return=minimal for RLS)
   const insAspRes = await fetch(`${SUPABASE_URL}/rest/v1/Aspirasi`, {
     method: 'POST',
-    headers: { ...COMMON_HEADERS, Prefer: 'return=representation' },
+    headers: { ...COMMON_HEADERS, Prefer: 'return=minimal' },
     body: JSON.stringify(testAsp),
   });
-  assert(insAspRes.status === 201 || insAspRes.status === 200, 'INSERT Aspirasi from public form succeeded');
+  assert(insAspRes.status === 201 || insAspRes.status === 200, `INSERT Aspirasi from public form returned HTTP ${insAspRes.status}`);
 
   // 3.2 UPDATE STATUS
   const updateAspRes = await fetch(`${SUPABASE_URL}/rest/v1/Aspirasi?id=eq.${testAspId}`, {

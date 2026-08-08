@@ -384,12 +384,18 @@ export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boole
       method: "POST",
       headers: {
         ...COMMON_HEADERS,
-        Prefer: "return=representation",
+        Prefer: "return=minimal",
       },
       body: JSON.stringify(row),
     });
 
-    return res.ok;
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("[supabaseData] insertAspirasiToDB failed:", res.status, errText);
+      return false;
+    }
+
+    return true;
   } catch (err) {
     console.warn("[supabaseData] insertAspirasiToDB error:", err);
     return false;
