@@ -1,47 +1,35 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
-  const isAdminRoute = path.startsWith("/admin");
+export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
 
   let response: NextResponse | undefined;
 
-  // ADMIN ROUTE AUTH GUARD:
-  // Intercept all /admin routes except /admin/login
-  if (isAdminRoute && path !== "/admin/login") {
+  // ─── ADMIN AUTH GUARD (hanya untuk rute /admin/*) ───────────────────────
+  if (path.startsWith("/admin")) {
     const session =
-      req.cookies.get("himsi_admin_session")?.value ||
-      req.cookies.get("sb-access-token")?.value ||
-      req.cookies.get("admin_session")?.value;
+      request.cookies.get("himsi_admin_session")?.value ||
+      request.cookies.get("sb-access-token")?.value ||
+      request.cookies.get("admin_session")?.value;
 
-    if (!session) {
-      const loginUrl = new URL("/admin/login", req.url);
-      response = NextResponse.redirect(loginUrl);
+    if (path !== "/admin/login" && !session) {
+      // Belum login → redirect ke halaman login
+      response = NextResponse.redirect(new URL("/admin/login", request.url));
+    } else if (path === "/admin/login" && session) {
+      // Sudah login tapi buka /admin/login → redirect ke dashboard
+      response = NextResponse.redirect(
+        new URL("/admin/dashboard", request.url)
+      );
     }
   }
 
-  // If user is already authenticated and visits /admin/login, redirect to /admin/dashboard
-  if (!response && path === "/admin/login") {
-    const session =
-      req.cookies.get("himsi_admin_session")?.value ||
-      req.cookies.get("sb-access-token")?.value ||
-      req.cookies.get("admin_session")?.value;
-
-    if (session) {
-      const dashboardUrl = new URL("/admin/dashboard", req.url);
-      response = NextResponse.redirect(dashboardUrl);
-    }
-  }
-
+  // Jika tidak ada redirect, lanjutkan request normal
   if (!response) {
     response = NextResponse.next();
   }
 
-  // ─── HTTP Security Headers ──────────────────────────────────────────────
-  // Applied here (middleware) so Vercel Edge always includes them in every
-  // response. The next.config.ts headers() alone gets overridden by
-  // NextResponse.next().
+  // ─── GLOBAL HTTP SECURITY HEADERS (berlaku untuk SEMUA rute) ───────────
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set(
@@ -53,8 +41,8 @@ export async function middleware(req: NextRequest) {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=(), browsing-topics=()"
   );
-  // Permissive CSP — allows inline styles (Framer Motion), inline scripts
-  // (Next.js), Cloudflare Turnstile, Google Fonts, and image placeholders.
+  // Permissive CSP — mengizinkan inline styles (Framer Motion), inline scripts
+  // (Next.js), Cloudflare Turnstile, Google Fonts, dan image placeholders.
   response.headers.set(
     "Content-Security-Policy",
     [
@@ -71,8 +59,8 @@ export async function middleware(req: NextRequest) {
     ].join("; ")
   );
 
-  // Global Cross-Device Anti-Cache Headers: Ensure Vercel Edge & Mobile Browsers NEVER serve stale cached pages
-  if (!isAdminRoute) {
+  // Anti-cache headers untuk halaman publik (bukan admin)
+  if (!path.startsWith("/admin")) {
     response.headers.set(
       "Cache-Control",
       "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
@@ -87,8 +75,10 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except static files & internal Next.js assets
+     * Match SEMUA rute KECUALI file statis, image, dan internal Next.js assets.
+     * Ini memastikan homepage (/) dan semua halaman publik juga melewati middleware.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
+
