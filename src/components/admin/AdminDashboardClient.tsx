@@ -98,7 +98,7 @@ export function AdminDashboardClient({
               Selamat Datang di Panel Control Admin!
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
-              Kelola data pengurus, event, merchandise, dan tanggapan aspirasi mahasiswa Sistem Informasi Gunadarma secara terpusat (Sinkron 100% Supabase DB).
+              Kelola data pengurus, event, merchandise, dan tanggapan aspirasi mahasiswa Sistem Informasi Gunadarma secara terpusat.
             </p>
           </div>
 
