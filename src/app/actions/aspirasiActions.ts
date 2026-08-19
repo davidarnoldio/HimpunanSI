@@ -74,12 +74,16 @@ export async function submitAspirasiAction(payload: {
 
     // 2. Rate Limiting Check (hanya jika Redis dikonfigurasi)
     if (ratelimit) {
-      const { success: isRateLimitOk } = await ratelimit.limit(ip);
-      if (!isRateLimitOk) {
-        return {
-          success: false,
-          error: "Sabar bos! Kamu terlalu banyak mengirim aspirasi. Tunggu 1 menit lagi ya.",
-        };
+      try {
+        const { success: isRateLimitOk } = await ratelimit.limit(ip);
+        if (!isRateLimitOk) {
+          return {
+            success: false,
+            error: "Sabar bos! Kamu terlalu banyak mengirim aspirasi. Tunggu 1 menit lagi ya.",
+          };
+        }
+      } catch (redisErr) {
+        console.warn("[aspirasiActions] Upstash Ratelimit error (bypassing):", redisErr);
       }
     }
 
