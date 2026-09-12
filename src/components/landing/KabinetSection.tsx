@@ -148,16 +148,16 @@ export function KabinetCard3D({ item }: { item: PengurusItem }) {
           <div className="flex-1 flex flex-col justify-center items-center px-2 py-4 space-y-3">
             <LiveText
               text={`"${item.visiMotto || "Mewujudkan HIMSI UG yang solid, unggul, dan berdaya saing tinggi dalam era digital."}"`}
-              className="text-slate-200 text-sm sm:text-base font-semibold leading-relaxed italic text-center"
+              className="text-slate-800 dark:text-slate-200 text-sm sm:text-base font-semibold leading-relaxed italic text-center"
               wordDelay={0.06}
             />
           </div>
 
-          <div className="w-full pt-4 border-t border-slate-800 space-y-1">
+          <div className="w-full pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
             <h4 className={`text-lg font-bold tracking-tight ${nameColorClass}`}>
               {item.nama}
             </h4>
-            <p className="text-[11px] text-slate-400 font-semibold truncate">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold truncate">
               {item.jabatan} • {TAHUN_KEPENGURUSAN}
             </p>
           </div>
@@ -272,11 +272,11 @@ export function KabinetSection({
           transition={{ duration: 0.55, ease: "easeOut" }}
           className="text-center space-y-3 pt-6"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-semibold font-mono tracking-widest uppercase">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-bold font-mono tracking-widest uppercase">
             <Sparkles size={11} />
             Kabinet HIMSI UG {TAHUN_KEPENGURUSAN}
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-heading text-slate-900 dark:text-slate-100 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading text-slate-900 dark:text-slate-100 tracking-tight hover-outline-text cursor-default transition-all duration-300">
             Pimpinan{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500 dark:from-red-500 dark:to-rose-400">
               Himpunan

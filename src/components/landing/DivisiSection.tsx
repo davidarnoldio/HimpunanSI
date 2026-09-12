@@ -84,10 +84,10 @@ export function DivisiSection({
           transition={{ duration: 0.55, ease: "easeOut" }}
           className="text-center mb-14 space-y-3"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-semibold tracking-widest uppercase">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-bold font-mono tracking-widest uppercase">
             Struktur Organisasi
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-slate-100 tracking-tight hover-outline-text cursor-default transition-all duration-300">
             Divisi{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500 dark:from-red-500 dark:to-rose-400">
               Utama

@@ -54,17 +54,17 @@ export function EventSection({ events = INITIAL_EVENTS }: { events?: EventAdminI
           transition={{ duration: 0.55, ease: "easeOut" }}
           className="flex flex-col items-center text-center space-y-3 mb-12 max-w-2xl mx-auto"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-semibold font-mono tracking-widest uppercase">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-400 text-xs font-bold font-mono tracking-widest uppercase">
             <Sparkles size={11} />
-            Upcoming
+            Upcoming Events
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-heading text-slate-900 dark:text-slate-100 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading text-slate-900 dark:text-slate-100 tracking-tight hover-outline-text cursor-default transition-all duration-300">
             Event &{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500 dark:from-red-500 dark:to-rose-400">
               Program Kerja
             </span>
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-medium">
             Jadwal kegiatan HIMSI UG terdekat. Daftarkan dirimu dan jangan sampai ketinggalan!
           </p>
         </motion.div>

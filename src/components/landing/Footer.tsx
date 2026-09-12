@@ -167,14 +167,22 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Thin Divider */}
-        <div className="h-px bg-slate-200 dark:border-slate-800/80 w-full" />
+        {/* AURA Agency Giant Statement Typography */}
+        <div className="py-8 my-4 border-y border-slate-200/80 dark:border-slate-800/80 text-center overflow-hidden">
+          <span className="text-4xl sm:text-6xl lg:text-8xl font-black font-heading tracking-tighter text-slate-200 dark:text-slate-900/80 select-none block hover-outline-text transition-all duration-300">
+            HIMSI GUNADARMA
+          </span>
+        </div>
 
-        {/* Bottom Bar: Copyright (Space Between) */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-500 font-medium">
+        {/* Bottom Bar: Copyright */}
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-500 dark:text-slate-500 font-semibold">
           <p className="text-center sm:text-left">
             © 2026 HIMSI Universitas Gunadarma. All rights reserved.
           </p>
+          <div className="flex items-center gap-4">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Sistem Informasi Portal v2.0</span>
+          </div>
         </div>
       </div>
     </footer>

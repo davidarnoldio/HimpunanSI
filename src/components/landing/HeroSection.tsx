@@ -78,13 +78,13 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
   return (
     <section
       id="beranda"
-      className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 pt-20 pb-16 transition-colors duration-300 scroll-mt-28"
+      className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 pt-24 pb-12 transition-colors duration-300 scroll-mt-28"
       aria-label="Beranda HIMSI UG"
     >
       {/* ── Hacker Matrix Background Teks Kode (Samar & Eleggan) ── */}
       <HackerMatrixBackground />
 
-      {/* ── Radial Mask Center Fade (Optimasi Keterbacaan Teks Utama) ── */}
+      {/* ── Ambient Radial Lighting & Grain Effects ── */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(248,250,252,0.92)_0%,rgba(248,250,252,0.6)_50%,transparent_100%)] dark:bg-[radial-gradient(circle_at_center,rgba(10,14,31,0.92)_0%,rgba(10,14,31,0.6)_50%,transparent_100%)]" />
 
@@ -96,32 +96,32 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             backgroundSize: "60px 60px",
           }}
         />
-        <FloatingOrb className="w-[500px] h-[500px] bg-red-500/12 dark:bg-red-700/15 -top-40 -left-20" delay={0} />
-        <FloatingOrb className="w-[400px] h-[400px] bg-rose-500/10 dark:bg-rose-800/12 top-1/3 -right-28" delay={2} />
-        <FloatingOrb className="w-[300px] h-[300px] bg-red-600/12 dark:bg-red-900/15 bottom-0 left-1/3" delay={4} />
+        <FloatingOrb className="w-[600px] h-[600px] bg-red-600/15 dark:bg-red-600/20 -top-40 -left-20" delay={0} />
+        <FloatingOrb className="w-[500px] h-[500px] bg-rose-600/12 dark:bg-rose-700/15 top-1/3 -right-28" delay={2} />
+        <FloatingOrb className="w-[400px] h-[400px] bg-red-700/15 dark:bg-red-900/20 bottom-0 left-1/3" delay={4} />
       </div>
 
-      {/* ── FORMAT CENTERED LAYOUT (Satu Kolom Terpusat & Simetris) ── */}
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 z-10 flex flex-col items-center text-center justify-center">
+      {/* ── FORMAT CENTERED LAYOUT (AURA Agency Headline & Copywriting) ── */}
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 z-10 flex flex-col items-center text-center justify-center">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="flex flex-col items-center text-center gap-7 max-w-4xl"
+          className="flex flex-col items-center text-center gap-7 max-w-5xl"
         >
-          {/* Top Pill Badge (Live Text) */}
+          {/* Top Pill Badge (AURA Glow Badge) */}
           <motion.div variants={itemVariants}>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/60 text-red-600 dark:text-red-400 text-xs sm:text-sm font-semibold tracking-wide font-mono backdrop-blur shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-red-600 dark:bg-red-500 animate-pulse" />
+            <span className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-red-500/10 dark:bg-red-950/70 border border-red-500/30 text-red-600 dark:text-red-400 text-xs sm:text-sm font-bold tracking-widest font-mono backdrop-blur-md shadow-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 dark:bg-red-500 animate-pulse shadow-sm shadow-red-500" />
               {content.badgePrefix || "Himpunan Mahasiswa "}
               <FlipWords words={badgeWords} duration={2000} className="font-bold font-mono text-red-600 dark:text-red-400" />
             </span>
           </motion.div>
 
-          {/* Headline Centered (Live Text FlipWords) */}
+          {/* Headline Centered (AURA Agency Oversized Title + Hover Outline Effect) */}
           <motion.h1
             variants={itemVariants}
-            className="text-4xl sm:text-6xl lg:text-7xl font-black font-heading text-slate-900 dark:text-slate-100 leading-[1.12] tracking-tight max-w-4xl"
+            className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-heading text-slate-900 dark:text-slate-100 leading-[1.08] tracking-tight max-w-5xl hover-outline-text cursor-default transition-all duration-300"
           >
             {content.headlinePrefix || "Wadah "}
             <FlipWords
@@ -135,7 +135,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
           {/* Subheadline Copywriting (Live Text) */}
           <motion.p
             variants={itemVariants}
-            className="text-slate-600 dark:text-slate-400 text-base sm:text-lg lg:text-xl max-w-2xl leading-relaxed font-medium"
+            className="text-slate-600 dark:text-slate-300 text-base sm:text-lg lg:text-xl max-w-2xl leading-relaxed font-medium"
           >
             {content.descriptionBefore || "HIMSI UG adalah gerakan mahasiswa yang "}
             <FlipWords
@@ -146,13 +146,13 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             {content.descriptionAfter}
           </motion.p>
 
-          {/* CTA Action Buttons (Centered Row) */}
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-1">
+          {/* CTA Action Buttons (AURA Agency Pill Row) */}
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <motion.a
               href="/#event"
-              whileHover={{ scale: 1.04, boxShadow: "0 0 30px rgba(220,38,38,0.4)" }}
+              whileHover={{ scale: 1.04, boxShadow: "0 0 35px rgba(220,38,38,0.45)" }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-red-700 via-red-600 to-rose-600 hover:from-red-600 hover:to-rose-500 text-white font-bold font-mono text-sm sm:text-base shadow-xl shadow-red-900/20 dark:shadow-red-900/30 transition-colors duration-200"
+              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-red-700 via-red-600 to-rose-600 hover:from-red-600 hover:to-rose-500 text-white font-bold font-mono text-sm sm:text-base shadow-2xl shadow-red-900/30 transition-all duration-200"
             >
               Jelajahi Event & Proker
               <ArrowRight size={18} />
@@ -162,7 +162,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
               href="/merchandise"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl bg-white dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold font-mono text-sm sm:text-base border border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors duration-200"
+              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold font-mono text-sm sm:text-base border border-slate-200/80 dark:border-slate-800 shadow-md backdrop-blur-md transition-all duration-200"
             >
               <ShoppingBag size={18} className="text-red-500" />
               Merchandise Resmi
@@ -174,7 +174,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="pt-6 flex flex-wrap justify-center items-center gap-4 w-full max-w-4xl mx-auto"
+            className="pt-4 flex flex-wrap justify-center items-center gap-4 w-full max-w-4xl mx-auto"
           >
             {statsList.map((stat, idx) => (
               <StatCard key={idx} value={stat.value} label={stat.label} />
@@ -183,8 +183,34 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
         </motion.div>
       </div>
 
+      {/* ── AURA SEAMLESS INFINITE MARQUEE BANNER ── */}
+      <div className="w-full mt-10 py-3.5 bg-gradient-to-r from-red-600 via-rose-600 to-red-600 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-y border-red-700/50 dark:border-red-500/30 shadow-md overflow-hidden backdrop-blur-md z-10 transition-colors duration-300">
+        <div className="animate-marquee flex items-center gap-8 text-xs sm:text-sm font-bold font-mono tracking-widest text-white dark:text-slate-300 select-none">
+          <span>HIMPUNAN MAHASISWA SISTEM INFORMASI</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>UNIVERSITAS GUNADARMA</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>INTEGRITY & EXCELLENCE</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>INNOVATION IN DIGITAL ERA</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>HIMSI UG PERIODE 2025/2026</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>HIMPUNAN MAHASISWA SISTEM INFORMASI</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>UNIVERSITAS GUNADARMA</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>INTEGRITY & EXCELLENCE</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>INNOVATION IN DIGITAL ERA</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+          <span>HIMSI UG PERIODE 2025/2026</span>
+          <span className="text-red-200 dark:text-red-500">•</span>
+        </div>
+      </div>
+
       {/* Scroll Down Indicator */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600 text-xs font-semibold font-mono">
+      <div className="mt-6 flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 text-xs font-semibold font-mono">
         <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}>
           <ChevronDown size={18} />
         </motion.div>

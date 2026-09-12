@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Flame } from "lucide-react";
 import { Navbar, Footer } from "@/components/landing";
 import { FormAspirasi } from "./FormAspirasi";
 
@@ -36,6 +36,15 @@ const wordBlurVariants: Variants = {
 };
 
 export function AspirasiClient() {
+  const MARQUEE_ITEMS = [
+    "HIMSI UG",
+    "SUARA MAHASISWA SISTEM INFORMASI",
+    "TRANSPARAN & INOVATIF",
+    "UNIVERSITAS GUNADARMA",
+    "ASPIRASI TERDENGAR",
+    "KABINET FORMASI",
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
       {/* Sticky Top Navbar */}
@@ -68,28 +77,31 @@ export function AspirasiClient() {
               Suara Mahasiswa Sistem Informasi
             </motion.div>
 
-            {/* <h1> ANIMATED BLUR REVEAL (BADTZ UI) */}
+            {/* <h1> ANIMATED BLUR REVEAL + EFEK 1: HOVER OUTLINE (SOLID KE TRANSPARAN) */}
             <motion.h1
               initial="hidden"
               animate="visible"
               variants={containerVariants}
               className="text-3xl sm:text-5xl font-black font-heading tracking-tight text-slate-900 dark:text-slate-100 leading-[1.15] flex flex-wrap items-center justify-center gap-x-3 gap-y-1"
             >
-              <motion.span variants={wordBlurVariants} className="inline-block">
+              <motion.span
+                variants={wordBlurVariants}
+                className="inline-block transition-all duration-300 hover:text-transparent hover:[-webkit-text-stroke:2px_#dc2626] dark:hover:[-webkit-text-stroke:2px_#ef4444] cursor-pointer select-none"
+              >
                 Wadah
               </motion.span>
 
               <span className="inline-flex flex-wrap gap-x-3">
                 <motion.span
                   variants={wordBlurVariants}
-                  className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-500 dark:via-rose-400 dark:to-red-500"
+                  className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-500 dark:via-rose-400 dark:to-red-500 transition-all duration-300 hover:opacity-90 hover:[-webkit-text-stroke:2px_#dc2626] dark:hover:[-webkit-text-stroke:2px_#ef4444] cursor-pointer select-none"
                 >
                   Aspirasi
                 </motion.span>
 
                 <motion.span
                   variants={wordBlurVariants}
-                  className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-500 dark:via-rose-400 dark:to-red-500"
+                  className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-500 dark:via-rose-400 dark:to-red-500 transition-all duration-300 hover:opacity-90 hover:[-webkit-text-stroke:2px_#dc2626] dark:hover:[-webkit-text-stroke:2px_#ef4444] cursor-pointer select-none"
                 >
                   Mahasiswa
                 </motion.span>
@@ -110,8 +122,36 @@ export function AspirasiClient() {
             </motion.p>
           </div>
 
-          {/* EXTRACTED INTERACTIVE FORM COMPONENT */}
-          <FormAspirasi />
+          {/* EFEK 3: EFEK SEAMLESS MARQUEE (TEKS BERJALAN) */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="w-full overflow-hidden py-3 bg-gradient-to-r from-red-600/10 via-rose-500/15 to-red-600/10 dark:from-red-950/40 dark:via-rose-900/30 dark:to-red-950/40 border-y border-red-500/20 backdrop-blur-md rounded-2xl shadow-sm"
+          >
+            <div className="flex animate-marquee whitespace-nowrap gap-8 select-none">
+              {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-3 text-xs sm:text-sm font-extrabold font-mono text-red-600 dark:text-red-400 tracking-wider">
+                  <Flame size={14} className="text-rose-500 animate-pulse" />
+                  <span className="transition-all duration-300 hover:text-transparent hover:[-webkit-text-stroke:1px_#dc2626] dark:hover:[-webkit-text-stroke:1px_#ef4444] cursor-pointer">
+                    {item}
+                  </span>
+                  <span className="text-red-400/40 dark:text-red-600/40">•</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* EFEK 2: EFEK SCROLL-REVEAL (MUNCUL SAAT DI-SCROLL) */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <FormAspirasi />
+          </motion.div>
         </div>
       </main>
 

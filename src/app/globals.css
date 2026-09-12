@@ -182,3 +182,53 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ─────────────────────────────────────────
+   Seamless Infinite Marquee Animation
+   ───────────────────────────────────────── */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ─────────────────────────────────────────
+   AURA Creative Agency Design Utilities
+   ───────────────────────────────────────── */
+.hover-outline-text {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-outline-text:hover {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px #dc2626;
+}
+
+.dark .hover-outline-text:hover {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px #f87171;
+}
+
+.aura-glow-red {
+  box-shadow: 0 0 50px -10px rgba(220, 38, 38, 0.4), 0 0 20px -5px rgba(220, 38, 38, 0.2);
+}
+
+.aura-text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
