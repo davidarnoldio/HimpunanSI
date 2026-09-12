@@ -181,7 +181,7 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Sistem Informasi Portal v2.0</span>
+
           </div>
         </div>
       </div>
