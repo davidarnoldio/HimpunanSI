@@ -132,17 +132,17 @@ export function AdminAnggotaDivisiClient({
         updated = activeAnggotaList.map((a) =>
           a.id === editingItem.id
             ? {
-                ...a,
-                nama,
-                npm,
-                divisiId,
-                role,
-                jabatanBadge,
-                fotoUrl: finalFoto,
-                periode,
-                instagram,
-                linkedin,
-              }
+              ...a,
+              nama,
+              npm,
+              divisiId,
+              role,
+              jabatanBadge,
+              fotoUrl: finalFoto,
+              periode,
+              instagram,
+              linkedin,
+            }
             : a
         );
       } else {
@@ -195,7 +195,7 @@ export function AdminAnggotaDivisiClient({
         <div className="space-y-1">
           <h1 className="text-xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2.5">
             <Users className="text-[#C8102E] dark:text-[#E31B3B]" size={22} />
-            KELOLA ANGGOTA & STAFF DIVISI HIMSI
+            KELOLA ANGGOTA & STAFF DIVISI HIMASI
           </h1>
           <p className="text-xs font-mono text-slate-600 dark:text-slate-400">
             Tambah, edit, dan atur jajaran anggota staff per divisi (Tersinkronisasi 100% dengan Supabase DB).
@@ -218,11 +218,10 @@ export function AdminAnggotaDivisiClient({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSelectedDivisiFilter("ALL")}
-            className={`px-3 py-1.5 font-mono text-xs font-black uppercase transition-all cursor-pointer shrink-0 border border-slate-950 ${
-              selectedDivisiFilter === "ALL"
+            className={`px-3 py-1.5 font-mono text-xs font-black uppercase transition-all cursor-pointer shrink-0 border border-slate-950 ${selectedDivisiFilter === "ALL"
                 ? "bg-slate-950 text-white dark:bg-white dark:text-slate-950"
                 : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
-            }`}
+              }`}
           >
             SEMUA DIVISI ({activeAnggotaList.length})
           </button>
@@ -230,11 +229,10 @@ export function AdminAnggotaDivisiClient({
             <button
               key={d.id}
               onClick={() => setSelectedDivisiFilter(d.id)}
-              className={`px-3 py-1.5 font-mono text-xs font-black uppercase transition-all cursor-pointer shrink-0 border border-slate-950 ${
-                selectedDivisiFilter === d.id
+              className={`px-3 py-1.5 font-mono text-xs font-black uppercase transition-all cursor-pointer shrink-0 border border-slate-950 ${selectedDivisiFilter === d.id
                   ? "bg-[#C8102E] text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
-              }`}
+                }`}
             >
               {d.singkatan} ({activeAnggotaList.filter((a) => a.divisiId === d.id).length})
             </button>

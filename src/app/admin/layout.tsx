@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = () => {
     // Clear session cookie
-    document.cookie = "himsi_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+    document.cookie = "HIMASI_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
     router.push("/admin/login");
   };
 
@@ -69,7 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <BrandLogo size="md" />
             <div>
               <h1 className="font-black font-heading text-sm text-slate-950 dark:text-white uppercase leading-tight">
-                HIMSI UG Admin
+                HIMASI UG Admin
               </h1>
               <span className="text-[10px] font-black font-mono text-[#C8102E] dark:text-[#E31B3B] uppercase tracking-widest flex items-center gap-1">
                 <Shield size={10} /> Control Panel
@@ -91,11 +91,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center justify-between px-3.5 py-3 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 transition-colors ${
-                  isActive
+                className={`group flex items-center justify-between px-3.5 py-3 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 transition-colors ${isActive
                     ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white shadow-[3px_3px_0px_0px_rgba(10,10,10,1)]"
                     : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2.5">
                   <Icon size={16} className={isActive ? "text-white" : "text-slate-950 dark:text-white"} />
@@ -104,11 +103,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                 {item.badge && (
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-black font-mono uppercase border border-slate-950 ${
-                      isActive
+                    className={`px-2 py-0.5 text-[10px] font-black font-mono uppercase border border-slate-950 ${isActive
                         ? "bg-slate-950 text-white"
                         : "bg-[#C8102E] text-white"
-                    }`}
+                      }`}
                   >
                     {item.badge}
                   </span>
@@ -152,7 +150,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="md:hidden flex items-center justify-between p-4 border-b-2 border-slate-950 dark:border-white/20 bg-white dark:bg-slate-950 sticky top-0 z-30">
         <Link href="/admin/dashboard" className="flex items-center gap-2">
           <BrandLogo size="sm" />
-          <span className="font-black font-heading text-xs uppercase tracking-wider">HIMSI Admin</span>
+          <span className="font-black font-heading text-xs uppercase tracking-wider">HIMASI Admin</span>
         </Link>
 
         <div className="flex items-center gap-2">
@@ -184,9 +182,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between px-4 py-3 text-xs font-black font-mono uppercase border-2 border-slate-950 ${
-                    isActive ? "bg-[#C8102E] text-white" : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white"
-                  }`}
+                  className={`flex items-center justify-between px-4 py-3 text-xs font-black font-mono uppercase border-2 border-slate-950 ${isActive ? "bg-[#C8102E] text-white" : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon size={16} />

@@ -21,7 +21,7 @@ export function DivisiSection({
     <section
       id="divisi"
       className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black text-slate-950 dark:text-slate-100 border-t-2 border-slate-950 dark:border-white/20 scroll-mt-28 overflow-hidden"
-      aria-label="Divisi HIMSI UG"
+      aria-label="Divisi HIMASI UG"
     >
       <div className="relative max-w-7xl mx-auto space-y-16 z-10">
         {/* Section Header — Format sama persis dengan Agenda & Program Kerja */}
@@ -36,10 +36,10 @@ export function DivisiSection({
             [ DEPARTEMEN & DIVISI ]
           </span>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading text-slate-950 dark:text-white tracking-tighter uppercase">
-            STRUKTUR <span className="text-[#C8102E] dark:text-[#E31B3B]">DIVISI HIMSI</span>
+            STRUKTUR <span className="text-[#C8102E] dark:text-[#E31B3B]">DIVISI HIMASI</span>
           </h2>
           <p className="text-slate-700 dark:text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed font-medium">
-            Setiap divisi di HIMSI UG memiliki peran strategis untuk menggerakkan potensi, inovasi digital, kepemimpinan, dan minat bakat mahasiswa Sistem Informasi Universitas Gunadarma.
+            Setiap divisi di HIMASI UG memiliki peran strategis untuk menggerakkan potensi, inovasi digital, kepemimpinan, dan minat bakat mahasiswa Sistem Informasi Universitas Gunadarma.
           </p>
         </motion.div>
 
@@ -59,7 +59,7 @@ export function DivisiSection({
                 Kabinet & Divisi Belum Dibentuk
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium">
-                Struktur kepengurusan & divisi HIMSI UG periode ini sedang dalam proses penyusunan oleh tim formatur.
+                Struktur kepengurusan & divisi HIMASI UG periode ini sedang dalam proses penyusunan oleh tim formatur.
               </p>
             </div>
           </motion.div>

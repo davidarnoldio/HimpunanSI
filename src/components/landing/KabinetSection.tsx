@@ -142,7 +142,7 @@ export function KabinetCard3D({ item }: { item: PengurusItem }) {
           <div className="flex-1 flex flex-col justify-center items-center px-2 py-4 space-y-3">
             <Quote size={28} className="text-[#E31B3B]" />
             <LiveText
-              text={`"${item.visiMotto || "Mewujudkan HIMSI UG yang solid, unggul, dan berdaya saing tinggi dalam era digital."}"`}
+              text={`"${item.visiMotto || "Mewujudkan HIMASI UG yang solid, unggul, dan berdaya saing tinggi dalam era digital."}"`}
               className="text-slate-200 text-sm sm:text-base font-semibold leading-relaxed italic text-center"
               wordDelay={0.06}
             />
@@ -176,7 +176,7 @@ export function KabinetSection({
   return (
     <section
       className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black text-slate-950 dark:text-slate-100 overflow-hidden border-t-2 border-slate-950 dark:border-white/20"
-      aria-label="Pimpinan Kabinet HIMSI UG"
+      aria-label="Pimpinan Kabinet HIMASI UG"
     >
       <div className="relative max-w-7xl mx-auto space-y-20">
         {/* ── EXODA MANIFESTO 3-COLUMN GRID (VISI, MISI, PILAR GERAKAN) ── */}
@@ -206,7 +206,7 @@ export function KabinetSection({
                 <LiveText text="VISI HIMPUNAN" />
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-medium">
-                <LiveText text={visiMisi?.visi || "Mewujudkan Himpunan Mahasiswa Sistem Informasi (HIMSI UG) yang solid, inovatif, adaptif, dan berdaya saing global serta menjadi pusat keunggulan."} />
+                <LiveText text={visiMisi?.visi || "Mewujudkan Himpunan Mahasiswa Sistem Informasi (HIMASI UG) yang solid, inovatif, adaptif, dan berdaya saing global serta menjadi pusat keunggulan."} />
               </p>
             </motion.div>
 
@@ -254,7 +254,7 @@ export function KabinetSection({
                 PILAR KABINET
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-medium">
-                <LiveText text={visiMisi?.pilar || INITIAL_VISI_MISI.pilar || "Setiap gerakan HIMSI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."} />
+                <LiveText text={visiMisi?.pilar || INITIAL_VISI_MISI.pilar || "Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."} />
               </p>
             </motion.div>
           </div>
@@ -273,13 +273,13 @@ export function KabinetSection({
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-mono font-bold tracking-widest uppercase">
             <Sparkles size={12} />
-            BPH HIMSI UG • {TAHUN_KEPENGURUSAN}
+            BPH HIMASI UG • {TAHUN_KEPENGURUSAN}
           </div>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading text-slate-950 dark:text-white tracking-tighter uppercase">
             PIMPINAN <span className="text-[#C8102E] dark:text-[#E31B3B]">HIMPUNAN</span>
           </h2>
           <p className="text-slate-700 dark:text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed font-medium">
-            Badan Pengurus Harian (BPH) yang memimpin dan mengarahkan gerakan HIMSI UG dengan komitmen tinggi. Double-click kartu untuk melihat visi & quotes.
+            Badan Pengurus Harian (BPH) yang memimpin dan mengarahkan gerakan HIMASI UG dengan komitmen tinggi. Double-click kartu untuk melihat visi & quotes.
           </p>
         </motion.div>
 
@@ -300,7 +300,7 @@ export function KabinetSection({
                 Kabinet Sedang Dalam Masa Formatur
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium">
-                Struktur kepengurusan HIMSI UG periode meini sedang dalam proses penyusunan. Nantikan formasi pemimpin baru kita!
+                Struktur kepengurusan HIMASI UG periode meini sedang dalam proses penyusunan. Nantikan formasi pemimpin baru kita!
               </p>
             </div>
           </motion.div>

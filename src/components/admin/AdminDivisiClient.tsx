@@ -132,14 +132,14 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
         updated = activeDivisiList.map((d) =>
           d.id === editingDivisi.id
             ? {
-                ...d,
-                singkatan,
-                nama,
-                deskripsi,
-                iconName,
-                colorTheme,
-                tugas: tugasArray,
-              }
+              ...d,
+              singkatan,
+              nama,
+              deskripsi,
+              iconName,
+              colorTheme,
+              tugas: tugasArray,
+            }
             : d
         );
       } else {
@@ -231,16 +231,16 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
         updated = activeAnggotaList.map((a) =>
           a.id === editingAnggota.id
             ? {
-                ...a,
-                nama: angNama,
-                npm: angNpm,
-                role: angRole,
-                jabatanBadge: angBadge,
-                fotoUrl: finalFoto,
-                periode: angPeriode,
-                instagram: angInstagram,
-                linkedin: angLinkedin,
-              }
+              ...a,
+              nama: angNama,
+              npm: angNpm,
+              role: angRole,
+              jabatanBadge: angBadge,
+              fotoUrl: finalFoto,
+              periode: angPeriode,
+              instagram: angInstagram,
+              linkedin: angLinkedin,
+            }
             : a
         );
       } else {
@@ -324,7 +324,7 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
         <div className="space-y-1">
           <h1 className="text-xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
             <Layers className="text-[#C8102E] dark:text-[#E31B3B]" size={22} />
-            KELOLA DIVISI & ANGGOTA STAFF HIMSI UG
+            KELOLA DIVISI & ANGGOTA STAFF HIMASI UG
           </h1>
           <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
             Kelola nama divisi, deskripsi proker, serta jajaran Ketua & Anggota Staff Divisi (Tersinkronisasi 100% dengan Supabase DB).
@@ -341,7 +341,7 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
 
       {/* SECTION 1: DIVISI OVERVIEW CARDS */}
       <div className="space-y-4">
-        <h2 className="text-xs font-mono font-black uppercase tracking-widest text-[#C8102E] dark:text-[#E31B3B]">[ DAFTAR DIVISI HIMSI ]</h2>
+        <h2 className="text-xs font-mono font-black uppercase tracking-widest text-[#C8102E] dark:text-[#E31B3B]">[ DAFTAR DIVISI HIMASI ]</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeDivisiList.map((div) => {
             const IconComp = AVAILABLE_ICONS.find((i) => i.name === div.iconName)?.icon || BookOpen;
@@ -423,11 +423,10 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
             <button
               key={d.id}
               onClick={() => setActiveDivisiTab(d.id)}
-              className={`px-4 py-2 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 cursor-pointer shrink-0 transition-colors ${
-                activeDivisiTab === d.id
+              className={`px-4 py-2 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 cursor-pointer shrink-0 transition-colors ${activeDivisiTab === d.id
                   ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white"
                   : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
-              }`}
+                }`}
             >
               DIVISI {d.singkatan} ({activeAnggotaList.filter((a) => a.divisiId === d.id).length})
             </button>

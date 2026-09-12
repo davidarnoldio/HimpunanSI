@@ -31,19 +31,17 @@ function CategoryTabs({
           onClick={() => onSelect(cat)}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
-          className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-            active === cat
+          className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${active === cat
               ? "bg-red-600/20 text-red-400 border-red-500/60 shadow-[0_0_16px_rgba(220,38,38,0.25)]"
               : "bg-slate-900/50 text-slate-400 border-slate-700/60 hover:border-red-500/30 hover:text-slate-200"
-          }`}
+            }`}
           aria-pressed={active === cat}
           aria-label={`Filter: ${CATEGORY_LABELS[cat]}`}
         >
           {CATEGORY_LABELS[cat]}
           <span
-            className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold ${
-              active === cat ? "bg-red-500/30 text-red-300" : "bg-slate-800 text-slate-500"
-            }`}
+            className={`ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold ${active === cat ? "bg-red-500/30 text-red-300" : "bg-slate-800 text-slate-500"
+              }`}
           >
             {counts[cat]}
           </span>
@@ -93,7 +91,7 @@ function FilterBar({
         <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
         <input
           type="search"
-          placeholder="Cari produk HIMSI..."
+          placeholder="Cari produk HIMASI..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/60 border border-slate-700/70 text-slate-200 placeholder-slate-600 text-sm focus:outline-none focus:border-red-500/60 focus:ring-1 focus:ring-red-500/30 transition-all duration-200"
@@ -228,7 +226,7 @@ export function MerchandiseCatalogue() {
     <section
       id="merchandise"
       className="relative min-h-screen bg-slate-950 py-16 sm:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden"
-      aria-label="Katalog Merchandise JAHIM HIMSI UG"
+      aria-label="Katalog Merchandise JAHIM HIMASI UG"
     >
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -256,7 +254,7 @@ export function MerchandiseCatalogue() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-950/40 border border-red-800/50 text-red-400 text-xs font-bold tracking-widest uppercase"
           >
             <Sparkles size={12} />
-            JAHIM × HIMSI UG Official Merch
+            JAHIM × HIMASI UG Official Merch
           </motion.div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-100 leading-tight tracking-tight">
@@ -266,7 +264,7 @@ export function MerchandiseCatalogue() {
             </span>
           </h1>
           <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Koleksi eksklusif JAHIM & HIMSI UG — dari hoodie premium hingga stationery keren.
+            Koleksi eksklusif JAHIM & HIMASI UG — dari hoodie premium hingga stationery keren.
             Tampil bangga dengan identitas Sistem Informasi Gunadarma.
           </p>
         </motion.div>
@@ -342,10 +340,10 @@ export function MerchandiseCatalogue() {
             </h2>
             <p className="text-slate-400 max-w-lg mx-auto text-sm sm:text-base">
               Dapatkan harga spesial reseller, komisi menarik, dan materi promosi eksklusif.
-              Hubungi tim Medpar HIMSI UG sekarang!
+              Hubungi tim Medpar HIMASI UG sekarang!
             </p>
             <motion.a
-              href="https://wa.me/6281234567890?text=Halo%20HIMSI%20UG!%20Saya%20tertarik%20menjadi%20reseller%20JAHIM.%20Mohon%20info%20lebih%20lanjut%20ya!"
+              href="https://wa.me/6281234567890?text=Halo%20HIMASI%20UG!%20Saya%20tertarik%20menjadi%20reseller%20JAHIM.%20Mohon%20info%20lebih%20lanjut%20ya!"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.04, boxShadow: "0 0 32px rgba(220,38,38,0.5)" }}

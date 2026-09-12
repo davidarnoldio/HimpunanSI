@@ -120,7 +120,7 @@ export function FormAspirasi() {
           >
             <CheckCircle2 size={20} className="shrink-0 text-white" />
             <span>
-              Aspirasi Anda telah berhasil dikirimkan secara aman ke Admin & Pengurus HIMSI UG!
+              Aspirasi Anda telah berhasil dikirimkan secara aman ke Admin & Pengurus HIMASI UG!
             </span>
           </motion.div>
         )}
@@ -154,8 +154,8 @@ export function FormAspirasi() {
                 type="button"
                 onClick={() => setKategori(cat)}
                 className={`px-3.5 py-1.5 text-xs font-mono font-black uppercase tracking-wider border-2 border-slate-950 transition-colors ${kategori === cat
-                    ? "bg-[#C8102E] text-white"
-                    : "bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
+                  ? "bg-[#C8102E] text-white"
+                  : "bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
                   }`}
               >
                 {cat}

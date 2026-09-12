@@ -1,5 +1,5 @@
 // ============================================================
-// Data Statis Landing Page HIMSI UG
+// Data Statis Landing Page HIMASI UG
 // Update semua konten di sini tanpa menyentuh komponen UI
 // ============================================================
 
@@ -89,7 +89,7 @@ export const KABINET_PIMPINAN: PimpinanKabinetItem[] = [
     npm: "14121810",
     fotoUrl: "https://placehold.co/600x800/0f172a/10b981?text=Bendahara",
     visiMotto:
-      "Mengelola keuangan organisasi secara akuntabel, efisien, dan berkelanjutan untuk menunjang seluruh program kerja HIMSI UG secara maksimal.",
+      "Mengelola keuangan organisasi secara akuntabel, efisien, dan berkelanjutan untuk menunjang seluruh program kerja HIMASI UG secara maksimal.",
     instagram: "https://instagram.com",
   },
 ];
@@ -131,7 +131,7 @@ export const DIVISI_LIST: DivisiItem[] = [
     singkatan: "Medinfo",
     nama: "Divisi Media, Informasi & Komunikasi",
     deskripsi:
-      "Mengelola identitas digital HIMSI UG: pengolahan media sosial, desain grafis, dokumentasi kegiatan, serta penyebaran informasi kampus.",
+      "Mengelola identitas digital HIMASI UG: pengolahan media sosial, desain grafis, dokumentasi kegiatan, serta penyebaran informasi kampus.",
     icon: Megaphone,
     colorTheme: "violet",
     accentColor: "text-violet-600 dark:text-violet-400 border-violet-500/40 hover:border-violet-400",
@@ -221,15 +221,15 @@ export const EVENT_LIST: EventItem[] = [
     link: "#daftar",
   },
   {
-    id: "inaugurasi-himsi-2025",
-    title: "Inaugurasi Kabinet HIMSI UG 2025",
+    id: "inaugurasi-HIMASI-2025",
+    title: "Inaugurasi Kabinet HIMASI UG 2025",
     kategori: "Event Himpunan",
     tanggal: "20 Agustus 2025",
     waktu: "13.00 WIB",
     lokasi: "Auditorium Kampus E Gunadarma",
     isOnline: false,
     status: "Segera Hadir",
-    deskripsi: "Pelantikan resmi pengurus kabinet HIMSI UG periode 2025/2026. Disertai rangkaian acara budaya dan networking.",
+    deskripsi: "Pelantikan resmi pengurus kabinet HIMASI UG periode 2025/2026. Disertai rangkaian acara budaya dan networking.",
     link: "#detail",
   },
   {
@@ -274,7 +274,7 @@ export const LAYANAN_ITEMS: LayananItem[] = [
     id: "event-proker",
     title: "Event & Program Kerja",
     deskripsi:
-      "Ikuti berbagai kegiatan seru, workshop teknologi, seminar karir, dan kompetisi tingkat nasional persembahan HIMSI UG.",
+      "Ikuti berbagai kegiatan seru, workshop teknologi, seminar karir, dan kompetisi tingkat nasional persembahan HIMASI UG.",
     icon: Calendar,
     color: "from-blue-900/30 to-blue-950/50",
     accentColor: "text-blue-600 dark:text-blue-400 border-blue-500/40 group-hover:border-blue-400",
@@ -285,7 +285,7 @@ export const LAYANAN_ITEMS: LayananItem[] = [
     id: "merchandise-jahim",
     title: "Merchandise Resmi JAHIM",
     deskripsi:
-      "Hoodie, kaos, totebag, lanyard, dan stiker eksklusif HIMSI UG. Tampil bangga dengan identitas SI Gunadarma!",
+      "Hoodie, kaos, totebag, lanyard, dan stiker eksklusif HIMASI UG. Tampil bangga dengan identitas SI Gunadarma!",
     icon: Award,
     color: "from-red-900/30 to-red-950/50",
     accentColor: "text-red-600 dark:text-red-400 border-red-500/40 group-hover:border-red-400",
@@ -297,7 +297,7 @@ export const LAYANAN_ITEMS: LayananItem[] = [
     id: "aspirasi",
     title: "Layanan Aspirasi Mahasiswa",
     deskripsi:
-      "Sampaikan aspirasi, kritik, dan saranmu ke pengurus HIMSI. Tersedia mode anonim untuk keamanan privasi kamu.",
+      "Sampaikan aspirasi, kritik, dan saranmu ke pengurus HIMASI. Tersedia mode anonim untuk keamanan privasi kamu.",
     icon: Megaphone,
     color: "from-violet-900/30 to-violet-950/50",
     accentColor: "text-violet-600 dark:text-violet-400 border-violet-500/40 group-hover:border-violet-400",
@@ -308,7 +308,7 @@ export const LAYANAN_ITEMS: LayananItem[] = [
     id: "medpar",
     title: "Media Partner & Sponsorship",
     deskripsi:
-      "Jalin kerjasama event, media partner, atau sponsorship dengan HIMSI UG. Tim Humas siap merespons dalam 24 jam.",
+      "Jalin kerjasama event, media partner, atau sponsorship dengan HIMASI UG. Tim Humas siap merespons dalam 24 jam.",
     icon: BarChart3,
     color: "from-emerald-900/30 to-emerald-950/50",
     accentColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/40 group-hover:border-emerald-400",
@@ -321,15 +321,15 @@ export const LAYANAN_ITEMS: LayananItem[] = [
 // FOOTER
 // ─────────────────────────────
 export const FOOTER_SOCIAL = [
-  { platform: "instagram", icon: "instagram", label: "@himsi.ug", href: "https://instagram.com/himasi_gunadarma" },
-  { platform: "linkedin", icon: "linkedin", label: "HIMSI UG", href: "https://linkedin.com" },
-  { platform: "youtube", icon: "youtube", label: "HIMSI Channel", href: "https://youtube.com" },
-  { platform: "tiktok", icon: "tiktok", label: "@himsi.ug", href: "https://tiktok.com" },
+  { platform: "instagram", icon: "instagram", label: "@himasi.ug", href: "https://instagram.com/himasi_gunadarma" },
+  { platform: "linkedin", icon: "linkedin", label: "HIMASI UG", href: "https://linkedin.com" },
+  { platform: "youtube", icon: "youtube", label: "HIMASI Channel", href: "https://youtube.com" },
+  { platform: "tiktok", icon: "tiktok", label: "@HIMASI.ug", href: "https://tiktok.com" },
 ];
 
 export const FOOTER_INFO = {
-  sekretariat: "Sekretariat HIMSI UG, Kampus E Universitas Gunadarma, Jl. Akses UI No.9, Kelapa Dua, Depok, Jawa Barat 16951",
-  email: "himsiug.official@gmail.com",
+  sekretariat: "Sekretariat HIMASI UG, Kampus E Universitas Gunadarma, Jl. Akses UI No.9, Kelapa Dua, Depok, Jawa Barat 16951",
+  email: "HIMASIug.official@gmail.com",
   jamKerja: "Senin - Jumat (09:00 - 17:00 WIB)",
 };
 

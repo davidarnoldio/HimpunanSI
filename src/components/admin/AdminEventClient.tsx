@@ -85,7 +85,7 @@ export function AdminEventClient({ initialEvents }: AdminEventClientProps) {
         isOnline: true,
         status: "Pendaftaran Dibuka",
         deskripsi: "",
-        bannerUrl: "https://placehold.co/800x450/0f172a/ef4444?text=Event+HIMSI",
+        bannerUrl: "https://placehold.co/800x450/0f172a/ef4444?text=Event+HIMASI",
         linkPendaftaran: "",
       });
     }
@@ -153,7 +153,7 @@ export function AdminEventClient({ initialEvents }: AdminEventClientProps) {
             KELOLA EVENT & PROGRAM KERJA
           </h1>
           <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
-            Tambah, edit, dan atur publikasi kegiatan HIMSI UG (Tersinkronisasi 100% dengan Supabase DB).
+            Tambah, edit, dan atur publikasi kegiatan HIMASI UG (Tersinkronisasi 100% dengan Supabase DB).
           </p>
         </div>
         <button
@@ -184,11 +184,10 @@ export function AdminEventClient({ initialEvents }: AdminEventClientProps) {
             <button
               key={st}
               onClick={() => setFilterStatus(st)}
-              className={`px-3 py-1.5 text-xs font-black font-mono uppercase border-2 border-slate-950 cursor-pointer transition-colors ${
-                filterStatus === st
+              className={`px-3 py-1.5 text-xs font-black font-mono uppercase border-2 border-slate-950 cursor-pointer transition-colors ${filterStatus === st
                   ? "bg-[#C8102E] text-white"
                   : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
-              }`}
+                }`}
             >
               {st}
             </button>

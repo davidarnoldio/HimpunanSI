@@ -10,7 +10,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 import { BrandLogo } from "@/components/ui/BrandLogo";
 
-const emptySubscribe = () => () => {};
+const emptySubscribe = () => () => { };
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -98,11 +98,10 @@ export function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 border-b ${
-        scrolled
+      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 border-b ${scrolled
           ? "bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md border-slate-950 dark:border-white/20 shadow-sm"
           : "bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-sm border-slate-200 dark:border-white/10"
-      }`}
+        }`}
       role="banner"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -111,12 +110,12 @@ export function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-3 group"
-            aria-label="HIMSI UG — Kembali ke beranda"
+            aria-label="HIMASI UG — Kembali ke beranda"
           >
             <BrandLogo size="md" />
             <div className="flex flex-col leading-none hidden sm:flex">
               <span className="text-slate-950 dark:text-white font-black font-heading text-base sm:text-lg tracking-tight uppercase group-hover:text-[#c8102e] dark:group-hover:text-[#e31b3b] transition-colors">
-                HIMSI <span className="text-[#c8102e] dark:text-[#e31b3b]">•</span> GUNADARMA
+                HIMASI <span className="text-[#c8102e] dark:text-[#e31b3b]">•</span> GUNADARMA
               </span>
               <span className="text-slate-500 dark:text-slate-400 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest uppercase">
                 STUDENT COMMUNITY & TECH
@@ -143,11 +142,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className={`px-4 py-1.5 text-xs font-bold font-mono uppercase tracking-wider transition-all duration-200 ${
-                    isActive
+                  className={`px-4 py-1.5 text-xs font-bold font-mono uppercase tracking-wider transition-all duration-200 ${isActive
                       ? "bg-[#c8102e] dark:bg-[#e31b3b] text-white"
                       : "text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -214,11 +212,10 @@ export function Navbar() {
                     <Link
                       href={link.href}
                       onClick={(e) => handleNavClick(e, link.href)}
-                      className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-bold font-mono transition-all duration-200 ${
-                        isActive
+                      className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-bold font-mono transition-all duration-200 ${isActive
                           ? "bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md"
                           : "text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/70"
-                      }`}
+                        }`}
                     >
                       {link.label}
                       <ChevronRight size={14} className="text-slate-400 dark:text-slate-600" />

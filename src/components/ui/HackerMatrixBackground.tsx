@@ -26,7 +26,7 @@ const matrixKeyframes = `
 export function HackerMatrixBackground({ className = "" }: { className?: string }) {
   const codeColumns = [
     ["01001000", "01001001", "01001101", "01010011", "_SYS_INIT", "2.6_SECURE", "ACCESS_OK", "01010011", "ROOT_2026"],
-    ["const himsi", "= {", "status: 'ONLINE'", "dept: 'SI'", "encrypted: true", "};", "RUN_CORE", "10101101"],
+    ["const HIMASI", "= {", "status: 'ONLINE'", "dept: 'SI'", "encrypted: true", "};", "RUN_CORE", "10101101"],
     ["SELECT *", "FROM mahasiswa", "WHERE role='DEV'", "AND status='ACTIVE'", "ORDER BY priority", "DESC;", "OK_200"],
     ["MATRIX_RUNNING", "LOG_SUCCESS", "HTTP/2.0", "0x960000", "DEV_MODE", "ACTIVE_SYS", "01000111", "GUNADARMA"],
     ["import React", "from 'next'", "CODE_VIBE", "ACTIVE_TRUE", "SYS_ONLINE", "SECURE_KEY", "01000010", "OK"],

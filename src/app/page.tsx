@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 /**
- * Halaman Utama — Portal Landing Page HIMSI UG
+ * Halaman Utama — Portal Landing Page HIMASI UG
  * Murni Server Component (RSC).
  * Data di-fetch dari Supabase secara paralel di server (no-store) dan dialirkan via props.
  */

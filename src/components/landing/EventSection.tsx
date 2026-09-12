@@ -27,7 +27,7 @@ export function EventSection({ events = INITIAL_EVENTS }: { events?: EventAdminI
     <section
       id="event"
       className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black text-slate-950 dark:text-slate-100 border-t-2 border-slate-950 dark:border-white/20 scroll-mt-28"
-      aria-label="Event dan Program Kerja HIMSI UG"
+      aria-label="Event dan Program Kerja HIMASI UG"
     >
       <div className="relative max-w-7xl mx-auto space-y-16">
         {/* Section Header */}
@@ -45,7 +45,7 @@ export function EventSection({ events = INITIAL_EVENTS }: { events?: EventAdminI
             AGENDA & <span className="text-[#C8102E] dark:text-[#E31B3B]">PROGRAM KERJA</span>
           </h2>
           <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-medium">
-            Jadwal kegiatan HIMSI UG terdekat. Daftarkan dirimu dan jangan sampai ketinggalan!
+            Jadwal kegiatan HIMASI UG terdekat. Daftarkan dirimu dan jangan sampai ketinggalan!
           </p>
         </motion.div>
 
@@ -66,18 +66,18 @@ export function EventSection({ events = INITIAL_EVENTS }: { events?: EventAdminI
                 Belum Ada Event Terdekat 🎯
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed max-w-lg mx-auto font-medium">
-                Panitia sedang menyiapkan agenda kegiatan menarik berikutnya. Pantau terus kanal resmi HIMSI UG!
+                Panitia sedang menyiapkan agenda kegiatan menarik berikutnya. Pantau terus kanal resmi HIMASI UG!
               </p>
             </div>
 
             <div className="pt-2">
               <a
-                href="https://instagram.com/himsi.ug"
+                href="https://instagram.com/HIMASI.ug"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#C8102E] dark:bg-[#E31B3B] text-white font-black font-mono text-xs uppercase tracking-wider hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950 transition-colors"
               >
-                Pantau Instagram @himsi.ug <ArrowRight size={14} />
+                Pantau Instagram @HIMASI.ug <ArrowRight size={14} />
               </a>
             </div>
           </motion.div>
@@ -145,11 +145,10 @@ export function EventSection({ events = INITIAL_EVENTS }: { events?: EventAdminI
                       href={event.linkPendaftaran}
                       target="_blank"
                       rel="noreferrer"
-                      className={`flex items-center justify-center gap-2 py-3 px-4 font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 dark:border-white/20 transition-colors ${
-                        event.status === "Pendaftaran Dibuka"
+                      className={`flex items-center justify-center gap-2 py-3 px-4 font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 dark:border-white/20 transition-colors ${event.status === "Pendaftaran Dibuka"
                           ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950"
                           : "bg-slate-950 text-white dark:bg-white dark:text-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white"
-                      }`}
+                        }`}
                       aria-label={`${event.status === "Pendaftaran Dibuka" ? "Daftar" : "Detail"} ${event.title}`}
                     >
                       {event.status === "Pendaftaran Dibuka" ? "DAFTAR SEKARANG →" : "LIHAT DETAIL →"}

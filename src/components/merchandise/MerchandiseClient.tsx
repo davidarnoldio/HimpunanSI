@@ -24,7 +24,7 @@ const LIVE_WORDS = [
   "APPAREL 2026",
   "CAMPUS TECH-WEAR",
   "EXCLUSIVE CATALOG",
-  "HIMSI COLLECTION",
+  "HIMASI COLLECTION",
 ];
 
 function LiveText() {
@@ -68,13 +68,13 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
   const modalItem: MerchandiseItem | null = selectedModalProduct
     ? {
       id: selectedModalProduct.id,
-      name: selectedModalProduct.title || "Merchandise HIMSI",
+      name: selectedModalProduct.title || "Merchandise HIMASI",
       category: (selectedModalProduct.category.toLowerCase() === "apparel" ? "apparel" : "accessories") as MerchandiseCategory,
       price: parseInt((selectedModalProduct.price || "0").replace(/[^0-9]/g, ""), 10) || 50000,
       images: [getValidImageUrl(selectedModalProduct.image, selectedModalProduct.title)],
       status: selectedModalProduct.status === "READY" ? "available" : selectedModalProduct.status === "PRE-ORDER" ? "pre-order" : "sold-out",
       badge: selectedModalProduct.badge || "Eksklusif",
-      description: selectedModalProduct.description || "Official Merchandise HIMSI UG.",
+      description: selectedModalProduct.description || "Official Merchandise HIMASI UG.",
       sizes: [
         { label: "S", available: true },
         { label: "M", available: true },
@@ -84,9 +84,9 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
       ],
       colors: ["#0f172a", "#dc2626", "#ffffff"],
       whatsappNumber: selectedModalProduct.whatsappNumber || "6281234567890",
-      tags: ["HIMSI", "SI", "Gunadarma"],
-      tagline: "Official Merchandise HIMSI UG",
-      details: ["Bahan High Quality", "Desain Eksklusif HIMSI UG", "Tahan Lama & Nyaman Dipakai"],
+      tags: ["HIMASI", "SI", "Gunadarma"],
+      tagline: "Official Merchandise HIMASI UG",
+      details: ["Bahan High Quality", "Desain Eksklusif HIMASI UG", "Tahan Lama & Nyaman Dipakai"],
     }
     : null;
 
@@ -109,7 +109,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-mono font-bold tracking-widest uppercase">
               <Sparkles size={12} />
-              OFFICIAL MERCHANDISE HIMSI UG
+              OFFICIAL MERCHANDISE HIMASI UG
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tighter uppercase text-slate-950 dark:text-white">
@@ -129,11 +129,10 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-5 py-2 text-xs font-black font-mono tracking-widest uppercase border-2 border-slate-950 transition-colors cursor-pointer ${
-                    isSelected
+                  className={`px-5 py-2 text-xs font-black font-mono tracking-widest uppercase border-2 border-slate-950 transition-colors cursor-pointer ${isSelected
                       ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white"
                       : "bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>
@@ -163,7 +162,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 const price = item.price || "Rp 0";
                 const image = item.image || "";
                 const category = item.category || "Apparel";
-                const description = item.description || "Official Merchandise HIMSI UG";
+                const description = item.description || "Official Merchandise HIMASI UG";
                 const waContact = item.whatsappNumber || "6281234567890";
 
                 return (
@@ -223,7 +222,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                         <a
                           href={formatWhatsAppUrl(
                             waContact,
-                            `Halo Admin HIMSI, saya berminat memesan merchandise *${title}*. Apakah masih tersedia?`
+                            `Halo Admin HIMASI, saya berminat memesan merchandise *${title}*. Apakah masih tersedia?`
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -249,7 +248,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 PUNYA PERTANYAAN SEPUTAR MERCHANDISE?
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 max-w-xl font-medium leading-relaxed">
-                Hubungi tim Merchandise HIMSI UG untuk info ukuran, custom nama, atau status ketersediaan stok barang.
+                Hubungi tim Merchandise HIMASI UG untuk info ukuran, custom nama, atau status ketersediaan stok barang.
               </p>
             </div>
 

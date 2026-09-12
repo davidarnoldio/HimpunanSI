@@ -51,18 +51,18 @@ import {
 } from "@/data/adminMockData";
 
 const STORAGE_KEYS = {
-  PENGURUS: "himsi_pengurus_data_v3",
-  EVENTS: "himsi_events_data_v3",
-  ASPIRASI: "himsi_aspirasi_data_v3",
-  DIVISI: "himsi_divisi_list_v3",
-  DIVISI_FULL: "himsi_divisi_full_data_v3",
-  MERCHANDISE: "himsi_merchandise_data_v3",
-  VISI_MISI: "himsi_visi_misi_v3",
-  ANGGOTA_DIVISI: "himsi_anggota_divisi_v3",
-  HEADLINE_WORDS: "himsi_headline_words_v3",
-  BADGE_WORDS: "himsi_badge_words_v3",
-  SUBHEADLINE_WORDS: "himsi_subheadline_words_v3",
-  HERO_CONTENT: "himsi_hero_content_v3",
+  PENGURUS: "HIMASI_pengurus_data_v3",
+  EVENTS: "HIMASI_events_data_v3",
+  ASPIRASI: "HIMASI_aspirasi_data_v3",
+  DIVISI: "HIMASI_divisi_list_v3",
+  DIVISI_FULL: "HIMASI_divisi_full_data_v3",
+  MERCHANDISE: "HIMASI_merchandise_data_v3",
+  VISI_MISI: "HIMASI_visi_misi_v3",
+  ANGGOTA_DIVISI: "HIMASI_anggota_divisi_v3",
+  HEADLINE_WORDS: "HIMASI_headline_words_v3",
+  BADGE_WORDS: "HIMASI_badge_words_v3",
+  SUBHEADLINE_WORDS: "HIMASI_subheadline_words_v3",
+  HERO_CONTENT: "HIMASI_hero_content_v3",
 };
 
 /**
@@ -71,7 +71,7 @@ const STORAGE_KEYS = {
  * On mismatch, all stored keys are wiped and re-seeded from INITIAL data.
  */
 const DATA_SCHEMA_VERSION = 4; // bumped: semua data dummy dihapus
-const SCHEMA_VERSION_KEY = "himsi_data_schema_version";
+const SCHEMA_VERSION_KEY = "HIMASI_data_schema_version";
 
 /**
  * Runs once at startup. Detects stale localStorage data from a previous schema
@@ -86,20 +86,20 @@ function runStoreMigration(): void {
       Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
       localStorage.setItem(SCHEMA_VERSION_KEY, String(DATA_SCHEMA_VERSION));
       console.info(
-        `[HIMSI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset to defaults.`
+        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset to defaults.`
       );
     }
   } catch (e) {
-    console.warn("[HIMSI Store] Migration check failed:", e);
+    console.warn("[HIMASI Store] Migration check failed:", e);
   }
 }
 
-const STORE_EVENT_NAME = "himsi_store_updated";
+const STORE_EVENT_NAME = "HIMASI_store_updated";
 
 /**
  * Helper to ensure image URLs are valid non-empty strings
  */
-export function getValidImageUrl(url?: string | null, fallbackText = "HIMSI"): string {
+export function getValidImageUrl(url?: string | null, fallbackText = "HIMASI"): string {
   if (!url || typeof url !== "string" || url.trim() === "") {
     const encodedText = encodeURIComponent(fallbackText);
     return `https://placehold.co/600x800/0f172a/dc2626?text=${encodedText}`;
@@ -306,7 +306,7 @@ export function useSharedStore() {
       store.setAspirasi(aspirasi);
       setAspirasiState(aspirasi);
     }).catch((err) => {
-      console.warn("[HIMSI Store] Supabase primary sync error:", err);
+      console.warn("[HIMASI Store] Supabase primary sync error:", err);
     });
 
     const handleUpdate = () => {
@@ -340,75 +340,75 @@ export function useSharedStore() {
       store.setPengurus(data);
       setPengurusState(data);
       // Sync to Supabase DB (fire-and-forget) — ensures cross-device real-time update
-      syncPengurusToDB(data).catch(() => {});
-      triggerRevalidatePengurus().catch(() => {});
+      syncPengurusToDB(data).catch(() => { });
+      triggerRevalidatePengurus().catch(() => { });
     },
     setEvents: (data: EventAdminItem[]) => {
       store.setEvents(data);
       setEventsState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncEventsToDB(data).catch(() => {});
-      triggerRevalidateEvent().catch(() => {});
+      syncEventsToDB(data).catch(() => { });
+      triggerRevalidateEvent().catch(() => { });
     },
     setAspirasi: (data: AspirasiAdminItem[]) => {
       store.setAspirasi(data);
       setAspirasiState(data);
-      triggerRevalidateAspirasi().catch(() => {});
+      triggerRevalidateAspirasi().catch(() => { });
     },
     setMerchandise: (data: MerchandiseAdminItem[]) => {
       store.setMerchandise(data);
       setMerchandiseState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncMerchandiseToDB(data).catch(() => {});
-      triggerRevalidateMerchandise().catch(() => {});
+      syncMerchandiseToDB(data).catch(() => { });
+      triggerRevalidateMerchandise().catch(() => { });
     },
     setDivisiData: (data: DivisiAdminItem[], slug?: string) => {
       store.setDivisiFull(data);
       setDivisiDataState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncDivisiToDB(data).catch(() => {});
-      triggerRevalidateDivisi(slug).catch(() => {});
+      syncDivisiToDB(data).catch(() => { });
+      triggerRevalidateDivisi(slug).catch(() => { });
     },
     setVisiMisi: (data: VisiMisiData) => {
       store.setVisiMisi(data);
       setVisiMisiState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncVisiMisiToDB(data).catch(() => {});
-      triggerRevalidateVisiMisi().catch(() => {});
+      syncVisiMisiToDB(data).catch(() => { });
+      triggerRevalidateVisiMisi().catch(() => { });
     },
     setAnggotaDivisi: (data: AnggotaDivisiItem[], slug?: string) => {
       store.setAnggotaDivisi(data);
       setAnggotaDivisiState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncAnggotaDivisiToDB(data).catch(() => {});
-      triggerRevalidateDivisi(slug).catch(() => {});
+      syncAnggotaDivisiToDB(data).catch(() => { });
+      triggerRevalidateDivisi(slug).catch(() => { });
     },
     setDivisiList: (data: string[]) => {
       store.setDivisiList(data);
       setDivisiListState(data);
-      triggerRevalidateDivisi().catch(() => {});
+      triggerRevalidateDivisi().catch(() => { });
     },
     setHeadlineWords: (data: string[]) => {
       store.setHeadlineWords(data);
       setHeadlineWordsState(data);
-      triggerRevalidateBeranda().catch(() => {});
+      triggerRevalidateBeranda().catch(() => { });
     },
     setBadgeWords: (data: string[]) => {
       store.setBadgeWords(data);
       setBadgeWordsState(data);
-      triggerRevalidateBeranda().catch(() => {});
+      triggerRevalidateBeranda().catch(() => { });
     },
     setSubheadlineWords: (data: string[]) => {
       store.setSubheadlineWords(data);
       setSubheadlineWordsState(data);
-      triggerRevalidateBeranda().catch(() => {});
+      triggerRevalidateBeranda().catch(() => { });
     },
     setHeroContent: (data: HeroContentData) => {
       store.setHeroContent(data);
       setHeroContentState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncHeroContentToDB(data).catch(() => {});
-      triggerRevalidateBeranda().catch(() => {});
+      syncHeroContentToDB(data).catch(() => { });
+      triggerRevalidateBeranda().catch(() => { });
 
       // Keep legacy arrays in sync as well
       if (data.headlineDynamicWords) {

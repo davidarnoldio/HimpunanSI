@@ -1,5 +1,5 @@
 // ============================================================
-// Data Statis Katalog Merchandise JAHIM & HIMSI UG
+// Data Statis Katalog Merchandise JAHIM & HIMASI UG
 // Update data produk di sini tanpa menyentuh komponen UI
 // ============================================================
 
@@ -37,7 +37,7 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
   {
     id: "jahim-hoodie-2025",
     name: "Hoodie JAHIM 2025",
-    tagline: "Kebanggaan HIMSI dalam setiap jahitan",
+    tagline: "Kebanggaan HIMASI dalam setiap jahitan",
     category: "apparel",
     status: "pre-order",
     price: 185000,
@@ -47,7 +47,7 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
       "https://placehold.co/600x600/1e293b/f43f5e?text=Detail+Hoodie",
     ],
     description:
-      "Hoodie premium JAHIM 2025 berbahan fleece 300gsm super lembut, cocok untuk menemani aktivitas kuliah maupun nongkrong. Desain eksklusif logo HIMSI UG di dada kiri.",
+      "Hoodie premium JAHIM 2025 berbahan fleece 300gsm super lembut, cocok untuk menemani aktivitas kuliah maupun nongkrong. Desain eksklusif logo HIMASI UG di dada kiri.",
     details: [
       "Bahan: Fleece 300gsm Anti-Pil",
       "Teknik sablon: DTF (Direct to Film) full color",
@@ -72,23 +72,23 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
     stock: 50,
   },
   {
-    id: "tshirt-himsi-edition",
-    name: "T-Shirt HIMSI Edition",
+    id: "tshirt-HIMASI-edition",
+    name: "T-Shirt HIMASI Edition",
     tagline: "Kasual, keren, dan penuh identitas",
     category: "apparel",
     status: "available",
     price: 95000,
     images: [
-      "https://placehold.co/600x600/0f172a/dc2626?text=T-Shirt+HIMSI",
+      "https://placehold.co/600x600/0f172a/dc2626?text=T-Shirt+HIMASI",
       "https://placehold.co/600x600/1e293b/f43f5e?text=Detail+T-Shirt",
     ],
     description:
-      "Kaos premium combed 30s dengan desain logo HIMSI UG modern. Nyaman dipakai sepanjang hari, cocok untuk acara formal maupun santai.",
+      "Kaos premium combed 30s dengan desain logo HIMASI UG modern. Nyaman dipakai sepanjang hari, cocok untuk acara formal maupun santai.",
     details: [
       "Bahan: Cotton Combed 30s",
       "Teknik sablon: Rubber Discharge",
       "Preshrunk (tidak menyusut)",
-      "Label jahit custom HIMSI",
+      "Label jahit custom HIMASI",
       "Tersedia warna: White, Black, Navy",
     ],
     sizes: [
@@ -100,7 +100,7 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
     ],
     colors: ["#ffffff", "#0f172a", "#1e3a5f"],
     whatsappNumber: "6281234567890",
-    tags: ["tshirt", "himsi", "apparel"],
+    tags: ["tshirt", "HIMASI", "apparel"],
     isBestSeller: true,
     stock: 120,
   },
@@ -129,17 +129,17 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
     stock: 80,
   },
   {
-    id: "lanyard-himsi",
-    name: "Lanyard Premium HIMSI",
+    id: "lanyard-HIMASI",
+    name: "Lanyard Premium HIMASI",
     tagline: "Identitas bangga di setiap langkah",
     category: "accessories",
     status: "available",
     price: 35000,
     images: [
-      "https://placehold.co/600x600/0f172a/dc2626?text=Lanyard+HIMSI",
+      "https://placehold.co/600x600/0f172a/dc2626?text=Lanyard+HIMASI",
     ],
     description:
-      "Lanyard sublimasi full-color dengan pengait stainless steel dan ring card holder. Wajib punya untuk mahasiswa HIMSI!",
+      "Lanyard sublimasi full-color dengan pengait stainless steel dan ring card holder. Wajib punya untuk mahasiswa HIMASI!",
     details: [
       "Bahan: Polyester sublimasi",
       "Lebar: 2cm",
@@ -148,7 +148,7 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
       "Termasuk card holder transparan",
     ],
     whatsappNumber: "6281234567890",
-    tags: ["lanyard", "accessories", "himsi"],
+    tags: ["lanyard", "accessories", "HIMASI"],
     stock: 200,
   },
   {
@@ -168,7 +168,7 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
       "Ukuran: A5 (14.8cm × 21cm)",
       "Kertas: 100gsm dotted, 200 halaman",
       "Jilid: Lay-flat sewn binding",
-      "Bonus: Sticker pack HIMSI",
+      "Bonus: Sticker pack HIMASI",
     ],
     badge: "Pre-Order Q3 2025",
     whatsappNumber: "6281234567890",
@@ -178,8 +178,8 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
     stock: 30,
   },
   {
-    id: "sticker-pack-himsi",
-    name: "Sticker Pack HIMSI Vol.2",
+    id: "sticker-pack-HIMASI",
+    name: "Sticker Pack HIMASI Vol.2",
     tagline: "Ekspresikan dirimu dengan stiker keren",
     category: "stationery",
     status: "available",
@@ -188,23 +188,23 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
       "https://placehold.co/600x600/0f172a/dc2626?text=Sticker+Pack",
     ],
     description:
-      "Pack berisi 12 stiker vinyl premium dengan desain karakter HIMSI, meme, dan logo. Tahan air, tahan UV, cocok untuk laptop, tumbler, dan helm.",
+      "Pack berisi 12 stiker vinyl premium dengan desain karakter HIMASI, meme, dan logo. Tahan air, tahan UV, cocok untuk laptop, tumbler, dan helm.",
     details: [
       "Isi: 12 stiker per pack",
       "Bahan: Vinyl waterproof + UV resist",
       "Ukuran bervariasi: 5–10cm",
       "Finishing: Glossy & Matte mix",
-      "Desain: Karakter, Quote, Logo HIMSI",
+      "Desain: Karakter, Quote, Logo HIMASI",
     ],
     whatsappNumber: "6281234567890",
-    tags: ["sticker", "stationery", "himsi"],
+    tags: ["sticker", "stationery", "HIMASI"],
     isBestSeller: true,
     stock: 300,
   },
   {
     id: "bundle-starter-pack",
-    name: "Starter Pack HIMSI Bundle",
-    tagline: "Paket lengkap untuk mahasiswa HIMSI baru",
+    name: "Starter Pack HIMASI Bundle",
+    tagline: "Paket lengkap untuk mahasiswa HIMASI baru",
     category: "bundle",
     status: "pre-order",
     price: 280000,
@@ -213,14 +213,14 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
       "https://placehold.co/600x600/0f172a/dc2626?text=Bundle+Starter",
     ],
     description:
-      "Bundle eksklusif berisi T-Shirt, Totebag, Lanyard, Notebook, dan Sticker Pack HIMSI. Hemat 22% dibanding beli satuan. Pilihan terbaik untuk maba HIMSI!",
+      "Bundle eksklusif berisi T-Shirt, Totebag, Lanyard, Notebook, dan Sticker Pack HIMASI. Hemat 22% dibanding beli satuan. Pilihan terbaik untuk maba HIMASI!",
     details: [
       "Isi: T-Shirt (pilih ukuran & warna)",
       "Isi: Totebag Kanvas JAHIM",
-      "Isi: Lanyard Premium HIMSI",
+      "Isi: Lanyard Premium HIMASI",
       "Isi: Notebook JAHIM A5",
       "Isi: Sticker Pack Vol.2",
-      "Gratis: Goodie bag eksklusif HIMSI",
+      "Gratis: Goodie bag eksklusif HIMASI",
     ],
     sizes: [
       { label: "S", available: true },
@@ -232,13 +232,13 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
     badge: "Hemat 22%",
     whatsappNumber: "6281234567890",
     orderFormUrl: "https://forms.gle/exampleBundleStarter",
-    tags: ["bundle", "starter", "himsi", "maba"],
+    tags: ["bundle", "starter", "HIMASI", "maba"],
     isNew: true,
     stock: 25,
   },
   {
-    id: "jacket-himsi-varsity",
-    name: "Jacket Varsity HIMSI",
+    id: "jacket-HIMASI-varsity",
+    name: "Jacket Varsity HIMASI",
     tagline: "Campus style yang tidak pernah lekang oleh waktu",
     category: "apparel",
     status: "coming-soon",
@@ -247,17 +247,17 @@ export const MERCHANDISE_ITEMS: MerchandiseItem[] = [
       "https://placehold.co/600x600/0f172a/dc2626?text=Jacket+Varsity",
     ],
     description:
-      "Jacket varsity premium dengan material wol di badan dan kulit PU di lengan. Desain eksklusif kolaborasi HIMSI × desainer lokal Gunadarma.",
+      "Jacket varsity premium dengan material wol di badan dan kulit PU di lengan. Desain eksklusif kolaborasi HIMASI × desainer lokal Gunadarma.",
     details: [
       "Bahan badan: Wool 80% + Polyester 20%",
       "Bahan lengan: PU Leather premium",
-      "Bordir: Logo HIMSI 3D embroidery",
+      "Bordir: Logo HIMASI 3D embroidery",
       "Kancing: Custom snap button",
       "Tersedia: M, L, XL",
     ],
     badge: "Coming Soon",
     whatsappNumber: "6281234567890",
-    tags: ["jacket", "varsity", "apparel", "himsi"],
+    tags: ["jacket", "varsity", "apparel", "HIMASI"],
     isNew: true,
   },
 ];

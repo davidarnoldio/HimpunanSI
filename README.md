@@ -1,6 +1,6 @@
-# 🚀 HIMSI UG — Official Website & Full CMS Portal
+# 🚀 HIMASI UG — Official Website & Full CMS Portal
 
-Selamat datang di repository resmi **Website Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma (HIMSI UG)**!
+Selamat datang di repository resmi **Website Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma (HIMASI UG)**!
 
 Website ini dibangun menggunakan **Next.js 16 (App Router)** dengan arsitektur **Pure Server Components (RSC)** dan **Client Components** yang terpisah secara ketat, terintegrasi 100% dengan **Supabase Database (PostgreSQL)** via REST API, serta dilindungi oleh sistem keamanan berlapis **Upstash Redis Rate Limiting**, **Cloudflare Turnstile Anti-Spam**, dan **Auth Guard Middleware**.
 
@@ -27,7 +27,7 @@ Website ini dibangun menggunakan **Next.js 16 (App Router)** dengan arsitektur *
 - **Realtime DB Sync:** Aspirasi yang dikirimkan publik disimpan secara aman di database Supabase dan hanya dapat dipantau & dikelola oleh pengurus di Admin Panel CMS.
 
 ### 5.  Branding & Navbar Modern (`/`)
-- **Branding Logo Terbaru:** Menggunakan `himsigundar.png` pada brand logo kiri dan logo Universitas Gunadarma (`logogundar.png`) pada bagian kanan navbar.
+- **Branding Logo Terbaru:** Menggunakan `HIMASIgundar.png` pada brand logo kiri dan logo Universitas Gunadarma (`logogundar.png`) pada bagian kanan navbar.
 - **Dynamic Hero Section:** Teks running animasi (*FlipWords*), subheadline, badge, dan 4 kartu statistik pencapaian dikelola 100% dari Admin Panel CMS.
 - **Background Matrix:** Latar visual teks kode/binary samar (`HackerMatrixBackground`) berjalan via animasi CSS standar HTML5 — kompatibel penuh dengan Next.js App Router (tanpa `<style jsx>`).
 - **Struktur Pimpinan Kabinet & Divisi:** Menampilkan jajaran BPH dan divisi secara dinamis langsung dari database.
@@ -84,7 +84,7 @@ UPSTASH_REDIS_REST_URL="https://your-redis-url.upstash.io"
 UPSTASH_REDIS_REST_TOKEN="your-redis-token"
 
 # Admin Credentials Fallback (Optional)
-NEXT_PUBLIC_ADMIN_EMAIL="admin@himsiug.ac.id"
+NEXT_PUBLIC_ADMIN_EMAIL="admin@HIMASIug.ac.id"
 NEXT_PUBLIC_ADMIN_PASSWORD="your-admin-password"
 ```
 
@@ -96,8 +96,8 @@ NEXT_PUBLIC_ADMIN_PASSWORD="your-admin-password"
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-org/himsi-web.git
-cd himsi-web
+git clone https://github.com/your-org/HIMASI-web.git
+cd HIMASI-web
 
 # 2. Install dependencies
 npm install
@@ -164,4 +164,4 @@ npm run start
 
 ---
 
-© 2026 HIMSI UG — Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma
+© 2026 HIMASI UG — Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma

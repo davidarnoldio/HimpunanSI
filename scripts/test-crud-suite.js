@@ -1,5 +1,5 @@
 /**
- * TDD CRUD Evaluation Suite — HIMSI UG CMS & Database Layer
+ * TDD CRUD Evaluation Suite — HIMASI UG CMS & Database Layer
  * ─────────────────────────────────────────────────────────────────────────────
  * Automated test suite evaluating CRUD capabilities and database consistency
  * across all 7 CMS feature modules:
@@ -38,7 +38,7 @@ function assert(condition, message) {
 
 async function runTddSuite() {
   console.log('\n================================================================');
-  console.log('🚀 RUNNING HIMSI UG CMS — AUTOMATED TDD EVALUATION SUITE');
+  console.log('🚀 RUNNING HIMASI UG CMS — AUTOMATED TDD EVALUATION SUITE');
   console.log('================================================================\n');
 
   // ───────────────────────────────────────────────────────────────────────────
@@ -185,7 +185,7 @@ async function runTddSuite() {
   // TEST 4: SETTINGS BLOBS (MERCHANDISE, DIVISI, VISI-MISI, HERO)
   // ───────────────────────────────────────────────────────────────────────────
   console.log('📌 Module 4: CMS Settings Blobs (Merchandise, Divisi, VisiMisi, Hero)');
-  
+
   const testSettingsKey = 'cms_tdd_test_key';
   const testPayload = { test: true, timestamp: Date.now() };
 

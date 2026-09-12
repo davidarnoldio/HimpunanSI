@@ -197,7 +197,7 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
             KELOLA PIMPINAN BPH
           </h1>
           <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
-            Ketua, Wakil, Sekretaris & Bendahara Umum HIMSI UG — tersinkronisasi langsung ke Beranda Utama.
+            Ketua, Wakil, Sekretaris & Bendahara Umum HIMASI UG — tersinkronisasi langsung ke Beranda Utama.
           </p>
         </div>
         <button
@@ -411,7 +411,7 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
                       rows={2}
                       value={formData.visiMotto || ""}
                       onChange={(e) => setFormData({ ...formData, visiMotto: e.target.value })}
-                      placeholder="e.g. Bersatu, Bergerak, Berdampak untuk HIMSI UG..."
+                      placeholder="e.g. Bersatu, Bergerak, Berdampak untuk HIMASI UG..."
                       className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-medium text-sm resize-none"
                     />
                   </div>

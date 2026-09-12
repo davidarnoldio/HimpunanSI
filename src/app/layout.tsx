@@ -30,22 +30,22 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: "HIMSI UG — Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma",
+  title: "HIMASI UG — Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma",
   description:
-    "Website resmi HIMSI UG. Temukan merchandise JAHIM, info kepanitiaan, aspirasi mahasiswa, dan program kerja Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma.",
+    "Website resmi HIMASI UG. Temukan merchandise JAHIM, info kepanitiaan, aspirasi mahasiswa, dan program kerja Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma.",
   keywords: [
-    "HIMSI UG",
+    "HIMASI UG",
     "Himpunan Mahasiswa Sistem Informasi",
     "Universitas Gunadarma",
     "JAHIM",
-    "merchandise HIMSI",
-    "Bank Soal HIMSI",
+    "merchandise HIMASI",
+    "Bank Soal HIMASI",
   ],
   openGraph: {
-    title: "HIMSI UG — Official Website",
-    description: "Merchandise, kepengurusan, dan aspirasi HIMSI Universitas Gunadarma",
+    title: "HIMASI UG — Official Website",
+    description: "Merchandise, kepengurusan, dan aspirasi HIMASI Universitas Gunadarma",
     type: "website",
-    siteName: "HIMSI UG",
+    siteName: "HIMASI UG",
   },
 };
 

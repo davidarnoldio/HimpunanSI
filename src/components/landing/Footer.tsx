@@ -53,7 +53,7 @@ export function Footer() {
     <footer
       id="footer"
       className="relative bg-slate-100 dark:bg-black text-slate-950 dark:text-white border-t-2 border-slate-950 dark:border-white/20 transition-colors duration-300"
-      aria-label="Footer HIMSI UG"
+      aria-label="Footer HIMASI UG"
     >
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Main Grid 2-Kolom */}
@@ -64,7 +64,7 @@ export function Footer() {
               <BrandLogo size="md" />
               <div className="flex flex-col leading-tight">
                 <span className="text-slate-950 dark:text-white font-black font-heading text-xl uppercase tracking-wider">
-                  HIMSI UG
+                  HIMASI UG
                 </span>
                 <span className="text-slate-600 dark:text-slate-400 text-xs font-mono font-bold uppercase tracking-widest">
                   Himpunan Mahasiswa Sistem Informasi
@@ -91,7 +91,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-10 h-10 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 flex items-center justify-center hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] hover:text-white dark:hover:text-white transition-colors"
-                      aria-label={`HIMSI UG di ${s.label}`}
+                      aria-label={`HIMASI UG di ${s.label}`}
                     >
                       <Icon size={18} />
                     </a>
@@ -149,14 +149,14 @@ export function Footer() {
         {/* Giant Statement Typography */}
         <div className="py-8 my-4 border-y border-slate-950/20 dark:border-white/20 text-center overflow-hidden">
           <span className="text-4xl sm:text-6xl lg:text-8xl font-black font-heading tracking-tighter text-slate-950/90 dark:text-white/90 select-none block uppercase">
-            HIMSI GUNADARMA
+            HIMASI GUNADARMA
           </span>
         </div>
 
         {/* Bottom Bar: Copyright */}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">
           <p className="text-center sm:text-left">
-            © 2026 HIMSI UNIVERSITAS GUNADARMA. ALL RIGHTS RESERVED.
+            © 2026 HIMASI UNIVERSITAS GUNADARMA. ALL RIGHTS RESERVED.
           </p>
         </div>
       </div>

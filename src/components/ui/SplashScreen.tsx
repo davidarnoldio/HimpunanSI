@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
-const emptySubscribe = () => () => {};
+const emptySubscribe = () => () => { };
 
 export function SplashScreen() {
   const isMounted = useSyncExternalStore(
@@ -20,7 +20,7 @@ export function SplashScreen() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const alreadySeen = sessionStorage.getItem("himsi_splash_shown") === "true";
+    const alreadySeen = sessionStorage.getItem("HIMASI_splash_shown") === "true";
     if (!alreadySeen) {
       document.body.style.overflow = "hidden";
 
@@ -36,7 +36,7 @@ export function SplashScreen() {
       }, 100);
 
       const timer = setTimeout(() => {
-        sessionStorage.setItem("himsi_splash_shown", "true");
+        sessionStorage.setItem("HIMASI_splash_shown", "true");
         setDismissed(true);
         document.body.style.overflow = "";
       }, 2400);
@@ -51,7 +51,7 @@ export function SplashScreen() {
 
   const hasSeenSplash =
     isMounted && typeof window !== "undefined"
-      ? sessionStorage.getItem("himsi_splash_shown") === "true"
+      ? sessionStorage.getItem("HIMASI_splash_shown") === "true"
       : true;
 
   const isVisible = isMounted && !hasSeenSplash && !dismissed;
@@ -89,7 +89,7 @@ export function SplashScreen() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#E31B3B] animate-pulse" />
               <span className="font-bold text-white uppercase tracking-wider">
-                SYS // HIMSI_UG_PORTAL
+                SYS // HIMASI_UG_PORTAL
               </span>
             </div>
             <span className="hidden sm:inline font-mono tracking-widest text-slate-500">
@@ -169,7 +169,7 @@ export function SplashScreen() {
             className="w-full max-w-5xl flex items-center justify-between z-10 font-mono text-[11px] text-slate-500 border-t border-white/10 pt-4"
           >
             <span>KABINET FORMASI • PERIODE 2025/2026</span>
-            <span>VERIFIED PORTAL • HIMSI UG</span>
+            <span>VERIFIED PORTAL • HIMASI UG</span>
           </motion.div>
         </motion.div>
       )}

@@ -19,7 +19,7 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
   const [misiList, setMisiList] = useState<string[]>(activeVisiMisi?.misi || []);
   const [pilarText, setPilarText] = useState(
     activeVisiMisi?.pilar ||
-      "Setiap gerakan HIMSI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."
+    "Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."
   );
   const [newMisi, setNewMisi] = useState("");
   const [toastMsg, setToastMsg] = useState("");
@@ -84,7 +84,7 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
         <div className="space-y-1">
           <h1 className="text-xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
             <Target className="text-[#C8102E] dark:text-[#E31B3B]" size={22} />
-            PENGELOLAAN VISI, MISI & PILAR KABINET HIMSI UG
+            PENGELOLAAN VISI, MISI & PILAR KABINET HIMASI UG
           </h1>
           <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
             Edit teks Visi, Misi & Pilar Himpunan secara realtime untuk ditampilkan pada Manifesto Kabinet (Tersinkronisasi 100% dengan Supabase DB).
@@ -123,7 +123,7 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
                   KELOLA VISI HIMPUNAN
                 </h2>
                 <p className="text-[11px] font-mono font-bold text-slate-500">
-                  Tuliskan pernyataan Visi utama HIMSI UG
+                  Tuliskan pernyataan Visi utama HIMASI UG
                 </p>
               </div>
             </div>
@@ -233,7 +233,7 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
               rows={3}
               value={pilarText}
               onChange={(e) => setPilarText(e.target.value)}
-              placeholder="Setiap gerakan HIMSI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."
+              placeholder="Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."
               className="w-full p-4 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs sm:text-sm font-medium text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] leading-relaxed resize-none font-sans"
             />
           </div>

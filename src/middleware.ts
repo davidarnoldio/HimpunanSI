@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   // ─── ADMIN AUTH GUARD (hanya untuk rute /admin/*) ───────────────────────
   if (path.startsWith("/admin")) {
     const session =
-      request.cookies.get("himsi_admin_session")?.value ||
+      request.cookies.get("HIMASI_admin_session")?.value ||
       request.cookies.get("sb-access-token")?.value ||
       request.cookies.get("admin_session")?.value;
 

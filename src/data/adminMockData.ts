@@ -95,14 +95,14 @@ export const INITIAL_MERCHANDISE: MerchandiseAdminItem[] = [];
 export const INITIAL_DIVISI_FULL: DivisiAdminItem[] = [];
 
 export const INITIAL_VISI_MISI: VisiMisiData = {
-  visi: "Mewujudkan Himpunan Mahasiswa Sistem Informasi (HIMSI UG) yang solid, inovatif, adaptif, dan berdaya saing global serta menjadi pusat keunggulan pengembangan potensi mahasiswa Sistem Informasi Universitas Gunadarma.",
+  visi: "Mewujudkan Himpunan Mahasiswa Sistem Informasi (HIMASI UG) yang solid, inovatif, adaptif, dan berdaya saing global serta menjadi pusat keunggulan pengembangan potensi mahasiswa Sistem Informasi Universitas Gunadarma.",
   misi: [
     "Mengembangkan iklim akademik & non-akademik yang komunikatif, inklusif, dan berlandaskan kekeluargaan.",
     "Menyelenggarakan program pelatihan keterampilan digital, leadership, dan teknologi terkini secara berkelanjutan.",
     "Membangun jejaring kolaborasi strategis dengan dunia industri, alumni, dan organisasi eksternal kampus.",
     "Mengoptimalkan tata kelola himpunan berbasis teknologi digital yang transparan dan akuntabel.",
   ],
-  pilar: "Setiap gerakan HIMSI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik.",
+  pilar: "Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik.",
 };
 
 export const INITIAL_ANGGOTA_DIVISI: AnggotaDivisiItem[] = [];
@@ -131,7 +131,7 @@ export const INITIAL_HERO_CONTENT: HeroContentData = {
   headlinePrefix: "Wadah ",
   headlineDynamicWords: ["Kolaborasi", "Aspirasi", "Kreativitas", "Kepemimpinan"],
   headlineSuffix: " Mahasiswa Sistem Informasi",
-  descriptionBefore: "HIMSI UG adalah gerakan mahasiswa yang ",
+  descriptionBefore: "HIMASI UG adalah gerakan mahasiswa yang ",
   descriptionDynamicWords: ["Proaktif", "Inklusif", "Solutif", "Berdampak", "Visioner"],
   descriptionAfter:
     " dalam menggerakkan potensi mahasiswa Sistem Informasi Universitas Gunadarma melalui program kerja unggulan & inovasi digital.",

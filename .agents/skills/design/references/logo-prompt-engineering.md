@@ -42,7 +42,7 @@ clean sans-serif, circuit-like, data visualization
 
 ### Playful/Fun
 ```
-playful, fun, colorful, friendly, approachable, cheerful, whimsical,
+playful, fun, colorful, friendly, approachable, cheerful, wHIMASIcal,
 bouncy, rounded shapes, bright colors, cartoon-like, energetic,
 bubbly, hand-drawn elements
 ```

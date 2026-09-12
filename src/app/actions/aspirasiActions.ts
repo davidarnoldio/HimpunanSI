@@ -20,14 +20,14 @@ const hasRedisConfig =
 
 const ratelimit = hasRedisConfig
   ? new Ratelimit({
-      redis: new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL!,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-      }),
-      limiter: Ratelimit.slidingWindow(3, "1 m"),
-      analytics: true,
-      prefix: "himsi_ratelimit_aspirasi",
-    })
+    redis: new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    }),
+    limiter: Ratelimit.slidingWindow(3, "1 m"),
+    analytics: true,
+    prefix: "HIMASI_ratelimit_aspirasi",
+  })
   : null; // Redis tidak dikonfigurasi — rate limiting di-skip (dev mode)
 // ─────────────────────────────────────────────────────────────────────────────
 

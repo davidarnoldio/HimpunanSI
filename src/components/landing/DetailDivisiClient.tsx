@@ -84,7 +84,7 @@ export function DetailDivisiClient({ targetDivisi, members }: DetailDivisiClient
         >
           <span className="inline-flex items-center gap-2 px-3 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-mono font-bold tracking-widest uppercase">
             <Sparkles size={12} />
-            {targetDivisi ? targetDivisi.singkatan : "DIVISI HIMSI"}
+            {targetDivisi ? targetDivisi.singkatan : "DIVISI HIMASI"}
           </span>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tighter uppercase text-slate-950 dark:text-white">
@@ -96,7 +96,7 @@ export function DetailDivisiClient({ targetDivisi, members }: DetailDivisiClient
               text={
                 targetDivisi
                   ? targetDivisi.deskripsi
-                  : "Mengenal para pengurus dan staff yang mengabdi pada divisi ini untuk kemajuan HIMSI UG."
+                  : "Mengenal para pengurus dan staff yang mengabdi pada divisi ini untuk kemajuan HIMASI UG."
               }
               delay={0.1}
             />

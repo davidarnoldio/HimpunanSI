@@ -80,7 +80,7 @@ export function AdminDashboardClient({
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#C8102E] text-white text-xs font-mono font-bold uppercase tracking-widest border border-slate-950">
-              🚀 HIMSI CMS CONTROL PANEL
+              🚀 HIMASI CMS CONTROL PANEL
             </div>
             <h1 className="text-2xl sm:text-4xl font-black font-heading tracking-tight uppercase">
               SELAMAT DATANG DI DASHBOARD ADMIN!

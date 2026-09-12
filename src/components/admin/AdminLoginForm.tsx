@@ -9,8 +9,8 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@himsiug.ac.id";
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "himsi2025!";
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@HIMASIug.ac.id";
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "HIMASI2025!";
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export function AdminLoginForm() {
       }
 
       document.cookie =
-        "himsi_admin_session=authenticated; path=/; max-age=86400; SameSite=Lax";
+        "HIMASI_admin_session=authenticated; path=/; max-age=86400; SameSite=Lax";
 
       router.push("/admin/dashboard");
     } catch (err) {
@@ -75,7 +75,7 @@ export function AdminLoginForm() {
                 PORTAL AUTENTIKASI CMS ADMIN
               </div>
               <p className="text-xs text-slate-700 dark:text-slate-300 mt-2 font-medium">
-                Masuk untuk mengelola event, merchandise, pengurus, & aspirasi HIMSI UG.
+                Masuk untuk mengelola event, merchandise, pengurus, & aspirasi HIMASI UG.
               </p>
             </div>
           </div>

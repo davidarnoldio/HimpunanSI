@@ -44,7 +44,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
     <section
       id="beranda"
       className="relative min-h-screen flex flex-col justify-center items-center bg-white dark:bg-black text-slate-950 dark:text-white pt-28 pb-16 transition-colors duration-300 border-b-2 border-slate-950 dark:border-white/20 overflow-hidden"
-      aria-label="Beranda HIMSI UG"
+      aria-label="Beranda HIMASI UG"
     >
       <HackerMatrixBackground />
 
@@ -85,7 +85,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             variants={itemVariants}
             className="text-slate-700 dark:text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed font-medium"
           >
-            {content.descriptionBefore || "HIMSI UG adalah gerakan mahasiswa yang "}
+            {content.descriptionBefore || "HIMASI UG adalah gerakan mahasiswa yang "}
             <FlipWords
               words={descriptionWords}
               duration={2000}
@@ -154,7 +154,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             {/* Editorial Photograph */}
             <img
               src={content.heroImageUrl || "/hero-editorial.jpg"}
-              alt="Indonesian Information Systems Students Collaborating — HIMSI UG"
+              alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
 
@@ -169,7 +169,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
                   INFORMATION SYSTEMS
                 </div>
                 <div className="text-[10px] uppercase tracking-widest text-slate-300 font-mono font-bold">
-                  STUDENT COMMUNITY • HIMSI UG
+                  STUDENT COMMUNITY • HIMASI UG
                 </div>
               </div>
               <span className="px-2.5 py-1 bg-[#C8102E] text-white font-mono font-bold text-[10px] uppercase tracking-widest border border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">

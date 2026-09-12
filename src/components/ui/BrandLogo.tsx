@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export function BrandLogo({ size = "md", className = "" }: { size?: "sm" | "md" | "lg"; className?: string }) {
-  const [himsiError, setHimsiError] = useState(false);
+  const [HIMASIError, setHIMASIError] = useState(false);
   const [gundarError, setGundarError] = useState(false);
 
   const dimMap = {
@@ -16,14 +16,14 @@ export function BrandLogo({ size = "md", className = "" }: { size?: "sm" | "md" 
 
   return (
     <div className={`flex items-center gap-2 shrink-0 ${className}`}>
-      {/* HIMSI Logo */}
-      {!himsiError ? (
+      {/* HIMASI Logo */}
+      {!HIMASIError ? (
         <div className={`relative ${currentHeight} w-auto flex items-center justify-center`}>
           <img
             src="/himsigundar.png"
-            alt="Logo HIMSI UG"
+            alt="Logo HIMASI UG"
             className={`${currentHeight} w-auto object-contain drop-shadow-md`}
-            onError={() => setHimsiError(true)}
+            onError={() => setHIMASIError(true)}
           />
         </div>
       ) : (

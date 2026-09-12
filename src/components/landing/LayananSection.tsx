@@ -18,7 +18,7 @@ export function LayananSection() {
     <section
       id="layanan"
       className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black text-slate-950 dark:text-slate-100 border-t-2 border-slate-950 dark:border-white/20 scroll-mt-28"
-      aria-label="Layanan dan akses cepat mahasiswa HIMSI UG"
+      aria-label="Layanan dan akses cepat mahasiswa HIMASI UG"
     >
       <div className="relative max-w-7xl mx-auto space-y-16">
         {/* Header */}
@@ -106,13 +106,13 @@ export function LayananSection() {
                 QUICK LINKS & <span className="text-[#C8102E] dark:text-[#E31B3B]">ASPIRASI MAHASISWA</span>
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base max-w-xl font-medium">
-                Punya masukan, ide, atau kendala akademik? Sampaikan suara kamu secara langsung dan ter-rekam melalui Portal Aspirasi HIMSI UG.
+                Punya masukan, ide, atau kendala akademik? Sampaikan suara kamu secara langsung dan ter-rekam melalui Portal Aspirasi HIMASI UG.
               </p>
             </div>
             <a
               href="/aspirasi"
               className="inline-flex items-center gap-2 px-8 py-4 bg-[#C8102E] dark:bg-[#E31B3B] text-white font-black font-mono text-xs uppercase tracking-widest hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950 transition-colors border-2 border-slate-950 dark:border-transparent"
-              aria-label="Buka portal Aspirasi HIMSI UG"
+              aria-label="Buka portal Aspirasi HIMASI UG"
             >
               KIRIM ASPIRASI <ArrowRight size={16} />
             </a>

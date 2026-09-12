@@ -35,7 +35,7 @@ export async function revalidateRoutes(paths: string[]) {
 }
 
 /**
- * Specialized Server Actions for each entity in HIMSI CMS
+ * Specialized Server Actions for each entity in HIMASI CMS
  */
 export async function triggerRevalidateDivisi(slug?: string) {
   try {

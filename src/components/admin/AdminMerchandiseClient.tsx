@@ -152,7 +152,7 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
         <div>
           <h1 className="text-2xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
             <ShoppingBag size={24} className="text-[#C8102E] dark:text-[#E31B3B]" />
-            KELOLA OFFICIAL MERCHANDISE HIMSI
+            KELOLA OFFICIAL MERCHANDISE HIMASI
           </h1>
           <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
             Atur katalog produk, harga, stok, dan nomor WA pemesanan (Tersinkronisasi 100% dengan Supabase DB & Katalog Publik).
@@ -184,11 +184,10 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-black font-mono uppercase border-2 border-slate-950 cursor-pointer transition-colors ${
-                filterCategory === cat
+              className={`px-3 py-1.5 text-xs font-black font-mono uppercase border-2 border-slate-950 cursor-pointer transition-colors ${filterCategory === cat
                   ? "bg-[#C8102E] text-white"
                   : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -311,7 +310,7 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g. Kaos Polo Official HIMSI UG 2025"
+                    placeholder="e.g. Kaos Polo Official HIMASI UG 2025"
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                   />
                 </div>

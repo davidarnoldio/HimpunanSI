@@ -8,7 +8,7 @@ import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
 export function AspirasiClient() {
   const MARQUEE_ITEMS = [
-    "HIMSI UG",
+    "HIMASI UG",
     "SUARA MAHASISWA SISTEM INFORMASI",
     "TRANSPARAN & INOVATIF",
     "UNIVERSITAS GUNADARMA",
@@ -66,26 +66,26 @@ export function AspirasiClient() {
           >
             <FormAspirasi />
           </motion.div>
-
-          {/* MARQUEE LIVE TEXT (BERADA DI BAWAH FORM ASPIRASI) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="w-full overflow-hidden py-3.5 bg-[#C8102E] text-white border-y-2 border-slate-950 dark:border-white/20 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
-          >
-            <div className="flex animate-marquee whitespace-nowrap gap-8 select-none">
-              {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3 text-xs sm:text-sm font-black font-mono text-white tracking-widest uppercase">
-                  <Flame size={14} className="text-white animate-pulse" />
-                  <span>{item}</span>
-                  <span className="text-white/40">•</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
         </div>
+
+        {/* MARQUEE LIVE TEXT (FULL WIDTH EDGE TO EDGE) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="w-full overflow-hidden py-3.5 mt-12 bg-[#C8102E] text-white border-y-2 border-slate-950 dark:border-white/20 shadow-[0px_4px_0px_0px_rgba(10,10,10,1)] relative z-10"
+        >
+          <div className="flex animate-marquee whitespace-nowrap gap-8 select-none">
+            {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
+              <div key={idx} className="flex items-center gap-3 text-xs sm:text-sm font-black font-mono text-white tracking-widest uppercase">
+                <Flame size={14} className="text-white animate-pulse" />
+                <span>{item}</span>
+                <span className="text-white/40">•</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </main>
 
       <Footer />

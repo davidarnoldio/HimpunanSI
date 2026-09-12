@@ -65,11 +65,10 @@ function ImageGallery({ images, name }: { images: string[]; name: string }) {
             <button
               key={i}
               onClick={() => setActiveIdx(i)}
-              className={`relative flex-1 aspect-square rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                i === activeIdx
+              className={`relative flex-1 aspect-square rounded-lg overflow-hidden border-2 transition-all duration-200 ${i === activeIdx
                   ? "border-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)]"
                   : "border-slate-700/60 hover:border-red-500/40"
-              }`}
+                }`}
               aria-label={`Lihat gambar ${i + 1}`}
             >
               <Image
@@ -109,13 +108,12 @@ function SizeSelector({
             key={label}
             disabled={!available}
             onClick={() => available && onSelect(label)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-200 ${
-              !available
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-200 ${!available
                 ? "opacity-40 cursor-not-allowed border-slate-700 text-slate-500 line-through"
                 : selected === label
-                ? "border-red-500 bg-red-500/20 text-red-400 shadow-[0_0_10px_rgba(220,38,38,0.3)]"
-                : "border-slate-700 text-slate-300 hover:border-red-500/50 hover:text-white"
-            }`}
+                  ? "border-red-500 bg-red-500/20 text-red-400 shadow-[0_0_10px_rgba(220,38,38,0.3)]"
+                  : "border-slate-700 text-slate-300 hover:border-red-500/50 hover:text-white"
+              }`}
           >
             {label}
           </button>
@@ -182,7 +180,7 @@ export function MerchandiseModal({ item, onClose }: MerchandiseModalProps) {
     : null;
 
   const waMessage = encodeURIComponent(
-    `Halo HIMSI UG! Saya ingin memesan *${item.name}*${selectedSize ? ` ukuran *${selectedSize}*` : ""}.\nMohon info lebih lanjut mengenai ketersediaan dan cara pembayaran. Terima kasih! 🙏`
+    `Halo HIMASI UG! Saya ingin memesan *${item.name}*${selectedSize ? ` ukuran *${selectedSize}*` : ""}.\nMohon info lebih lanjut mengenai ketersediaan dan cara pembayaran. Terima kasih! 🙏`
   );
   const waUrl = `https://wa.me/${item.whatsappNumber}?text=${waMessage}`;
 
