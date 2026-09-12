@@ -100,7 +100,7 @@ export function FormAspirasi() {
             <h2 className="font-black font-heading text-lg uppercase tracking-tight text-slate-950 dark:text-white">
               FORMULIR ASPIRASI
             </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400 font-mono font-bold">LANGSUNG TERSAMPAYKAN SECARA RAHASIA</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 font-mono font-bold">LANGSUNG TERSAMPAIKAN SECARA RAHASIA</p>
           </div>
         </div>
 
@@ -153,11 +153,10 @@ export function FormAspirasi() {
                 key={cat}
                 type="button"
                 onClick={() => setKategori(cat)}
-                className={`px-3.5 py-1.5 text-xs font-mono font-black uppercase tracking-wider border-2 border-slate-950 transition-colors ${
-                  kategori === cat
+                className={`px-3.5 py-1.5 text-xs font-mono font-black uppercase tracking-wider border-2 border-slate-950 transition-colors ${kategori === cat
                     ? "bg-[#C8102E] text-white"
                     : "bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -184,9 +183,8 @@ export function FormAspirasi() {
           <button
             type="button"
             onClick={handleToggleAnonim}
-            className={`w-12 h-6 border-2 border-slate-950 transition-colors p-0.5 cursor-pointer flex items-center ${
-              isAnonim ? "bg-[#C8102E] justify-end" : "bg-slate-300 dark:bg-slate-800 justify-start"
-            }`}
+            className={`w-12 h-6 border-2 border-slate-950 transition-colors p-0.5 cursor-pointer flex items-center ${isAnonim ? "bg-[#C8102E] justify-end" : "bg-slate-300 dark:bg-slate-800 justify-start"
+              }`}
           >
             <div className="w-4 h-4 bg-slate-950 dark:bg-white" />
           </button>

@@ -254,7 +254,7 @@ export function KabinetSection({
                 PILAR KABINET
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-medium">
-                Setiap gerakan HIMSI berpusat pada 3 pilar: <strong className="text-slate-950 dark:text-white font-bold">Inovasi Digital</strong>, <strong className="text-slate-950 dark:text-white font-bold">Kolaborasi Strategis</strong>, dan <strong className="text-slate-950 dark:text-white font-bold">Integritas Akademik</strong>.
+                <LiveText text={visiMisi?.pilar || INITIAL_VISI_MISI.pilar || "Setiap gerakan HIMSI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."} />
               </p>
             </motion.div>
           </div>

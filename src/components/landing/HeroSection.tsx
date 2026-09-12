@@ -6,6 +6,7 @@ import type { HeroContentData } from "@/data/adminMockData";
 import { INITIAL_HERO_CONTENT } from "@/data/adminMockData";
 import { FlipWords } from "@/components/ui/FlipWords";
 import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
+import { useSharedStore } from "@/lib/sharedStore";
 
 const containerVariants = {
   hidden: {},
@@ -18,7 +19,8 @@ const itemVariants = {
 };
 
 export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) {
-  const content = heroContent || INITIAL_HERO_CONTENT;
+  const { heroContent: sharedHero } = useSharedStore();
+  const content = sharedHero || heroContent || INITIAL_HERO_CONTENT;
 
   const badgeWords =
     content.badgeDynamicWords && content.badgeDynamicWords.length > 0
@@ -120,7 +122,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="pt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 w-full"
+            className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 w-full"
           >
             {statsList.map((stat, idx) => (
               <div
@@ -138,31 +140,40 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
           </motion.div>
         </motion.div>
 
-        {/* Right Column (5 cols): Visual Showcase Card with foto.jpg */}
+        {/* Right Column (5 cols): Editorial Photography Visual Anchor */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="lg:col-span-5 relative"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="lg:col-span-5 relative flex items-center justify-center"
         >
-          <div className="relative aspect-[4/4.5] border-2 border-slate-950 dark:border-[#E31B3B]/60 dark:group-hover:border-[#E31B3B] bg-slate-950 overflow-hidden group shadow-[8px_8px_0px_0px_rgba(200,16,46,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(227,27,59,0.3)]">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[4/3.2] border-2 border-slate-950 dark:border-white/30 bg-slate-950 overflow-hidden shadow-[10px_10px_0px_0px_rgba(200,16,46,1)] dark:shadow-[10px_10px_0px_0px_rgba(227,27,59,0.85)] transition-all duration-300 group">
+            {/* Top HMSI Red Accent Line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[#C8102E] dark:bg-[#E31B3B] z-20" />
+
+            {/* Editorial Photograph */}
             <img
-              src="/foto.jpg"
-              alt="HIMSI UG — Student Community"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src={content.heroImageUrl || "/hero-editorial.jpg"}
+              alt="Indonesian Information Systems Students Collaborating — HIMSI UG"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-            <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10 gap-2">
-              <div>
-                <div className="font-heading font-black text-3xl text-[#e31b3b] tracking-tight">
-                  2025/2026
+
+            {/* Cinematic Vignette */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+
+            {/* Editorial Tag Overlay */}
+            <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10 gap-2">
+              <div className="space-y-0.5">
+                <div className="font-heading font-black text-xl text-white tracking-tight flex items-center gap-2">
+                  <span className="w-2 h-2 bg-[#C8102E] dark:bg-[#E31B3B] inline-block" />
+                  INFORMATION SYSTEMS
                 </div>
-                <div className="text-[11px] uppercase tracking-widest text-white font-mono font-bold">
-                  KABINET FORMASI • HIMSI UG
+                <div className="text-[10px] uppercase tracking-widest text-slate-300 font-mono font-bold">
+                  STUDENT COMMUNITY • HIMSI UG
                 </div>
               </div>
-              <span className="px-3 py-1 bg-[#c8102e] text-white font-mono font-bold text-[10px] uppercase tracking-widest border border-slate-950">
-                VERIFIED
+              <span className="px-2.5 py-1 bg-[#C8102E] text-white font-mono font-bold text-[10px] uppercase tracking-widest border border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                EDITORIAL
               </span>
             </div>
           </div>

@@ -38,14 +38,14 @@ export function HackerMatrixBackground({ className = "" }: { className?: string 
       <style dangerouslySetInnerHTML={{ __html: matrixKeyframes }} />
 
       <div
-        className={`absolute inset-0 pointer-events-none select-none overflow-hidden font-mono text-[11px] sm:text-xs leading-relaxed tracking-widest text-slate-700/20 dark:text-red-400/30 transition-colors duration-300 ${className}`}
+        className={`absolute inset-0 pointer-events-none select-none overflow-hidden font-mono text-[11px] sm:text-xs leading-relaxed tracking-widest opacity-[0.06] text-slate-900 dark:text-slate-100 transition-opacity duration-300 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_85%)] ${className}`}
         aria-hidden="true"
       >
         {/* Grid Kolom Vertikal */}
         <div className="absolute inset-0 flex justify-around px-2">
-          {Array.from({ length: 10 }).map((_, colIndex) => {
+          {Array.from({ length: 8 }).map((_, colIndex) => {
             const isEven = colIndex % 2 === 0;
-            const speed = 18 + (colIndex % 4) * 6;
+            const speed = 24 + (colIndex % 4) * 8;
             const data = codeColumns[colIndex % codeColumns.length];
 
             return (
@@ -55,7 +55,7 @@ export function HackerMatrixBackground({ className = "" }: { className?: string 
                   style={{ animationDuration: `${speed}s` }}
                 >
                   {[...Array(3)].map((_, loopIdx) => (
-                    <div key={loopIdx} className="flex flex-col gap-6 py-2 text-center font-bold">
+                    <div key={loopIdx} className="flex flex-col gap-8 py-2 text-center font-semibold">
                       {data.map((item, itemIdx) => (
                         <span key={itemIdx} className="block whitespace-nowrap">
                           {item}

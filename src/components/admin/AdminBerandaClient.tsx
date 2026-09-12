@@ -16,6 +16,8 @@ import {
   BarChart3,
   Save,
   Trash2,
+  Image as ImageIcon,
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 import { useSharedStore } from "@/lib/sharedStore";
@@ -124,6 +126,20 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
   const [formData, setFormData] = useState<HeroContentData>(activeHero);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleHeroPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        setFormData((prev) => ({ ...prev, heroImageUrl: base64 }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -240,6 +256,67 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
       </AnimatePresence>
 
       <form onSubmit={handleSave} className="space-y-8">
+        {/* Form Card 0: Hero Editorial Photograph */}
+        <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-slate-950 dark:border-white/20 pb-4">
+            <h2 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white flex items-center gap-2">
+              <ImageIcon size={18} className="text-[#C8102E] dark:text-[#E31B3B]" />
+              FOTO UTAMA HERO SECTION (EDITORIAL PHOTOGRAPHY)
+            </h2>
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">VISUAL ANCHOR</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            {/* Image Preview Box */}
+            <div className="md:col-span-4 relative aspect-[4/3] bg-slate-950 border-2 border-slate-950 dark:border-white/20 overflow-hidden shadow-[4px_4px_0px_0px_rgba(200,16,46,1)]">
+              <img
+                src={formData.heroImageUrl || "/hero-editorial.jpg"}
+                alt="Preview Hero Editorial"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-2 right-2 px-2 py-0.5 bg-[#C8102E] text-white text-[9px] font-mono font-bold uppercase border border-black">
+                LIVE PREVIEW
+              </div>
+            </div>
+
+            {/* Inputs & Upload button */}
+            <div className="md:col-span-8 space-y-4">
+              <div>
+                <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                  URL FOTO HERO EDITORIAL
+                </label>
+                <input
+                  type="text"
+                  value={formData.heroImageUrl || "/hero-editorial.jpg"}
+                  onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
+                  placeholder="Isi URL foto atau upload file foto baru..."
+                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                  UPLOAD FOTO DARI PERANGKAT (LOCAL FILE)
+                </label>
+                <div className="flex items-center gap-3">
+                  <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border-2 border-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors cursor-pointer">
+                    <Upload size={14} /> UNGGAH FOTO BARU
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleHeroPhotoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-[11px] font-mono font-bold text-slate-500">
+                    Disarankan format .jpg/.png horizontal 16:9 atau 4:3.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Form Card 1: Dynamic Running Text Words */}
         <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-6">
           <div className="flex items-center justify-between border-b-2 border-slate-950 dark:border-white/20 pb-4">
@@ -406,7 +483,7 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
                     type="text"
                     value={stat.label}
                     onChange={(e) => handleStatChange(idx, "label", e.target.value)}
-                    className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-950 dark:border-white/20 text-xs font-bold text-slate-950 dark:text-white focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-950 dark:border-white/20 text-xs font-black font-mono tracking-wider uppercase text-slate-950 dark:text-white focus:outline-none"
                   />
                 </div>
               </div>

@@ -7,6 +7,7 @@ import { Lock, Mail, ArrowRight, AlertCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
+import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@himsiug.ac.id";
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "himsi2025!";
@@ -50,6 +51,10 @@ export function AdminLoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-white dark:bg-slate-950 text-slate-950 dark:text-slate-100 relative overflow-hidden transition-colors duration-300">
+      {/* Background Hacker Matrix & Subtle Red Radial Glow */}
+      <HackerMatrixBackground className="opacity-[0.08] dark:opacity-[0.10]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(200,16,46,0.06)_0%,transparent_70%)]" />
+
       {/* Top Bar Theme Toggle */}
       <div className="absolute top-6 right-6 z-20">
         <ThemeToggle />
@@ -101,7 +106,7 @@ export function AdminLoginForm() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@himsiug.ac.id"
+                  placeholder="Masukkan Email Admin"
                   className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                 />
               </div>

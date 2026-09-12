@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BrandLogo } from "@/components/ui/BrandLogo";
+import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
 const emptySubscribe = () => () => {};
 
@@ -13,10 +14,8 @@ export function SplashScreen() {
     () => false
   );
 
-  // B4 FIX: Gunakan lazy initializer di useState agar sessionStorage dibaca SEKALI
-  // pada saat state pertama kali diinisialisasi — aman dari SSR karena useState lazy init
-  // hanya berjalan di client. Ini menghindari setHasSeenSplash di dalam useEffect (cascading renders).
   const [dismissed, setDismissed] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -25,30 +24,40 @@ export function SplashScreen() {
     if (!alreadySeen) {
       document.body.style.overflow = "hidden";
 
+      // Progress animation counter
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 5;
+        });
+      }, 100);
+
       const timer = setTimeout(() => {
         sessionStorage.setItem("himsi_splash_shown", "true");
         setDismissed(true);
         document.body.style.overflow = "";
-      }, 3000);
+      }, 2400);
 
       return () => {
+        clearInterval(interval);
         clearTimeout(timer);
         document.body.style.overflow = "";
       };
     }
   }, []);
 
-  // Cek sessionStorage langsung di render (hanya client-safe karena dikombinasikan isMounted guard)
   const hasSeenSplash =
     isMounted && typeof window !== "undefined"
       ? sessionStorage.getItem("himsi_splash_shown") === "true"
-      : true; // SSR: anggap sudah pernah lihat (fallback aman)
+      : true;
 
   const isVisible = isMounted && !hasSeenSplash && !dismissed;
 
-  // Render light overlay placeholder before JS hydration to eliminate white flash
   if (!isMounted) {
-    return <div className="fixed inset-0 z-[9999] bg-slate-50" />;
+    return <div className="fixed inset-0 z-[9999] bg-black" />;
   }
 
   if (!isVisible) {
@@ -62,71 +71,109 @@ export function SplashScreen() {
           key="splash-screen"
           initial={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: "-100%" }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-50 text-slate-900 overflow-hidden select-none"
+          transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-between bg-black text-white p-6 sm:p-12 overflow-hidden select-none"
         >
-          {/* Glowing Background Radial Effects */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-red-400/15 rounded-full blur-[90px] pointer-events-none" />
+          {/* Background Hacker Matrix & Grid Ticks */}
+          <HackerMatrixBackground />
 
-          {/* Grid Pattern Overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.03] pointer-events-none"
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.4) 1px, transparent 0)`,
-              backgroundSize: "32px 32px",
-            }}
-          />
+          <div className="absolute inset-0 bg-radial from-red-600/10 via-transparent to-transparent pointer-events-none" />
 
-          <div className="relative z-10 max-w-2xl px-6 text-center flex flex-col items-center">
-            {/* Animated Logo Container */}
+          {/* Top Bar Tech Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-5xl flex items-center justify-between z-10 font-mono text-xs text-slate-400 border-b border-white/10 pb-4"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#E31B3B] animate-pulse" />
+              <span className="font-bold text-white uppercase tracking-wider">
+                SYS // HIMSI_UG_PORTAL
+              </span>
+            </div>
+            <span className="hidden sm:inline font-mono tracking-widest text-slate-500">
+              STATUS: INITIALIZING_CORE_MODULES
+            </span>
+          </motion.div>
+
+          {/* Main Hero Card Container */}
+          <div className="relative z-10 max-w-3xl w-full text-center flex flex-col items-center justify-center my-auto space-y-8">
+            {/* Brutalist Twin Logo Card */}
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="mb-8 p-3.5 rounded-2xl bg-white/90 border border-slate-200 shadow-xl backdrop-blur-md"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="p-5 sm:p-7 bg-slate-950 border-2 border-white/20 shadow-[8px_8px_0px_0px_rgba(227,27,59,1)]"
             >
               <BrandLogo size="lg" />
             </motion.div>
 
-            {/* Subtitle Badge */}
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#C8102E] text-white text-xs font-mono font-bold uppercase tracking-[0.25em] border border-white/20">
+                <span className="w-1.5 h-1.5 bg-white animate-ping" />
+                SELAMAT DATANG
+              </span>
+            </motion.div>
+
+            {/* Title Copy */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider text-red-600 bg-red-50 border border-red-200/60 uppercase mb-4 shadow-inner"
+              transition={{ duration: 0.5, delay: 0.25 }}
+              className="space-y-3"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-              Selamat Datang
+              <span className="block text-xs sm:text-sm font-mono font-bold text-slate-400 uppercase tracking-[0.3em]">
+                [ THE OFFICIAL WEBSITE OF ]
+              </span>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tighter uppercase leading-[1.05] text-white">
+                HIMPUNAN <span className="text-[#E31B3B]">SISTEM INFORMASI</span>
+              </h1>
+              <h2 className="text-lg sm:text-2xl font-black font-heading tracking-tight uppercase text-slate-300">
+                UNIVERSITAS GUNADARMA
+              </h2>
             </motion.div>
 
-            {/* Main Welcome Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-              className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 leading-relaxed md:leading-snug"
-            >
-              The Official Website of Himpunan Sistem Informasi Universitas Gunadarma
-            </motion.h1>
-
-            {/* Subtle Progress Bar */}
+            {/* Brutalist Loading Bar */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="w-48 h-1 bg-slate-200 rounded-full mt-8 overflow-hidden relative"
+              transition={{ delay: 0.35 }}
+              className="w-full max-w-md space-y-2 pt-2"
             >
-              <motion.div
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2.4, ease: "easeInOut" }}
-                className="h-full bg-gradient-to-r from-red-600 to-red-500 rounded-full"
-              />
+              <div className="flex items-center justify-between font-mono text-xs text-slate-400 font-bold uppercase">
+                <span>LOADING CORE ASSETS</span>
+                <span className="text-[#E31B3B]">{progress}%</span>
+              </div>
+              <div className="w-full h-3 bg-slate-900 border-2 border-white/30 p-0.5 overflow-hidden">
+                <motion.div
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ ease: "easeOut" }}
+                  className="h-full bg-[#E31B3B]"
+                />
+              </div>
             </motion.div>
           </div>
+
+          {/* Bottom Footer Info */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+            className="w-full max-w-5xl flex items-center justify-between z-10 font-mono text-[11px] text-slate-500 border-t border-white/10 pt-4"
+          >
+            <span>KABINET FORMASI • PERIODE 2025/2026</span>
+            <span>VERIFIED PORTAL • HIMSI UG</span>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
+

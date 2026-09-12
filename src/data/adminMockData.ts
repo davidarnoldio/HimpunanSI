@@ -66,6 +66,7 @@ export interface DivisiAdminItem {
 export interface VisiMisiData {
   visi: string;
   misi: string[];
+  pilar?: string;
 }
 
 export interface AnggotaDivisiItem {
@@ -101,6 +102,7 @@ export const INITIAL_VISI_MISI: VisiMisiData = {
     "Membangun jejaring kolaborasi strategis dengan dunia industri, alumni, dan organisasi eksternal kampus.",
     "Mengoptimalkan tata kelola himpunan berbasis teknologi digital yang transparan dan akuntabel.",
   ],
+  pilar: "Setiap gerakan HIMSI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik.",
 };
 
 export const INITIAL_ANGGOTA_DIVISI: AnggotaDivisiItem[] = [];
@@ -120,6 +122,7 @@ export interface HeroContentData {
   descriptionDynamicWords: string[];
   descriptionAfter: string;
   stats: HeroStatItem[];
+  heroImageUrl?: string;
 }
 
 export const INITIAL_HERO_CONTENT: HeroContentData = {
@@ -138,6 +141,7 @@ export const INITIAL_HERO_CONTENT: HeroContentData = {
     { value: "20+", label: "Proker / Tahun" },
     { value: "3", label: "Kampus Gunadarma" },
   ],
+  heroImageUrl: "/hero-editorial.jpg",
 };
 
 export const INITIAL_HEADLINE_WORDS: string[] = INITIAL_HERO_CONTENT.headlineDynamicWords;
