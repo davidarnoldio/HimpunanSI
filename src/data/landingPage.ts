@@ -321,7 +321,7 @@ export const LAYANAN_ITEMS: LayananItem[] = [
 // FOOTER
 // ─────────────────────────────
 export const FOOTER_SOCIAL = [
-  { platform: "instagram", icon: "instagram", label: "@himsi.ug", href: "https://instagram.com/himsi.ug" },
+  { platform: "instagram", icon: "instagram", label: "@himsi.ug", href: "https://instagram.com/himasi_gunadarma" },
   { platform: "linkedin", icon: "linkedin", label: "HIMSI UG", href: "https://linkedin.com" },
   { platform: "youtube", icon: "youtube", label: "HIMSI Channel", href: "https://youtube.com" },
   { platform: "tiktok", icon: "tiktok", label: "@himsi.ug", href: "https://tiktok.com" },
