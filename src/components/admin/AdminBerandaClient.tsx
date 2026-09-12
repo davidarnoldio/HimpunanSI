@@ -52,9 +52,9 @@ function WordTagInput({ title, badgeText, words, onChange }: WordTagInputProps) 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+        <label className="text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white flex items-center gap-2">
           <span>{title}</span>
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/60">
+          <span className="px-2 py-0.5 bg-[#C8102E] text-white text-[10px] font-mono font-bold uppercase border border-slate-950">
             {badgeText}
           </span>
         </label>
@@ -62,7 +62,7 @@ function WordTagInput({ title, badgeText, words, onChange }: WordTagInputProps) 
 
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Tag size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Tag size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-950 dark:text-slate-400" />
           <input
             type="text"
             value={inputVal}
@@ -74,33 +74,33 @@ function WordTagInput({ title, badgeText, words, onChange }: WordTagInputProps) 
               }
             }}
             placeholder={`Tambah kata animasi ${title.toLowerCase()}...`}
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-red-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
           />
         </div>
         <button
           type="button"
           onClick={() => handleAdd()}
-          className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
+          className="px-4 py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border-2 border-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1"
         >
-          <Plus size={15} /> Tambah
+          <Plus size={15} /> TAMBAH
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 min-h-[50px] items-center">
+      <div className="flex flex-wrap gap-2 p-3 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 min-h-[50px] items-center">
         <AnimatePresence>
           {words.map((word, idx) => (
             <motion.span
               key={`${word}-${idx}`}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold shadow-sm"
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-950 text-white dark:bg-slate-800 text-xs font-mono font-bold uppercase border border-slate-950"
             >
               <span>{word}</span>
               <button
                 type="button"
                 onClick={() => handleRemove(idx)}
-                className="text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+                className="text-slate-400 hover:text-[#C8102E] transition-colors cursor-pointer"
                 title="Hapus kata"
               >
                 <X size={12} />
@@ -191,13 +191,13 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b-2 border-slate-950 dark:border-white/20 pb-6">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2.5">
-            <Sparkles size={24} className="text-red-600 dark:text-red-500" />
-            Kelola Konten Beranda & Hero Section
+          <h1 className="text-2xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2.5">
+            <Sparkles size={24} className="text-[#C8102E] dark:text-[#E31B3B]" />
+            KELOLA KONTEN BERANDA & HERO SECTION
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-1">
             Ubah kata-kata animasi typewriter, subheadline, badge, dan statistik di halaman utama (Tersinkronisasi 100% dengan Supabase DB).
           </p>
         </div>
@@ -206,18 +206,18 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
           <Link
             href="/"
             target="_blank"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors"
           >
-            Preview Web <ExternalLink size={13} />
+            PREVIEW WEB <ExternalLink size={13} />
           </Link>
 
           <button
             type="button"
             disabled={isLoading}
             onClick={handleResetToDefault}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-white font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-300 transition-colors cursor-pointer"
           >
-            <RotateCcw size={13} /> Reset Default
+            <RotateCcw size={13} /> RESET DEFAULT
           </button>
         </div>
       </div>
@@ -229,9 +229,9 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center gap-3 text-xs font-bold shadow-sm"
+            className="p-4 bg-[#C8102E] text-white border-2 border-slate-950 font-mono font-bold text-xs flex items-center gap-3 uppercase shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
           >
-            <CheckCircle2 size={18} className="shrink-0 text-emerald-500" />
+            <CheckCircle2 size={18} className="shrink-0 text-white" />
             <span>
               Perubahan konten Hero Section berhasil disimpan dan langsung diperbarui di Halaman Utama secara publik!
             </span>
@@ -241,13 +241,13 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
 
       <form onSubmit={handleSave} className="space-y-8">
         {/* Form Card 1: Dynamic Running Text Words */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-            <h2 className="font-extrabold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Type size={18} className="text-red-500" />
-              Kata Animasi Running Text / Typewriter
+        <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-slate-950 dark:border-white/20 pb-4">
+            <h2 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white flex items-center gap-2">
+              <Type size={18} className="text-[#C8102E] dark:text-[#E31B3B]" />
+              KATA ANIMASI RUNNING TEXT / TYPEWRITER
             </h2>
-            <span className="text-[11px] font-bold text-slate-400">Section Header</span>
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">SECTION HEADER</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -275,99 +275,99 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
         </div>
 
         {/* Form Card 2: Main Text Header */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-            <h2 className="font-extrabold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <FileText size={18} className="text-red-500" />
-              Teks Utama Hero Section
+        <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-slate-950 dark:border-white/20 pb-4">
+            <h2 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white flex items-center gap-2">
+              <FileText size={18} className="text-[#C8102E] dark:text-[#E31B3B]" />
+              TEKS UTAMA HERO SECTION
             </h2>
-            <span className="text-[11px] font-bold text-slate-400">Judul & Deskripsi</span>
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">JUDUL & DESKRIPSI</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-1">
-                Teks Awalan Badge Top
+              <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                TEKS AWALAN BADGE TOP
               </label>
               <div className="relative">
-                <Badge size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Badge size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-950 dark:text-slate-400" />
                 <input
                   type="text"
                   value={formData.badgePrefix || ""}
                   onChange={(e) => setFormData({ ...formData, badgePrefix: e.target.value })}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-red-500"
+                  className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-1">
-                Awalan Headline Utama
+              <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                AWALAN HEADLINE UTAMA
               </label>
               <input
                 type="text"
                 value={formData.headlinePrefix || ""}
                 onChange={(e) => setFormData({ ...formData, headlinePrefix: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-red-500"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-1">
-              Akhiran Headline Utama
+            <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+              AKHIRAN HEADLINE UTAMA
             </label>
             <input
               type="text"
               value={formData.headlineSuffix || ""}
               onChange={(e) => setFormData({ ...formData, headlineSuffix: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-red-500"
+              className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-1">
-                Teks Awalan Deskripsi
+              <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                TEKS AWALAN DESKRIPSI
               </label>
               <textarea
                 rows={2}
                 value={formData.descriptionBefore || ""}
                 onChange={(e) => setFormData({ ...formData, descriptionBefore: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium leading-relaxed focus:outline-none focus:border-red-500 resize-none"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-medium leading-relaxed focus:outline-none focus:border-[#C8102E] resize-none text-slate-950 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-1">
-                Teks Akhiran Deskripsi
+              <label className="block font-black font-mono text-xs uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                TEKS AKHIRAN DESKRIPSI
               </label>
               <textarea
                 rows={2}
                 value={formData.descriptionAfter || ""}
                 onChange={(e) => setFormData({ ...formData, descriptionAfter: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium leading-relaxed focus:outline-none focus:border-red-500 resize-none"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-medium leading-relaxed focus:outline-none focus:border-[#C8102E] resize-none text-slate-950 dark:text-white"
               />
             </div>
           </div>
         </div>
 
         {/* Form Card 3: Hero Statistics counter */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-slate-950 dark:border-white/20 pb-4">
             <div>
-              <h2 className="font-extrabold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <BarChart3 size={18} className="text-red-500" />
-                Statistik Pencapaian Himpunan
+              <h2 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white flex items-center gap-2">
+                <BarChart3 size={18} className="text-[#C8102E] dark:text-[#E31B3B]" />
+                STATISTIK PENCAPAIAN HIMPUNAN
               </h2>
-              <p className="text-xs text-slate-500">Angka pencapaian yang tampil di bagian bawah Hero Section.</p>
+              <p className="text-xs font-mono font-bold text-slate-500">Angka pencapaian yang tampil di bagian bawah Hero Section.</p>
             </div>
             <button
               type="button"
               onClick={handleAddStat}
-              className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center gap-1 cursor-pointer"
+              className="px-3 py-1.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1 cursor-pointer hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors"
             >
-              <Plus size={14} /> Tambah Stat
+              <Plus size={14} /> TAMBAH STAT
             </button>
           </div>
 
@@ -375,38 +375,38 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
             {(formData.stats || []).map((stat, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3 relative group"
+                className="p-4 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 space-y-3 relative group"
               >
                 <button
                   type="button"
                   onClick={() => handleRemoveStat(idx)}
-                  className="absolute top-3 right-3 p-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-950 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+                  className="absolute top-3 right-3 p-1 bg-[#C8102E] text-white border border-slate-950 hover:bg-slate-950 transition-colors cursor-pointer"
                   title="Hapus statistik"
                 >
                   <Trash2 size={13} />
                 </button>
 
                 <div>
-                  <label className="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">
-                    Angka / Nilai
+                  <label className="block text-[10px] font-mono font-black uppercase text-slate-500 mb-1">
+                    ANGKA / NILAI
                   </label>
                   <input
                     type="text"
                     value={stat.value}
                     onChange={(e) => handleStatChange(idx, "value", e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-black text-red-600 dark:text-red-400 focus:outline-none focus:border-red-500 font-mono"
+                    className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-950 dark:border-white/20 text-xs font-black text-[#C8102E] dark:text-[#E31B3B] focus:outline-none font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">
-                    Label Keterangan
+                  <label className="block text-[10px] font-mono font-black uppercase text-slate-500 mb-1">
+                    LABEL KETERANGAN
                   </label>
                   <input
                     type="text"
                     value={stat.label}
                     onChange={(e) => handleStatChange(idx, "label", e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-950 dark:border-white/20 text-xs font-bold text-slate-950 dark:text-white focus:outline-none"
                   />
                 </div>
               </div>
@@ -419,16 +419,16 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
           <button
             type="submit"
             disabled={isLoading}
-            className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm shadow-2xl shadow-red-900/40 disabled:opacity-50 transition-all cursor-pointer flex items-center gap-2"
+            className="px-8 py-3.5 bg-[#C8102E] dark:bg-[#E31B3B] hover:bg-slate-950 text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 transition-colors cursor-pointer flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
           >
             {isLoading ? (
               <>
-                <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                <span>Menyimpan Perubahan...</span>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
+                <span>MENYIMPAN...</span>
               </>
             ) : (
               <>
-                <Save size={18} /> Simpan Perubahan Beranda
+                <Save size={18} /> SIMPAN PERUBAHAN BERANDA
               </>
             )}
           </button>

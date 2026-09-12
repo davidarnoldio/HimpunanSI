@@ -21,7 +21,6 @@ import {
   Briefcase,
   User,
   Upload,
-  Crown,
   Check,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -41,15 +40,6 @@ const AVAILABLE_ICONS: { name: string; icon: LucideIcon }[] = [
   { name: "Heart", icon: Heart },
   { name: "Briefcase", icon: Briefcase },
   { name: "Layers", icon: Layers },
-];
-
-const COLOR_THEMES = [
-  { id: "red", label: "Merah", bg: "bg-red-500" },
-  { id: "blue", label: "Biru", bg: "bg-blue-500" },
-  { id: "violet", label: "Ungu", bg: "bg-violet-500" },
-  { id: "emerald", label: "Hijau", bg: "bg-emerald-500" },
-  { id: "amber", label: "Kuning", bg: "bg-amber-500" },
-  { id: "cyan", label: "Cyan", bg: "bg-cyan-500" },
 ];
 
 interface AdminDivisiClientProps {
@@ -321,7 +311,7 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-6 right-6 z-50 p-4 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-xl flex items-center gap-2"
+            className="fixed top-6 right-6 z-50 p-4 bg-[#C8102E] text-white font-mono font-black text-xs border-2 border-slate-950 flex items-center gap-2 uppercase shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
           >
             <CheckCircle2 size={16} />
             {toastMsg}
@@ -330,28 +320,28 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20">
         <div className="space-y-1">
-          <h1 className="text-xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Layers className="text-red-600 dark:text-red-500" size={22} />
-            Kelola Divisi & Anggota Staff HIMSI UG
+          <h1 className="text-xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
+            <Layers className="text-[#C8102E] dark:text-[#E31B3B]" size={22} />
+            KELOLA DIVISI & ANGGOTA STAFF HIMSI UG
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
             Kelola nama divisi, deskripsi proker, serta jajaran Ketua & Anggota Staff Divisi (Tersinkronisasi 100% dengan Supabase DB).
           </p>
         </div>
 
         <button
           onClick={() => handleOpenDivisiModal()}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 transition-all cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 hover:bg-slate-950 transition-colors cursor-pointer shrink-0"
         >
-          <Plus size={16} /> Tambah Divisi Baru
+          <Plus size={16} /> TAMBAH DIVISI BARU
         </button>
       </div>
 
       {/* SECTION 1: DIVISI OVERVIEW CARDS */}
       <div className="space-y-4">
-        <h2 className="text-sm font-black uppercase tracking-wider text-slate-400">Daftar Divisi HIMSI</h2>
+        <h2 className="text-xs font-mono font-black uppercase tracking-widest text-[#C8102E] dark:text-[#E31B3B]">[ DAFTAR DIVISI HIMSI ]</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeDivisiList.map((div) => {
             const IconComp = AVAILABLE_ICONS.find((i) => i.name === div.iconName)?.icon || BookOpen;
@@ -359,43 +349,43 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
             return (
               <div
                 key={div.id}
-                className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4"
+                className="p-5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 hover:shadow-[4px_4px_0px_0px_rgba(200,16,46,1)] transition-all flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-2xl bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400">
+                      <div className="p-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950">
                         <IconComp size={20} />
                       </div>
                       <div>
-                        <h3 className="font-black text-base text-slate-900 dark:text-slate-100">
+                        <h3 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white">
                           {div.singkatan}
                         </h3>
-                        <p className="text-[11px] text-slate-400 font-bold">{div.nama}</p>
+                        <p className="text-[11px] font-mono font-bold text-slate-500">{div.nama}</p>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 font-medium">
+                  <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 font-medium">
                     {div.deskripsi}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-400">
-                    {activeAnggotaList.filter((a) => a.divisiId === div.id).length} Anggota Staff
+                <div className="pt-3 border-t-2 border-slate-950/20 dark:border-white/20 flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold text-slate-500 uppercase">
+                    {activeAnggotaList.filter((a) => a.divisiId === div.id).length} ANGGOTA STAFF
                   </span>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleOpenDivisiModal(div)}
-                      className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+                      className="p-1.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors"
                       title="Edit Divisi"
                     >
                       <Pencil size={13} />
                     </button>
                     <button
                       onClick={() => handleDeleteDivisi(div.id)}
-                      className="p-1.5 rounded-xl bg-red-50 dark:bg-red-950/60 hover:bg-red-100 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
+                      className="p-1.5 bg-[#C8102E] text-white border border-slate-950 cursor-pointer hover:bg-slate-950 transition-colors"
                       title="Hapus Divisi"
                     >
                       <Trash2 size={13} />
@@ -409,21 +399,21 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       </div>
 
       {/* SECTION 2: ANGGOTA MANAGER BY DIVISION TAB */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+      <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-slate-950 dark:border-white/20 pb-4">
           <div>
-            <h2 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Users size={18} className="text-red-500" />
-              Pengelolaan Anggota Staff Divisi
+            <h2 className="text-base font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
+              <Users size={18} className="text-[#C8102E] dark:text-[#E31B3B]" />
+              PENGELOLAAN ANGGOTA STAFF DIVISI
             </h2>
-            <p className="text-xs text-slate-500">Pilih tab divisi di bawah untuk mengelola Ketua & Anggota Staff divisi tersebut.</p>
+            <p className="text-xs font-mono font-bold text-slate-500">Pilih tab divisi di bawah untuk mengelola Ketua & Anggota Staff divisi tersebut.</p>
           </div>
 
           <button
             onClick={() => handleOpenAnggotaModal()}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-extrabold text-xs shadow-md transition-all cursor-pointer shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors cursor-pointer shrink-0"
           >
-            <Plus size={15} /> Tambah Anggota Divisi
+            <Plus size={15} /> TAMBAH ANGGOTA DIVISI
           </button>
         </div>
 
@@ -433,37 +423,37 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
             <button
               key={d.id}
               onClick={() => setActiveDivisiTab(d.id)}
-              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+              className={`px-4 py-2 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 cursor-pointer shrink-0 transition-colors ${
                 activeDivisiTab === d.id
-                  ? "bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-900/20"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+                  ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white"
+                  : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
               }`}
             >
-              Divisi {d.singkatan} ({activeAnggotaList.filter((a) => a.divisiId === d.id).length})
+              DIVISI {d.singkatan} ({activeAnggotaList.filter((a) => a.divisiId === d.id).length})
             </button>
           ))}
         </div>
 
         {/* Anggota Cards Grid */}
         {filteredMembers.length === 0 ? (
-          <div className="p-8 text-center rounded-2xl bg-slate-50 dark:bg-slate-950 border border-dashed border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="p-8 text-center bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 space-y-2">
             <User size={36} className="mx-auto text-slate-400" />
-            <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
+            <p className="text-xs font-black font-mono uppercase text-slate-950 dark:text-white">
               Belum ada anggota di Divisi ini.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredMembers.map((member) => {
               const isKetua = member.role === "Ketua Divisi";
 
               return (
                 <div
                   key={member.id}
-                  className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between space-y-3"
+                  className="p-4 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 flex flex-col justify-between space-y-3 hover:shadow-[4px_4px_0px_0px_rgba(200,16,46,1)] transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-800 shrink-0 border border-slate-300 dark:border-slate-700">
+                    <div className="w-12 h-12 border border-slate-950 overflow-hidden bg-slate-950 shrink-0">
                       <img
                         src={getValidImageUrl(member.fotoUrl, member.nama)}
                         alt={member.nama}
@@ -471,30 +461,30 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-extrabold text-xs text-slate-900 dark:text-slate-100 truncate">
+                      <h4 className="font-black font-heading text-xs text-slate-950 dark:text-white uppercase truncate">
                         {member.nama}
                       </h4>
-                      <p className="text-[11px] font-bold text-slate-400 truncate">
-                        {isKetua ? "👑 Kadiv" : "Staff Divisi"}
+                      <p className="text-[11px] font-mono font-bold text-[#C8102E] dark:text-[#E31B3B] uppercase truncate">
+                        {isKetua ? "👑 KADIV" : "STAFF DIVISI"}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-slate-400">
-                      {member.npm ? `NPM: ${member.npm}` : `Periode ${member.periode}`}
+                  <div className="pt-2 border-t-2 border-slate-950/20 dark:border-white/20 flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">
+                      {member.npm ? `NPM: ${member.npm}` : `PERIODE ${member.periode}`}
                     </span>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => handleOpenAnggotaModal(member)}
-                        className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors cursor-pointer"
+                        className="p-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer"
                         title="Edit Anggota"
                       >
                         <Pencil size={13} />
                       </button>
                       <button
                         onClick={() => handleDeleteAnggota(member.id)}
-                        className="p-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-950 text-red-600 transition-colors cursor-pointer"
+                        className="p-1 bg-[#C8102E] text-white border border-slate-950 cursor-pointer"
                         title="Hapus Anggota"
                       >
                         <Trash2 size={13} />
@@ -511,20 +501,20 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       {/* DIVISI CREATE/EDIT MODAL */}
       <AnimatePresence>
         {isDivisiModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 overflow-y-auto">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 my-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full max-w-lg bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 p-6 sm:p-8 shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] space-y-6 my-8"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-                  {editingDivisi ? "Edit Data Divisi" : "Tambah Divisi Baru"}
+              <div className="flex items-center justify-between pb-4 border-b-2 border-slate-950 dark:border-white/20">
+                <h2 className="text-lg font-black font-heading uppercase text-slate-950 dark:text-white">
+                  {editingDivisi ? "EDIT DATA DIVISI" : "TAMBAH DIVISI BARU"}
                 </h2>
                 <button
                   onClick={() => setIsDivisiModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer"
+                  className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -533,8 +523,8 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
               <form onSubmit={handleSaveDivisi} className="space-y-4 text-xs sm:text-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Singkatan Divisi *
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      SINGKATAN DIVISI *
                     </label>
                     <input
                       type="text"
@@ -542,13 +532,13 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                       value={singkatan}
                       onChange={(e) => setSingkatan(e.target.value)}
                       placeholder="e.g. PTI / Litbang"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Nama Lengkap Divisi *
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      NAMA LENGKAP DIVISI *
                     </label>
                     <input
                       type="text"
@@ -556,46 +546,46 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                       value={nama}
                       onChange={(e) => setNama(e.target.value)}
                       placeholder="e.g. Pengembangan Teknologi Informasi"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Deskripsi Tugas Divisi
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    DESKRIPSI TUGAS DIVISI
                   </label>
                   <textarea
                     rows={3}
                     value={deskripsi}
                     onChange={(e) => setDeskripsi(e.target.value)}
                     placeholder="Penjelasan fungsi & tanggung jawab divisi..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-medium resize-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-medium resize-none"
                   />
                 </div>
 
-                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                <div className="pt-4 flex items-center justify-end gap-3 border-t-2 border-slate-950 dark:border-white/20">
                   <button
                     type="button"
                     disabled={isLoading}
                     onClick={() => setIsDivisiModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs"
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-white font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-300 transition-colors"
                   >
-                    Batal
+                    BATAL
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || !singkatan.trim() || !nama.trim()}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] hover:bg-slate-950 text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 transition-colors cursor-pointer flex items-center gap-2"
                   >
                     {isLoading ? (
                       <>
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                        <span>Menyimpan...</span>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent animate-spin" />
+                        <span>MENYIMPAN...</span>
                       </>
                     ) : (
                       <>
-                        <Check size={15} /> Simpan Divisi
+                        <Check size={15} /> SIMPAN DIVISI
                       </>
                     )}
                   </button>
@@ -609,20 +599,20 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       {/* ANGGOTA CREATE/EDIT MODAL */}
       <AnimatePresence>
         {isAnggotaModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 overflow-y-auto">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 my-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full max-w-lg bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 p-6 sm:p-8 shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] space-y-6 my-8"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-                  {editingAnggota ? "Edit Data Anggota Divisi" : "Tambah Anggota Staff Baru"}
+              <div className="flex items-center justify-between pb-4 border-b-2 border-slate-950 dark:border-white/20">
+                <h2 className="text-lg font-black font-heading uppercase text-slate-950 dark:text-white">
+                  {editingAnggota ? "EDIT DATA ANGGOTA DIVISI" : "TAMBAH ANGGOTA STAFF BARU"}
                 </h2>
                 <button
                   onClick={() => setIsAnggotaModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer"
+                  className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -630,8 +620,8 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
 
               <form onSubmit={handleSaveAnggota} className="space-y-4 text-xs sm:text-sm">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Nama Lengkap Anggota *
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    NAMA LENGKAP ANGGOTA *
                   </label>
                   <input
                     type="text"
@@ -639,21 +629,21 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                     value={angNama}
                     onChange={(e) => setAngNama(e.target.value)}
                     placeholder="e.g. Ahmad Rizky"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Jabatan / Peran
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      JABATAN / PERAN
                     </label>
                     <select
                       value={angRole}
                       onChange={(e) =>
                         setAngRole(e.target.value as "Ketua Divisi" | "Anggota Divisi")
                       }
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     >
                       <option value="Anggota Divisi">Anggota Staff Divisi</option>
                       <option value="Ketua Divisi">Ketua Divisi (Kadiv)</option>
@@ -661,22 +651,22 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                   </div>
 
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      NPM Mahasiswa (Opsional)
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      NPM MAHASISWA (OPSIONAL)
                     </label>
                     <input
                       type="text"
                       value={angNpm}
                       onChange={(e) => setAngNpm(e.target.value)}
                       placeholder="e.g. 10121001"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono text-xs"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono text-xs"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Foto Profil (Galeri HP/PC atau URL)
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    FOTO PROFIL (GALERI OR URL)
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -684,14 +674,14 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                       value={angFotoUrl}
                       onChange={(e) => setAngFotoUrl(e.target.value)}
                       placeholder="https://..."
-                      className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono text-xs"
+                      className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono text-xs"
                     />
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
+                      className="px-3 py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer"
                     >
-                      <Upload size={14} /> Galeri
+                      <Upload size={14} /> GALERI
                     </button>
                     <input
                       ref={fileInputRef}
@@ -703,28 +693,28 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                   </div>
                 </div>
 
-                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                <div className="pt-4 flex items-center justify-end gap-3 border-t-2 border-slate-950 dark:border-white/20">
                   <button
                     type="button"
                     disabled={isLoading}
                     onClick={() => setIsAnggotaModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs"
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-white font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-300 transition-colors"
                   >
-                    Batal
+                    BATAL
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || !angNama.trim()}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] hover:bg-slate-950 text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 transition-colors cursor-pointer flex items-center gap-2"
                   >
                     {isLoading ? (
                       <>
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                        <span>Menyimpan...</span>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent animate-spin" />
+                        <span>MENYIMPAN...</span>
                       </>
                     ) : (
                       <>
-                        <Check size={15} /> Simpan Anggota
+                        <Check size={15} /> SIMPAN ANGGOTA
                       </>
                     )}
                   </button>

@@ -6,6 +6,7 @@ import {
   EventSection,
   Footer,
 } from "@/components/landing";
+import { MarqueeTicker } from "@/components/landing/MarqueeTicker";
 import {
   fetchPengurusFromDB,
   fetchEventsFromDB,
@@ -42,6 +43,9 @@ export default async function HomePage() {
       <main id="main-content">
         {/* 1. Hero & Live Text */}
         <HeroSection heroContent={heroContent} />
+
+        {/* 1.5 EXODA Signature Marquee Ticker */}
+        <MarqueeTicker />
 
         {/* 2. Pimpinan Kabinet BPH */}
         <KabinetSection pengurus={pengurus} visiMisi={visiMisi} />

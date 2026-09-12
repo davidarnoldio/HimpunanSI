@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_LINKS } from "@/data/landingPage";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+
 import { BrandLogo } from "@/components/ui/BrandLogo";
 
 const emptySubscribe = () => () => {};
@@ -96,38 +97,35 @@ export function Navbar() {
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 border-b ${
         scrolled
-          ? "bg-slate-50/85 dark:bg-[#0a0e1f]/90 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 shadow-lg dark:shadow-2xl dark:shadow-black/40"
-          : "bg-slate-50/60 dark:bg-[#0a0e1f]/60 backdrop-blur-xl border-b border-slate-200/40 dark:border-slate-800/40"
+          ? "bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md border-slate-950 dark:border-white/20 shadow-sm"
+          : "bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-sm border-slate-200 dark:border-white/10"
       }`}
       role="banner"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-[72px]">
-          {/* Logo */}
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          {/* Left: HMSI / Universitas Gunadarma Branding */}
           <Link
             href="/"
             className="flex items-center gap-3 group"
             aria-label="HIMSI UG — Kembali ke beranda"
           >
-            <div className="relative">
-              <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 opacity-30 group-hover:opacity-100 blur transition duration-300" />
-              <BrandLogo size="sm" />
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-slate-900 dark:text-slate-100 font-extrabold font-heading text-base tracking-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
-                HIMSI UG
+            <BrandLogo size="md" />
+            <div className="flex flex-col leading-none hidden sm:flex">
+              <span className="text-slate-950 dark:text-white font-black font-heading text-base sm:text-lg tracking-tight uppercase group-hover:text-[#c8102e] dark:group-hover:text-[#e31b3b] transition-colors">
+                HIMSI <span className="text-[#c8102e] dark:text-[#e31b3b]">•</span> GUNADARMA
               </span>
-              <span className="text-slate-500 dark:text-slate-400 text-[10px] font-mono font-semibold tracking-wider">
-                SI • GUNADARMA
+              <span className="text-slate-500 dark:text-slate-400 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest uppercase">
+                STUDENT COMMUNITY & TECH
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/50 backdrop-blur-md" aria-label="Navigasi utama">
+          {/* Desktop Navigation Items */}
+          <nav className="hidden md:flex items-center gap-1 border border-slate-950/20 dark:border-white/20 p-1 bg-slate-50 dark:bg-black rounded-sm" aria-label="Navigasi utama">
             {NAV_LINKS.map((link) => {
               let isActive = false;
 
@@ -145,10 +143,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className={`relative px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all duration-300 ${
+                  className={`px-4 py-1.5 text-xs font-bold font-mono uppercase tracking-wider transition-all duration-200 ${
                     isActive
-                      ? "bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-900/30"
-                      : "text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/70"
+                      ? "bg-[#c8102e] dark:bg-[#e31b3b] text-white"
+                      : "text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
                   }`}
                 >
                   {link.label}
@@ -161,30 +159,24 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
 
-            <div className="flex items-center pl-1 border-l border-slate-200 dark:border-slate-800/80">
-              <img
-                src="/logogundar.png"
-                alt="Logo Universitas Gunadarma"
-                className="h-9 sm:h-10 w-auto object-contain transition-transform hover:scale-110 duration-200"
-              />
-            </div>
+            <Link
+              href="/#event"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#c8102e] dark:bg-[#e31b3b] hover:bg-[#a00c24] dark:hover:bg-[#ff2d4d] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all border border-slate-950 dark:border-transparent"
+            >
+              Jelajahi Event →
+            </Link>
           </div>
 
-          {/* Mobile Actions (Gunadarma Logo + ThemeToggle + Hamburger) */}
+          {/* Mobile Actions */}
           <div className="flex items-center gap-2 md:hidden">
-            <img
-              src="/logogundar.png"
-              alt="Logo Gunadarma"
-              className="h-7 w-auto object-contain mr-1"
-            />
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+              className="p-2 border-2 border-slate-950 dark:border-white text-slate-950 dark:text-white bg-slate-100 dark:bg-slate-900 transition-all"
               aria-label={isOpen ? "Tutup menu" : "Buka menu"}
               aria-expanded={isOpen}
             >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>

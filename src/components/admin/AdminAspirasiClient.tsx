@@ -89,12 +89,12 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b-2 border-slate-950 dark:border-white/20 pb-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-            Aspirasi & Masukan Mahasiswa
+          <h1 className="text-2xl sm:text-3xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white">
+            ASPIRASI & MASUKAN MAHASISWA
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-1">
             Kelola masukan, kritik, dan aspirasi anonim dari mahasiswa Sistem Informasi (Tersinkronisasi 100% dengan Supabase DB).
           </p>
         </div>
@@ -102,35 +102,35 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
         <button
           onClick={loadData}
           disabled={isLoading}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-400 transition-colors shadow-sm cursor-pointer shrink-0 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors cursor-pointer shrink-0 disabled:opacity-50"
         >
           <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-          {isLoading ? "Memuat Data..." : "Refresh Data DB"}
+          {isLoading ? "MEMUAT DATA..." : "REFRESH DATA DB"}
         </button>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="p-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-950 dark:text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari aspirasi..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-red-500"
+            className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 flex-wrap w-full md:w-auto">
+        <div className="flex items-center gap-2 flex-wrap w-full md:w-auto">
           {["Semua", "Baru", "Diproses", "Selesai"].map((st) => (
             <button
               key={st}
               onClick={() => setFilterStatus(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-black font-mono uppercase border-2 border-slate-950 cursor-pointer transition-colors ${
                 filterStatus === st
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+                  ? "bg-[#C8102E] text-white"
+                  : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
               }`}
             >
               {st}
@@ -141,40 +141,35 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
 
       {/* List Aspirasi Cards */}
       {filteredItems.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800 space-y-2">
+        <div className="p-12 text-center bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-2">
           <ShieldAlert size={40} className="mx-auto text-slate-400" />
-          <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Belum ada aspirasi masuk</p>
-          <p className="text-xs text-slate-500">Mahasiswa belum mengirimkan aspirasi atau telah dihapus.</p>
+          <p className="text-sm font-black font-heading uppercase text-slate-950 dark:text-white">Belum ada aspirasi masuk</p>
+          <p className="text-xs font-mono font-bold text-slate-500">Mahasiswa belum mengirimkan aspirasi atau telah dihapus.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {filteredItems.map((item) => {
-            const isBaru = item.status === "Baru";
-            const isDiproses = item.status === "Diproses";
-            const isSelesai = item.status === "Selesai";
-
             return (
               <motion.div
                 key={item.id}
                 layout
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4"
+                className="p-5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-4 hover:shadow-[4px_4px_0px_0px_rgba(200,16,46,1)] transition-all"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-slate-950/20 dark:border-white/20 pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-sm text-slate-900 dark:text-slate-100">
-                      {item.isAnonim ? "🔒 Kirim Anonim" : item.nama || "Mahasiswa SI"}
+                    <span className="font-black font-mono text-xs uppercase text-slate-950 dark:text-white">
+                      {item.isAnonim ? "🔒 KIRIM ANONIM" : item.nama || "MAHASISWA SI"}
                     </span>
                     {item.email && !item.isAnonim && (
-                      <span className="text-xs font-mono text-slate-400">({item.email})</span>
+                      <span className="text-xs font-mono text-slate-500">({item.email})</span>
                     )}
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-slate-400 font-medium">{item.tanggal}</span>
+                    <span className="text-xs font-mono font-bold text-slate-500">{item.tanggal}</span>
 
-                    {/* Status Pill Switcher */}
                     <select
                       disabled={isLoading}
                       value={item.status}
@@ -184,23 +179,17 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
                           e.target.value as "Baru" | "Diproses" | "Selesai"
                         )
                       }
-                      className={`px-3 py-1 rounded-full text-xs font-extrabold border focus:outline-none cursor-pointer ${
-                        isBaru
-                          ? "bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
-                          : isDiproses
-                          ? "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800"
-                          : "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
-                      }`}
+                      className="px-3 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-black font-mono uppercase tracking-wider border border-slate-950 cursor-pointer"
                     >
-                      <option value="Baru">🔴 Baru</option>
-                      <option value="Diproses">🟡 Diproses</option>
-                      <option value="Selesai">🟢 Selesai</option>
+                      <option value="Baru">🔴 BARU</option>
+                      <option value="Diproses">🟡 DIPROSES</option>
+                      <option value="Selesai">🟢 SELESAI</option>
                     </select>
 
                     <button
                       disabled={isLoading}
                       onClick={() => setDeleteTargetId(item.id)}
-                      className="p-1.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950 text-slate-400 hover:text-red-600 transition-colors cursor-pointer disabled:opacity-50"
+                      className="p-1.5 bg-[#C8102E] text-white border border-slate-950 cursor-pointer hover:bg-slate-950 transition-colors disabled:opacity-50"
                       title="Hapus Aspirasi"
                     >
                       <Trash2 size={15} />
@@ -208,7 +197,7 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
                   </div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-medium leading-relaxed">
                   &ldquo;{item.pesan}&rdquo;
                 </p>
               </motion.div>

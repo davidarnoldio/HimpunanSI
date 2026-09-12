@@ -2,8 +2,6 @@
 
 import React from "react";
 
-// B1 FIX: Keyframes diimplementasikan via inline style object agar kompatibel penuh
-// dengan Next.js App Router (tidak menggunakan <style jsx> milik Pages Router).
 const matrixKeyframes = `
 @keyframes matrix-scroll-down {
   0% { transform: translateY(-50%); }
@@ -37,11 +35,10 @@ export function HackerMatrixBackground({ className = "" }: { className?: string 
 
   return (
     <>
-      {/* B1 FIX: Inject keyframes menggunakan tag <style> standar HTML5, bukan <style jsx> */}
       <style dangerouslySetInnerHTML={{ __html: matrixKeyframes }} />
 
       <div
-        className={`absolute inset-0 pointer-events-none select-none overflow-hidden font-mono text-[11px] sm:text-xs leading-relaxed tracking-widest text-slate-800/25 dark:text-red-400/35 transition-colors duration-300 ${className}`}
+        className={`absolute inset-0 pointer-events-none select-none overflow-hidden font-mono text-[11px] sm:text-xs leading-relaxed tracking-widest text-slate-700/20 dark:text-red-400/30 transition-colors duration-300 ${className}`}
         aria-hidden="true"
       >
         {/* Grid Kolom Vertikal */}

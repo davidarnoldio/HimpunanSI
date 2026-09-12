@@ -4,6 +4,7 @@ import { motion, Variants } from "framer-motion";
 import { Sparkles, Flame } from "lucide-react";
 import { Navbar, Footer } from "@/components/landing";
 import { FormAspirasi } from "./FormAspirasi";
+import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
 // Variants untuk kontainer teks (stagger efek)
 const containerVariants: Variants = {
@@ -46,13 +47,14 @@ export function AspirasiClient() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-black text-slate-950 dark:text-slate-100 flex flex-col transition-colors duration-300">
       {/* Sticky Top Navbar */}
       <Navbar />
 
       <main className="flex-1 pt-24 pb-20 relative overflow-hidden">
         {/* Ambient Subtle Grid & Soft Background Mask */}
         <div className="pointer-events-none absolute inset-0 select-none">
+          <HackerMatrixBackground />
           <div
             className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
             style={{
@@ -122,13 +124,23 @@ export function AspirasiClient() {
             </motion.p>
           </div>
 
-          {/* EFEK 3: EFEK SEAMLESS MARQUEE (TEKS BERJALAN) */}
+          {/* FORM ASPIRASI */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <FormAspirasi />
+          </motion.div>
+
+          {/* MARQUEE LIVE TEXT (BERADA DI BAWAH FORM ASPIRASI) */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="w-full overflow-hidden py-3 bg-gradient-to-r from-red-600/10 via-rose-500/15 to-red-600/10 dark:from-red-950/40 dark:via-rose-900/30 dark:to-red-950/40 border-y border-red-500/20 backdrop-blur-md rounded-2xl shadow-sm"
+            className="w-full overflow-hidden py-3.5 bg-gradient-to-r from-red-600/10 via-rose-500/15 to-red-600/10 dark:from-red-950/40 dark:via-rose-900/30 dark:to-red-950/40 border-y border-red-500/20 backdrop-blur-md rounded-2xl shadow-sm"
           >
             <div className="flex animate-marquee whitespace-nowrap gap-8 select-none">
               {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
@@ -141,16 +153,6 @@ export function AspirasiClient() {
                 </div>
               ))}
             </div>
-          </motion.div>
-
-          {/* EFEK 2: EFEK SCROLL-REVEAL (MUNCUL SAAT DI-SCROLL) */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
-            <FormAspirasi />
           </motion.div>
         </div>
       </main>

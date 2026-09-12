@@ -12,20 +12,25 @@
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --accent-primary: #960000;
-  --accent-rose: #dc2626;
-  --accent-blue: #5b7fff;
-  --accent-violet: #8b7cf6;
-  --accent-amber: #f5b942;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --accent-red: #c8102e;
+  --accent-red-hover: #a00c24;
+  --border-color: #0a0a0a;
+  --muted-text: #555555;
+  --card-bg: #ffffff;
   --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
   color-scheme: light;
 }
 
 .dark {
-  --background: #0a0e1f;
-  --foreground: #f1f5f9;
+  --background: #000000;
+  --foreground: #ffffff;
+  --accent-red: #e31b3b;
+  --accent-red-hover: #ff2d4d;
+  --border-color: rgba(255, 255, 255, 0.22);
+  --muted-text: #b3b3b3;
+  --card-bg: #080808;
   color-scheme: dark;
 }
 
@@ -60,7 +65,7 @@ input[type="button"] {
 html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: #dc262640 transparent;
+  scrollbar-color: #c8102e transparent;
 }
 
 ::-webkit-scrollbar {
@@ -72,8 +77,8 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #dc262650;
-  border-radius: 999px;
+  background-color: #c8102e;
+  border-radius: 0px;
 }
 
 body {
@@ -86,68 +91,52 @@ body {
   min-height: 100dvh;
 }
 
-/* Glassmorphism utility adaptive */
-.glass-card {
-  background: rgba(0, 0, 0, 0.02);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 20px;
+/* ─────────────────────────────────────────
+   MODERN BRUTALIST × EDITORIAL UTILITIES
+   ───────────────────────────────────────── */
+.brutalist-border {
+  border: 2px solid var(--border-color);
 }
 
-.dark .glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+.brutalist-card {
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-card:hover {
-  border-color: rgba(220, 38, 38, 0.4);
+.brutalist-card:hover {
+  border-color: var(--accent-red);
+  transform: translateY(-2px);
 }
 
-/* High-End Liquid Glassmorphism Utilities */
-.liquid-glass-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.65) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.8), 0 20px 40px -15px rgba(148, 163, 184, 0.15);
-  border-radius: 24px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.hover-invert {
+  transition: all 0.25s ease;
 }
 
-.dark .liquid-glass-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-  border-radius: 24px;
+.hover-invert:hover {
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
-.liquid-glass-card:hover {
-  border-color: rgba(220, 38, 38, 0.4);
-  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 25px 50px -12px rgba(220, 38, 38, 0.15);
-}
-
-/* Red glow shadow */
-.glow-red {
-  box-shadow: 0 0 30px rgba(220, 38, 38, 0.3), 0 0 60px rgba(220, 38, 38, 0.1);
+.editorial-heading {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
 }
 
 /* Selection color */
 ::selection {
-  background: rgba(220, 38, 38, 0.35);
-  color: #fff;
+  background: #c8102e;
+  color: #ffffff;
 }
 
 /* Focus ring for accessibility */
 :focus-visible {
-  outline: 2px solid #dc2626;
+  outline: 2px solid var(--accent-red);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 2px;
 }
 
 /* Prevent layout shift from scrollbar */
@@ -158,12 +147,6 @@ html {
 /* Group hover scale fix */
 .group:hover .group-hover\:scale-110 {
   transform: scale(1.1);
-}
-
-/* Gradient animation for hero headline */
-@keyframes gradientShift {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
 }
 
 /* Custom line-clamp */
@@ -205,30 +188,13 @@ html {
   animation-play-state: paused;
 }
 
-/* ─────────────────────────────────────────
-   AURA Creative Agency Design Utilities
-   ───────────────────────────────────────── */
 .hover-outline-text {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hover-outline-text:hover {
   color: transparent !important;
-  -webkit-text-stroke: 1.5px #dc2626;
+  -webkit-text-stroke: 1.5px var(--accent-red);
 }
 
-.dark .hover-outline-text:hover {
-  color: transparent !important;
-  -webkit-text-stroke: 1.5px #f87171;
-}
-
-.aura-glow-red {
-  box-shadow: 0 0 50px -10px rgba(220, 38, 38, 0.4), 0 0 20px -5px rgba(220, 38, 38, 0.2);
-}
-
-.aura-text-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
 

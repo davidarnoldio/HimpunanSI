@@ -23,7 +23,7 @@ import { savePengurusAction } from "@/app/actions/adminActions";
 function InstagramIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <rect x="2" y="2" width="20" height="20" rx="0" ry="0" />
       <circle cx="12" cy="12" r="3.5" />
       <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
     </svg>
@@ -40,8 +40,7 @@ function LinkedinIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-// ─── Constants ─────────────────────────────────────────────────────────────
-const MAX_BASE64_KB = 200; // Batas aman agar payload tidak melebihi kapasitas Supabase
+const MAX_BASE64_KB = 200;
 const JABATAN_OPTIONS = [
   "Ketua Himpunan",
   "Wakil Ketua Himpunan",
@@ -89,16 +88,14 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
       item.jabatan.toLowerCase().includes(search.toLowerCase())
   );
 
-  // ─── Handle file upload with size guard ─────────────────────────────────
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Warn if file is too large — Base64 of >150KB will bloat Supabase payload
     const fileSizeKB = file.size / 1024;
     if (fileSizeKB > MAX_BASE64_KB) {
       setFotoWarning(
-        `⚠️ Foto terlalu besar (${Math.round(fileSizeKB)} KB). Disarankan pakai URL eksternal (Google Drive/Imgur) agar tidak gagal upload ke database.`
+        `⚠️ Foto terlalu besar (${Math.round(fileSizeKB)} KB). Disarankan pakai URL eksternal agar tidak gagal upload.`
       );
     } else {
       setFotoWarning("");
@@ -113,7 +110,6 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
     }
   };
 
-  // ─── Modal open helpers ──────────────────────────────────────────────────
   const handleOpenAdd = () => {
     setEditingItem(null);
     setFormData(EMPTY_FORM);
@@ -137,14 +133,12 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
     setIsModalOpen(true);
   };
 
-  // ─── Save handler ────────────────────────────────────────────────────────
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.nama.trim() || !formData.jabatan.trim() || isLoading) return;
 
     setIsLoading(true);
     try {
-      // Gunakan URL placeholder jika foto tidak diisi, jangan simpan Base64 kosong
       const finalFotoUrl = getValidImageUrl(formData.fotoUrl, formData.nama);
 
       let updated: PengurusItem[];
@@ -164,16 +158,9 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
         updated = [...activePengurus, newItem];
       }
 
-      // 1. Update shared store (instant UI update)
       setPengurus(updated);
-
-      // 2. Sync ke Supabase DB + trigger revalidatePath("/")
       await savePengurusAction(updated);
-
-      // 3. Refresh RSC (Server Component) agar data landing page ikut ter-update
-      //    tanpa harus reload manual — Next.js router.refresh() re-fetches server data
       router.refresh();
-
       setIsModalOpen(false);
     } catch (err) {
       console.error("[AdminPengurus] Save error:", err);
@@ -183,7 +170,6 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
     }
   };
 
-  // ─── Delete handler ──────────────────────────────────────────────────────
   const confirmDelete = async () => {
     if (!deleteTargetId || isLoading) return;
     setIsLoading(true);
@@ -192,7 +178,7 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
       setPengurus(updated);
       setDeleteTargetId(null);
       await savePengurusAction(updated);
-      router.refresh(); // Refresh RSC setelah delete
+      router.refresh();
     } catch (err) {
       console.error("[AdminPengurus] Delete error:", err);
       alert("Gagal menghapus pengurus dari database.");
@@ -201,105 +187,101 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
     }
   };
 
-  // ─── Render ─────────────────────────────────────────────────────────────
   return (
     <div className="space-y-6">
-      {/* ── Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b-2 border-slate-950 dark:border-white/20 pb-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Shield size={24} className="text-red-600 dark:text-red-500" />
-            Kelola Pimpinan BPH
+          <h1 className="text-2xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
+            <Shield size={24} className="text-[#C8102E] dark:text-[#E31B3B]" />
+            KELOLA PIMPINAN BPH
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
             Ketua, Wakil, Sekretaris & Bendahara Umum HIMSI UG — tersinkronisasi langsung ke Beranda Utama.
           </p>
         </div>
         <button
           onClick={handleOpenAdd}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 transition-all cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 hover:bg-slate-950 transition-colors cursor-pointer shrink-0"
         >
-          <Plus size={16} /> Tambah BPH Baru
+          <Plus size={16} /> TAMBAH BPH BARU
         </button>
       </div>
 
-      {/* ── Search Bar ── */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+      {/* Search Bar */}
+      <div className="p-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20">
         <div className="relative w-full max-w-sm">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-950 dark:text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari nama atau jabatan pimpinan BPH..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-red-500 text-slate-900 dark:text-slate-100"
+            className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
           />
         </div>
       </div>
 
-      {/* ── Cards Grid / Empty State ── */}
+      {/* Cards Grid / Empty State */}
       {filteredItems.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800">
+        <div className="p-12 text-center bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20">
           <User size={40} className="mx-auto text-slate-400 mb-3" />
-          <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Belum ada data Pimpinan BPH</p>
-          <p className="text-xs text-slate-500 mt-1">Klik &quot;Tambah BPH Baru&quot; untuk memasukkan pimpinan kabinet.</p>
+          <p className="text-sm font-black font-heading uppercase text-slate-950 dark:text-white">Belum ada data Pimpinan BPH</p>
+          <p className="text-xs font-mono font-bold text-slate-500 mt-1">Klik &quot;Tambah BPH Baru&quot; untuk memasukkan pimpinan kabinet.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredItems.map((item) => (
             <motion.div
               key={item.id}
               layout
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="group rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+              className="group bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(200,16,46,1)] transition-all flex flex-col justify-between"
             >
               <div className="p-5 space-y-3 text-center flex-1">
-                {/* Avatar */}
-                <div className="relative w-24 h-24 mx-auto rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-red-500/20 group-hover:border-red-500/60 transition-colors">
+                <div className="relative w-24 h-24 mx-auto border-2 border-slate-950 overflow-hidden bg-slate-950">
                   <img
                     src={getValidImageUrl(item.fotoUrl, item.nama)}
                     alt={item.nama}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-slate-100 line-clamp-1">
+                  <h3 className="font-black font-heading text-sm text-slate-950 dark:text-white uppercase truncate">
                     {item.nama}
                   </h3>
-                  <p className="text-xs font-bold text-red-600 dark:text-red-400">{item.jabatan}</p>
-                  <span className="inline-block text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                  <p className="text-xs font-mono font-bold text-[#C8102E] dark:text-[#E31B3B]">{item.jabatan}</p>
+                  <span className="inline-block text-[10px] font-mono font-black uppercase text-white bg-slate-950 px-2 py-0.5 border border-slate-950">
                     BPH • {item.periode}
                   </span>
                 </div>
 
-                {/* Social Links */}
                 <div className="flex items-center justify-center gap-2 pt-1">
                   {item.instagram && (
                     <a href={item.instagram} target="_blank" rel="noreferrer"
-                      className="p-1.5 rounded-lg bg-pink-50 dark:bg-pink-950/50 text-pink-600 dark:text-pink-400 hover:scale-110 transition-transform" title="Instagram">
+                      className="p-1.5 bg-slate-950 text-white border border-slate-950 hover:bg-[#C8102E] transition-colors" title="Instagram">
                       <InstagramIcon size={13} />
                     </a>
                   )}
                   {item.linkedin && (
                     <a href={item.linkedin} target="_blank" rel="noreferrer"
-                      className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:scale-110 transition-transform" title="LinkedIn">
+                      className="p-1.5 bg-slate-950 text-white border border-slate-950 hover:bg-[#C8102E] transition-colors" title="LinkedIn">
                       <LinkedinIcon size={13} />
                     </a>
                   )}
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="px-4 py-3 bg-slate-50/60 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+              <div className="px-4 py-3 bg-white dark:bg-slate-950 border-t-2 border-slate-950 dark:border-white/20 flex items-center justify-end gap-2">
                 <button onClick={() => handleOpenEdit(item)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer text-xs font-bold">
-                  <Edit2 size={12} /> Edit
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer text-xs font-black font-mono uppercase hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors">
+                  <Edit2 size={12} /> EDIT
                 </button>
                 <button onClick={() => setDeleteTargetId(item.id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/60 hover:bg-red-100 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 transition-colors cursor-pointer text-xs font-bold">
-                  <Trash2 size={12} /> Hapus
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C8102E] text-white border border-slate-950 cursor-pointer text-xs font-black font-mono uppercase hover:bg-slate-950 transition-colors">
+                  <Trash2 size={12} /> HAPUS
                 </button>
               </div>
             </motion.div>
@@ -307,193 +289,177 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
         </div>
       )}
 
-      {/* ── CREATE / EDIT MODAL ── */}
+      {/* CREATE / EDIT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full max-w-lg bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] flex flex-col max-h-[90vh]"
             >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b-2 border-slate-950 dark:border-white/20">
                 <div>
-                  <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-                    {editingItem ? "Edit Data Pimpinan BPH" : "Tambah Pimpinan BPH Baru"}
+                  <h2 className="text-lg font-black font-heading uppercase text-slate-950 dark:text-white">
+                    {editingItem ? "EDIT DATA PIMPINAN BPH" : "TAMBAH PIMPINAN BPH BARU"}
                   </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs font-mono font-bold text-slate-500 mt-0.5">
                     Data akan langsung tersinkron ke Beranda setelah disimpan.
                   </p>
                 </div>
                 <button onClick={() => setIsModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer transition-colors ml-3 shrink-0">
+                  className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer transition-colors ml-3 shrink-0">
                   <X size={18} />
                 </button>
               </div>
 
-              {/* Modal Form — scrollable body */}
               <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0">
-                {/* Scrollable fields */}
                 <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
-                {/* Nama Lengkap */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Nama Lengkap <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nama}
-                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                    placeholder="e.g. Ahmad Fathir Ramadhan"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
-                  />
-                </div>
-
-                {/* Jabatan — dropdown + text fallback */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Jabatan <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={JABATAN_OPTIONS.includes(formData.jabatan) ? formData.jabatan : "custom"}
-                    onChange={(e) => {
-                      if (e.target.value !== "custom") {
-                        setFormData({ ...formData, jabatan: e.target.value });
-                      }
-                    }}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm transition-colors"
-                  >
-                    {JABATAN_OPTIONS.map((j) => <option key={j} value={j}>{j}</option>)}
-                    <option value="custom">Lainnya (ketik manual)</option>
-                  </select>
-                  {/* Custom jabatan input */}
-                  {!JABATAN_OPTIONS.includes(formData.jabatan) && (
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                      NAMA LENGKAP *
+                    </label>
                     <input
                       type="text"
                       required
-                      value={formData.jabatan}
-                      onChange={(e) => setFormData({ ...formData, jabatan: e.target.value })}
-                      placeholder="Tulis jabatan manual..."
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-red-300 dark:border-red-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm mt-2"
+                      value={formData.nama}
+                      onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                      placeholder="Nama Lengkap..."
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-sm"
                     />
-                  )}
-                </div>
+                  </div>
 
-                {/* Periode */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Periode Kepengurusan
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.periode}
-                    onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
-                    placeholder="e.g. 2025/2026"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-semibold text-sm"
-                  />
-                </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                      JABATAN *
+                    </label>
+                    <select
+                      value={JABATAN_OPTIONS.includes(formData.jabatan) ? formData.jabatan : "custom"}
+                      onChange={(e) => {
+                        if (e.target.value !== "custom") {
+                          setFormData({ ...formData, jabatan: e.target.value });
+                        }
+                      }}
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-sm"
+                    >
+                      {JABATAN_OPTIONS.map((j) => <option key={j} value={j}>{j}</option>)}
+                      <option value="custom">Lainnya (ketik manual)</option>
+                    </select>
+                    {!JABATAN_OPTIONS.includes(formData.jabatan) && (
+                      <input
+                        type="text"
+                        required
+                        value={formData.jabatan}
+                        onChange={(e) => setFormData({ ...formData, jabatan: e.target.value })}
+                        placeholder="Tulis jabatan manual..."
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-[#C8102E] text-slate-950 dark:text-white focus:outline-none font-bold text-sm mt-2"
+                      />
+                    )}
+                  </div>
 
-                {/* Foto Profil */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Foto Profil
-                  </label>
-                  <div className="flex items-center gap-2">
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                      PERIODE KEPENGURUSAN
+                    </label>
                     <input
                       type="text"
-                      value={formData.fotoUrl.startsWith("data:") ? "(File dari galeri terpilih)" : formData.fotoUrl}
-                      onChange={(e) => {
-                        setFormData({ ...formData, fotoUrl: e.target.value });
-                        setFotoWarning("");
-                      }}
-                      placeholder="https://i.imgur.com/... atau link Google Drive"
-                      className="flex-1 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-mono text-xs"
+                      value={formData.periode}
+                      onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
+                      placeholder="e.g. 2025/2026"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-sm"
                     />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 shrink-0 cursor-pointer border border-slate-200 dark:border-slate-700 transition-colors"
-                    >
-                      <Upload size={14} /> Galeri
-                    </button>
-                    <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                   </div>
-                  {/* Foto warning */}
-                  {fotoWarning && (
-                    <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-xs">
-                      <AlertCircle size={14} className="shrink-0 mt-0.5" />
-                      <span>{fotoWarning}</span>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                      FOTO PROFIL
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={formData.fotoUrl.startsWith("data:") ? "(File dari galeri terpilih)" : formData.fotoUrl}
+                        onChange={(e) => {
+                          setFormData({ ...formData, fotoUrl: e.target.value });
+                          setFotoWarning("");
+                        }}
+                        placeholder="https://i.imgur.com/..."
+                        className="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono text-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-3 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer"
+                      >
+                        <Upload size={14} /> GALERI
+                      </button>
+                      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                     </div>
-                  )}
-                  <p className="text-[10px] text-slate-400">
-                    💡 Rekomendasikan URL eksternal (Imgur, Google Drive share link) agar performa lebih stabil.
-                  </p>
-                </div>
+                    {fotoWarning && (
+                      <div className="flex items-start gap-2 p-3 bg-[#C8102E] text-white text-xs font-mono font-bold">
+                        <AlertCircle size={14} className="shrink-0 mt-0.5" />
+                        <span>{fotoWarning}</span>
+                      </div>
+                    )}
+                  </div>
 
-                {/* Visi / Motto */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Visi / Motto (Opsional)
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={formData.visiMotto || ""}
-                    onChange={(e) => setFormData({ ...formData, visiMotto: e.target.value })}
-                    placeholder="e.g. Bersatu, Bergerak, Berdampak untuk HIMSI UG..."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 font-medium text-sm leading-relaxed resize-none"
-                  />
-                </div>
-
-                {/* Sosial Media */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="flex items-center gap-1.5 text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                      <LinkedinIcon size={12} /> LinkedIn
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                      VISI / MOTTO (OPSIONAL)
                     </label>
-                    <input
-                      type="url"
-                      value={formData.linkedin}
-                      onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-                      placeholder="https://linkedin.com/in/..."
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 text-xs font-mono"
+                    <textarea
+                      rows={2}
+                      value={formData.visiMotto || ""}
+                      onChange={(e) => setFormData({ ...formData, visiMotto: e.target.value })}
+                      placeholder="e.g. Bersatu, Bergerak, Berdampak untuk HIMSI UG..."
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-medium text-sm resize-none"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="flex items-center gap-1.5 text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                      <InstagramIcon size={12} /> Instagram
-                    </label>
-                    <input
-                      type="url"
-                      value={formData.instagram}
-                      onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                      placeholder="https://instagram.com/..."
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 text-xs font-mono"
-                    />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="flex items-center gap-1.5 text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                        <LinkedinIcon size={12} /> LINKEDIN
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.linkedin}
+                        onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
+                        placeholder="https://linkedin.com/in/..."
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] text-xs font-mono"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="flex items-center gap-1.5 text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
+                        <InstagramIcon size={12} /> INSTAGRAM
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.instagram}
+                        onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                        placeholder="https://instagram.com/..."
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] text-xs font-mono"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                </div>
-
-                {/* Sticky footer — always visible */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-3xl shrink-0">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t-2 border-slate-950 dark:border-white/20 bg-white dark:bg-slate-950 shrink-0">
                   <button type="button" disabled={isLoading} onClick={() => setIsModalOpen(false)}
-                    className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-50">
-                    Batal
+                    className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-white font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-300 transition-colors cursor-pointer">
+                    BATAL
                   </button>
                   <button type="submit"
                     disabled={isLoading || !formData.nama.trim() || !formData.jabatan.trim()}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 disabled:opacity-50 transition-all cursor-pointer flex items-center gap-2">
+                    className="px-6 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] hover:bg-slate-950 text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 transition-colors cursor-pointer flex items-center gap-2">
                     {isLoading ? (
                       <>
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                        <span>Menyimpan & Sinkronisasi...</span>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent animate-spin" />
+                        <span>MENYIMPAN...</span>
                       </>
                     ) : (
                       <>
-                        <Check size={15} /> Simpan ke Beranda
+                        <Check size={15} /> SIMPAN KE BERANDA
                       </>
                     )}
                   </button>
@@ -504,7 +470,6 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
         )}
       </AnimatePresence>
 
-      {/* ── DELETE CONFIRMATION ── */}
       <ConfirmDeleteModal
         isOpen={!!deleteTargetId}
         onClose={() => setDeleteTargetId(null)}

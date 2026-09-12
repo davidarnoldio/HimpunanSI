@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { MapPin, Mail, Clock, Send } from "lucide-react";
 import Link from "next/link";
 import { FOOTER_SOCIAL, FOOTER_INFO } from "@/data/landingPage";
@@ -9,7 +8,7 @@ import { BrandLogo } from "@/components/ui/BrandLogo";
 function InstagramIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <rect x="2" y="2" width="20" height="20" rx="0" ry="0" />
       <circle cx="12" cy="12" r="3.5" />
       <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
     </svg>
@@ -49,73 +48,53 @@ const SOCIAL_ICON_MAP: Record<string, React.ElementType> = {
   tiktok: TikTokIcon,
 };
 
-const SOCIAL_HOVER: Record<string, string> = {
-  instagram: "hover:bg-pink-500/15 hover:border-pink-500/40 hover:text-pink-600 dark:hover:text-pink-400",
-  linkedin: "hover:bg-blue-500/15 hover:border-blue-500/40 hover:text-blue-600 dark:hover:text-blue-400",
-  youtube: "hover:bg-red-500/15 hover:border-red-500/40 hover:text-red-600 dark:hover:text-red-400",
-  tiktok: "hover:bg-slate-400/15 hover:border-slate-400/40 hover:text-slate-900 dark:hover:text-slate-200",
-};
-
 export function Footer() {
   return (
     <footer
       id="footer"
-      className="relative bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 border-t border-slate-200 dark:border-slate-800/80 overflow-hidden transition-colors duration-300"
+      className="relative bg-slate-100 dark:bg-black text-slate-950 dark:text-white border-t-2 border-slate-950 dark:border-white/20 transition-colors duration-300"
       aria-label="Footer HIMSI UG"
     >
-      {/* Top accent glow line */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-red-600/40 to-transparent" />
-
-      {/* Ambient background glow */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-red-500/5 dark:bg-red-900/8 blur-[120px]" />
-        <div className="absolute top-0 right-0 w-[350px] h-[250px] bg-rose-500/5 dark:bg-rose-900/6 blur-[100px]" />
-      </div>
-
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Main Grid 2-Kolom Ringkas (Left & Right Aligned) */}
+        {/* Main Grid 2-Kolom */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 pb-12">
           {/* Kolom 1: Branding & About */}
           <div className="space-y-5 text-left">
-            {/* Logo & Title */}
-            <Link href="/" className="inline-flex items-center gap-3 group">
+            <Link href="/" className="inline-flex items-center gap-3">
               <BrandLogo size="md" />
               <div className="flex flex-col leading-tight">
-                <span className="text-slate-900 dark:text-slate-100 font-black font-heading text-lg group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                <span className="text-slate-950 dark:text-white font-black font-heading text-xl uppercase tracking-wider">
                   HIMSI UG
                 </span>
-                <span className="text-slate-500 dark:text-slate-400 text-xs font-mono font-semibold">
+                <span className="text-slate-600 dark:text-slate-400 text-xs font-mono font-bold uppercase tracking-widest">
                   Himpunan Mahasiswa Sistem Informasi
                 </span>
               </div>
             </Link>
 
-            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md font-medium">
+            <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed max-w-md font-medium">
               Organisasi kemahasiswaan resmi Sistem Informasi Universitas Gunadarma yang menggerakkan potensi mahasiswa melalui program akademik, pengembangan minat bakat, dan sosial yang berdampak.
             </p>
 
             {/* Social Media Icons */}
-            <div className="pt-2 space-y-2">
-              <span className="text-[11px] font-bold font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
-                Ikuti Media Sosial Kami:
+            <div className="pt-2 space-y-3">
+              <span className="text-[11px] font-black font-mono uppercase tracking-widest text-[#C8102E] dark:text-[#E31B3B] block">
+                MEDIA SOSIAL RESMI:
               </span>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 {FOOTER_SOCIAL.map((s) => {
                   const Icon = SOCIAL_ICON_MAP[s.icon] ?? InstagramIcon;
-                  const hoverCls = SOCIAL_HOVER[s.icon] ?? "";
                   return (
-                    <motion.a
+                    <a
                       key={s.platform}
                       href={s.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.12, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 transition-all duration-200 shadow-sm dark:shadow-none ${hoverCls}`}
+                      className="w-10 h-10 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 flex items-center justify-center hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] hover:text-white dark:hover:text-white transition-colors"
                       aria-label={`HIMSI UG di ${s.label}`}
                     >
-                      <Icon size={16} />
-                    </motion.a>
+                      <Icon size={18} />
+                    </a>
                   );
                 })}
               </div>
@@ -123,61 +102,61 @@ export function Footer() {
           </div>
 
           {/* Kolom 2: Sekretariat & Kontak */}
-          <div className="space-y-4 text-left">
-            <h3 className="text-slate-900 dark:text-slate-100 font-extrabold font-heading text-base tracking-tight">
-              Sekretariat & Kontak
+          <div className="space-y-5 text-left">
+            <h3 className="text-[#C8102E] dark:text-[#E31B3B] font-black font-heading text-lg uppercase tracking-wider">
+              SEKRETARIAT & KONTAK
             </h3>
 
-            <div className="space-y-3.5 text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
-              {/* Alamat Rapi Ke Bawah */}
-              <div className="flex items-start gap-2.5">
-                <MapPin size={16} className="text-red-600 dark:text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="space-y-4 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">
+              {/* Alamat */}
+              <div className="flex items-start gap-3">
+                <MapPin size={18} className="text-[#C8102E] dark:text-[#E31B3B] mt-0.5 flex-shrink-0" />
                 <span className="leading-relaxed">
                   {FOOTER_INFO.sekretariat}
                 </span>
               </div>
 
               {/* Email */}
-              <div className="flex items-center gap-2.5">
-                <Mail size={16} className="text-red-600 dark:text-red-500 flex-shrink-0" />
+              <div className="flex items-center gap-3">
+                <Mail size={18} className="text-[#C8102E] dark:text-[#E31B3B] flex-shrink-0" />
                 <a
                   href={`mailto:${FOOTER_INFO.email}`}
-                  className="hover:text-red-600 dark:hover:text-red-400 font-semibold transition-colors duration-200"
+                  className="hover:text-[#C8102E] dark:hover:text-[#E31B3B] font-mono font-bold transition-colors"
                 >
                   {FOOTER_INFO.email}
                 </a>
               </div>
 
               {/* Jam Operasional */}
-              <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 font-mono">
-                <Clock size={16} className="text-slate-400 dark:text-slate-500 flex-shrink-0" />
-                <span>Senin - Jumat (09:00 - 17:00 WIB)</span>
+              <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-400 font-mono font-bold">
+                <Clock size={18} className="text-[#C8102E] dark:text-[#E31B3B] flex-shrink-0" />
+                <span>SENIN - JUMAT (09:00 - 17:00 WIB)</span>
               </div>
             </div>
 
             {/* CTA Kirim Aspirasi */}
             <div className="pt-2">
               <Link
-                href="/#aspirasi"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold font-mono text-xs shadow-md shadow-red-900/20 transition-all"
+                href="/aspirasi"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#C8102E] dark:bg-[#E31B3B] text-white font-black font-mono text-xs uppercase tracking-widest border border-slate-950 dark:border-transparent hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950 transition-colors"
               >
-                <Send size={13} /> Kirim Aspirasi
+                <Send size={13} /> KIRIM ASPIRASI SEKARANG
               </Link>
             </div>
           </div>
         </div>
 
-        {/* AURA Agency Giant Statement Typography */}
-        <div className="py-8 my-4 border-y border-slate-200/80 dark:border-slate-800/80 text-center overflow-hidden">
-          <span className="text-4xl sm:text-6xl lg:text-8xl font-black font-heading tracking-tighter text-slate-200 dark:text-slate-900/80 select-none block hover-outline-text transition-all duration-300">
+        {/* Giant Statement Typography */}
+        <div className="py-8 my-4 border-y border-slate-950/20 dark:border-white/20 text-center overflow-hidden">
+          <span className="text-4xl sm:text-6xl lg:text-8xl font-black font-heading tracking-tighter text-slate-950/90 dark:text-white/90 select-none block uppercase">
             HIMSI GUNADARMA
           </span>
         </div>
 
         {/* Bottom Bar: Copyright */}
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-500 dark:text-slate-500 font-semibold">
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">
           <p className="text-center sm:text-left">
-            © 2026 HIMSI Universitas Gunadarma. All rights reserved.
+            © 2026 HIMSI UNIVERSITAS GUNADARMA. ALL RIGHTS RESERVED.
           </p>
         </div>
       </div>

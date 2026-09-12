@@ -6,6 +6,7 @@ import { ShoppingBag, Search, X, Sparkles } from "lucide-react";
 import { MERCHANDISE_ITEMS, CATEGORY_LABELS, type MerchandiseCategory, type MerchandiseItem } from "@/data/merchandise";
 import { MerchandiseCard } from "./MerchandiseCard";
 import { MerchandiseModal } from "./MerchandiseModal";
+import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
 // ─────────────────────────────────────────────
 // Category Tab Filter Component
@@ -231,6 +232,7 @@ export function MerchandiseCatalogue() {
     >
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <HackerMatrixBackground />
         <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] rounded-full bg-red-900/10 blur-[140px]" />
         <div className="absolute -bottom-20 right-1/4 w-[400px] h-[400px] rounded-full bg-rose-900/8 blur-[120px]" />
         <div className="absolute top-1/2 left-0 w-px h-2/3 bg-gradient-to-b from-transparent via-red-800/20 to-transparent" />

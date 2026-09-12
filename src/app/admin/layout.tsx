@@ -56,22 +56,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // If viewing admin login page, omit sidebar layout
   if (pathname === "/admin/login") {
-    return <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1f]">{children}</div>;
+    return <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-950 dark:text-slate-100">{children}</div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-950 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-300">
       {/* ── Sidebar (Desktop) ── */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-[#0a0e1f]/80 backdrop-blur-xl shrink-0 sticky top-0 h-screen z-30">
+      <aside className="hidden md:flex flex-col w-64 border-r-2 border-slate-950 dark:border-white/20 bg-slate-50 dark:bg-slate-900 shrink-0 sticky top-0 h-screen z-30">
         {/* Brand Header */}
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
+        <div className="p-6 border-b-2 border-slate-950 dark:border-white/20 flex items-center justify-between">
           <Link href="/admin/dashboard" className="flex items-center gap-3">
             <BrandLogo size="md" />
             <div>
-              <h1 className="font-extrabold font-heading text-sm text-slate-900 dark:text-slate-100 leading-tight">
+              <h1 className="font-black font-heading text-sm text-slate-950 dark:text-white uppercase leading-tight">
                 HIMSI UG Admin
               </h1>
-              <span className="text-[11px] font-semibold font-mono text-red-600 dark:text-red-400 flex items-center gap-1">
+              <span className="text-[10px] font-black font-mono text-[#C8102E] dark:text-[#E31B3B] uppercase tracking-widest flex items-center gap-1">
                 <Shield size={10} /> Control Panel
               </span>
             </div>
@@ -79,9 +79,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-          <span className="px-3 text-[10px] font-extrabold font-mono tracking-widest text-slate-400 dark:text-slate-500 uppercase block mb-2">
-            Menu Utama
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <span className="px-3 text-[10px] font-black font-mono tracking-widest text-[#C8102E] dark:text-[#E31B3B] uppercase block mb-2">
+            [ MENU UTAMA ]
           </span>
           {SIDEBAR_ITEMS.map((item) => {
             const Icon = item.icon;
@@ -91,23 +91,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all duration-200 ${
+                className={`group flex items-center justify-between px-3.5 py-3 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 transition-colors ${
                   isActive
-                    ? "bg-gradient-to-r from-red-700 to-red-600 text-white shadow-lg shadow-red-900/20"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                    ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white shadow-[3px_3px_0px_0px_rgba(10,10,10,1)]"
+                    : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon size={16} className={isActive ? "text-white" : "text-slate-400 group-hover:text-red-500"} />
+                  <Icon size={16} className={isActive ? "text-white" : "text-slate-950 dark:text-white"} />
                   <span>{item.label}</span>
                 </div>
 
                 {item.badge && (
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold font-mono shadow-sm ${
+                    className={`px-2 py-0.5 text-[10px] font-black font-mono uppercase border border-slate-950 ${
                       isActive
-                        ? "bg-white text-red-600"
-                        : "bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20"
+                        ? "bg-slate-950 text-white"
+                        : "bg-[#C8102E] text-white"
                     }`}
                   >
                     {item.badge}
@@ -119,9 +119,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
-          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/60">
-            <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300">Mode Tampilan</span>
+        <div className="p-4 border-t-2 border-slate-950 dark:border-white/20 space-y-3">
+          <div className="flex items-center justify-between px-3 py-2 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20">
+            <span className="text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">TEMA</span>
             <div className="shrink-0 scale-90 origin-right">
               <ThemeToggle />
             </div>
@@ -130,10 +130,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link
             href="/"
             target="_blank"
-            className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold font-mono text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
+            className="flex items-center justify-between px-3 py-2 bg-slate-200 dark:bg-slate-800 text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white border-2 border-slate-950 dark:border-white/20 hover:bg-[#C8102E] hover:text-white transition-colors"
           >
             <span className="flex items-center gap-2">
-              <ExternalLink size={14} /> Lihat Public Web
+              <ExternalLink size={14} /> PUBLIC WEB
             </span>
             <ChevronRight size={14} />
           </Link>
@@ -141,25 +141,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-bold font-mono text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+            className="flex items-center gap-2 w-full px-3 py-2 bg-[#C8102E] text-white text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-950 transition-colors"
           >
-            <LogOut size={14} /> Logout Admin
+            <LogOut size={14} /> LOGOUT ADMIN
           </button>
         </div>
       </aside>
 
       {/* ── Header Mobile ── */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-[#0a0e1f]/90 backdrop-blur-xl sticky top-0 z-30">
+      <div className="md:hidden flex items-center justify-between p-4 border-b-2 border-slate-950 dark:border-white/20 bg-white dark:bg-slate-950 sticky top-0 z-30">
         <Link href="/admin/dashboard" className="flex items-center gap-2">
           <BrandLogo size="sm" />
-          <span className="font-extrabold font-heading text-xs">HIMSI Admin</span>
+          <span className="font-black font-heading text-xs uppercase tracking-wider">HIMSI Admin</span>
         </Link>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+            className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -173,7 +173,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0a0e1f] p-4 space-y-2 z-20"
+            className="md:hidden border-b-2 border-slate-950 dark:border-white/20 bg-slate-50 dark:bg-slate-900 p-4 space-y-2 z-20"
           >
             {SIDEBAR_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -184,8 +184,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold font-mono ${
-                    isActive ? "bg-red-600 text-white" : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className={`flex items-center justify-between px-4 py-3 text-xs font-black font-mono uppercase border-2 border-slate-950 ${
+                    isActive ? "bg-[#C8102E] text-white" : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -193,7 +193,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <span>{item.label}</span>
                   </div>
                   {item.badge && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold font-mono bg-red-500 text-white">
+                    <span className="px-2 py-0.5 text-[10px] font-black font-mono bg-slate-950 text-white">
                       {item.badge}
                     </span>
                   )}
@@ -207,9 +207,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 setMobileOpen(false);
                 handleLogout();
               }}
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-xs font-bold font-mono text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
+              className="flex items-center gap-3 w-full px-4 py-3 bg-[#C8102E] text-white text-xs font-black font-mono uppercase border-2 border-slate-950"
             >
-              <LogOut size={16} /> Logout Admin
+              <LogOut size={16} /> LOGOUT ADMIN
             </button>
           </motion.div>
         )}

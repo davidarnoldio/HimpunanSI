@@ -8,9 +8,11 @@ import {
   PackageOpen,
   Eye,
   Flame,
+  ArrowRight,
 } from "lucide-react";
 import { Navbar, Footer } from "@/components/landing";
 import { MerchandiseModal } from "@/components/merchandise/MerchandiseModal";
+import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 import { getValidImageUrl, formatWhatsAppUrl } from "@/lib/sharedStore";
 import type { MerchandiseAdminItem } from "@/data/adminMockData";
 import type { MerchandiseItem, MerchandiseCategory } from "@/data/merchandise";
@@ -18,11 +20,11 @@ import type { MerchandiseItem, MerchandiseCategory } from "@/data/merchandise";
 const CATEGORIES = ["Semua", "Apparel", "Accessories"];
 
 const LIVE_WORDS = [
-  "Merchandise Drop",
-  "Apparel 2026",
-  "Campus Tech-Wear",
-  "Exclusive Catalog",
-  "HIMSI Collection",
+  "MERCHANDISE DROP",
+  "APPAREL 2026",
+  "CAMPUS TECH-WEAR",
+  "EXCLUSIVE CATALOG",
+  "HIMSI COLLECTION",
 ];
 
 function LiveText() {
@@ -40,11 +42,11 @@ function LiveText() {
       <AnimatePresence mode="wait">
         <motion.span
           key={LIVE_WORDS[index]}
-          initial={{ y: 36, opacity: 0, filter: "blur(6px)" }}
-          animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-          exit={{ y: -36, opacity: 0, filter: "blur(6px)" }}
-          transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-          className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-500 dark:via-rose-400 dark:to-red-500 pb-1"
+          initial={{ y: 36, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -36, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="inline-block text-[#C8102E] dark:text-[#E31B3B]"
         >
           {LIVE_WORDS[index]}
         </motion.span>
@@ -89,58 +91,49 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
     : null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-black text-slate-950 dark:text-slate-100 flex flex-col transition-colors duration-300">
       <Navbar />
 
-      <main className="flex-1 pt-24 pb-20 relative overflow-hidden">
-        {/* Ambient Subtle Grid & Background Mask */}
-        <div className="pointer-events-none absolute inset-0 select-none">
-          <div
-            className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
-            style={{
-              backgroundImage:
-                "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
-            }}
-          />
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-red-600/10 dark:bg-red-900/12 blur-[140px] rounded-full" />
+      <main className="flex-1 pt-28 pb-20 relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 select-none opacity-40">
+          <HackerMatrixBackground />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 z-10">
           {/* Header & Title */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center space-y-4 max-w-3xl mx-auto"
+            transition={{ duration: 0.4 }}
+            className="text-left space-y-4 max-w-3xl border-b-2 border-slate-950 dark:border-white/20 pb-6"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/60 text-red-600 dark:text-red-400 text-xs font-bold font-mono tracking-wide backdrop-blur-md shadow-sm">
-              <Sparkles size={13} className="animate-spin text-red-500" />
-              Official Merchandise HIMSI UG
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-mono font-bold tracking-widest uppercase">
+              <Sparkles size={12} />
+              OFFICIAL MERCHANDISE HIMSI UG
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black font-heading tracking-tight text-slate-900 dark:text-slate-100 leading-[1.15]">
-              Official Catalog <br className="hidden sm:inline" />
-              <LiveText />
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tighter uppercase text-slate-950 dark:text-white">
+              KATALOG <LiveText />
             </h1>
 
-            <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-medium max-w-2xl mx-auto">
+            <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed font-medium max-w-2xl">
               Tampil bangga dengan identitas Sistem Informasi Gunadarma. Temukan hoodie, kaos, totebag, lanyard, dan stiker berkualitas tinggi dengan desain eksklusif.
             </p>
           </motion.div>
 
           {/* Category Pill Filters */}
-          <div className="flex items-center justify-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
             {CATEGORIES.map((category) => {
               const isSelected = selectedCategory === category;
               return (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold font-mono transition-all cursor-pointer border ${isSelected
-                      ? "bg-gradient-to-r from-red-600 to-rose-600 text-white border-transparent shadow-md shadow-red-900/20 scale-105"
-                      : "bg-white/90 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-800 hover:border-red-500/40 hover:text-red-600 dark:hover:text-red-400"
-                    }`}
+                  className={`px-5 py-2 text-xs font-black font-mono tracking-widest uppercase border-2 border-slate-950 transition-colors cursor-pointer ${
+                    isSelected
+                      ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white"
+                      : "bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
+                  }`}
                 >
                   {category}
                 </button>
@@ -151,15 +144,15 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
           {/* Products Grid */}
           {filteredProducts.length === 0 ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="py-16 px-6 text-center space-y-3 rounded-3xl bg-white/70 dark:bg-slate-900/60 border border-dashed border-slate-300 dark:border-slate-800 max-w-md mx-auto"
+              className="py-16 px-6 text-center space-y-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 max-w-md mx-auto"
             >
               <PackageOpen size={48} className="mx-auto text-slate-400" />
-              <h3 className="font-extrabold text-slate-800 dark:text-slate-200">
-                Produk Tidak Ditemukan
+              <h3 className="font-black font-heading text-lg uppercase text-slate-950 dark:text-white">
+                PRODUK TIDAK DITEMUKAN
               </h3>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-mono font-bold">
                 Belum ada merchandise yang sesuai dengan kategori ini saat ini.
               </p>
             </motion.div>
@@ -173,45 +166,32 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                 const description = item.description || "Official Merchandise HIMSI UG";
                 const waContact = item.whatsappNumber || "6281234567890";
 
-                const isReady = item.status === "READY" || item.status === "available";
-                const isPreOrder = item.status === "PRE-ORDER" || item.status === "pre-order";
-
                 return (
                   <motion.div
                     key={item.id}
-                    initial={{ opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.08, duration: 0.4 }}
-                    className="group relative flex flex-col justify-between rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
+                    className="group flex flex-col justify-between bg-slate-50 dark:bg-slate-900/60 border-2 border-slate-950 dark:border-white/20 hover:shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] transition-all duration-200"
                   >
                     {/* Card Image Container */}
-                    <div className="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden">
+                    <div className="relative w-full aspect-[4/3] bg-slate-950 border-b-2 border-slate-950 dark:border-white/20 overflow-hidden">
                       <img
                         src={getValidImageUrl(image, title)}
                         alt={title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
                       />
 
-                      {/* Dark overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-
                       {/* Status Badge */}
-                      <div className="absolute top-3.5 left-3.5">
-                        <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold font-mono tracking-wider uppercase border shadow-sm ${isReady
-                              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40 backdrop-blur-md"
-                              : isPreOrder
-                                ? "bg-amber-500/20 text-amber-400 border-amber-500/40 backdrop-blur-md"
-                                : "bg-red-500/20 text-red-400 border-red-500/40 backdrop-blur-md"
-                            }`}
-                        >
+                      <div className="absolute top-3 left-3">
+                        <span className="px-3 py-1 bg-[#C8102E] text-white text-[10px] font-black font-mono tracking-widest uppercase border border-slate-950">
                           {item.status}
                         </span>
                       </div>
 
                       {/* Price Tag Overlay */}
-                      <div className="absolute bottom-3.5 right-3.5">
-                        <span className="px-3.5 py-1.5 rounded-2xl bg-slate-900/90 text-white text-xs font-mono font-bold tracking-tight border border-slate-700/60 backdrop-blur-md shadow-lg">
+                      <div className="absolute bottom-3 right-3">
+                        <span className="px-3.5 py-1.5 bg-slate-950 text-white text-xs font-mono font-black tracking-widest border border-slate-950 uppercase">
                           {price}
                         </span>
                       </div>
@@ -220,24 +200,24 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                     {/* Card Body */}
                     <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                       <div className="space-y-2">
-                        <span className="text-[10px] font-bold font-mono uppercase tracking-widest text-red-600 dark:text-red-400">
+                        <span className="text-[10px] font-black font-mono uppercase tracking-widest text-[#C8102E] dark:text-[#E31B3B]">
                           {category}
                         </span>
-                        <h3 className="font-extrabold font-heading text-lg text-slate-900 dark:text-slate-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-1">
+                        <h3 className="font-black font-heading text-lg uppercase text-slate-950 dark:text-white group-hover:text-[#C8102E] dark:group-hover:text-[#E31B3B] transition-colors line-clamp-1">
                           {title}
                         </h3>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
+                        <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 leading-relaxed font-medium">
                           {description}
                         </p>
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="grid grid-cols-2 gap-2.5 pt-2">
+                      <div className="grid grid-cols-2 gap-3 pt-2">
                         <button
                           onClick={() => setSelectedModalProduct(item)}
-                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold font-mono transition-colors cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-black font-mono uppercase border border-slate-950 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors cursor-pointer"
                         >
-                          <Eye size={14} /> Detail
+                          <Eye size={14} /> DETAIL
                         </button>
 
                         <a
@@ -247,9 +227,9 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold font-mono shadow-md shadow-red-900/20 transition-all cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] text-white text-xs font-black font-mono uppercase border border-slate-950 hover:bg-slate-950 transition-colors cursor-pointer"
                         >
-                          <ShoppingBag size={14} /> Pesan WA
+                          <ShoppingBag size={14} /> PESAN WA
                         </a>
                       </div>
                     </div>
@@ -260,15 +240,15 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
           )}
 
           {/* Bottom Banner */}
-          <div className="p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-950 to-red-950 border border-slate-800/80 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-            <div className="space-y-2 text-center sm:text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/30 text-red-400 text-[10px] font-bold font-mono uppercase tracking-wider border border-red-500/30">
-                <Flame size={12} /> Custom Orders
+          <div className="p-8 sm:p-12 bg-slate-950 text-white border-2 border-slate-950 dark:border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#E31B3B] text-white text-[10px] font-black font-mono uppercase tracking-widest">
+                <Flame size={12} /> CUSTOM ORDERS
               </span>
-              <h3 className="text-xl font-black font-heading tracking-tight">
-                Punya Pertanyaan Seputar Merchandise?
+              <h3 className="text-xl sm:text-2xl font-black font-heading uppercase tracking-tight text-white">
+                PUNYA PERTANYAAN SEPUTAR MERCHANDISE?
               </h3>
-              <p className="text-xs text-slate-300 max-w-xl font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-xl font-medium leading-relaxed">
                 Hubungi tim Merchandise HIMSI UG untuk info ukuran, custom nama, atau status ketersediaan stok barang.
               </p>
             </div>
@@ -277,9 +257,9 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
               href="https://wa.me/"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-2xl bg-white text-slate-950 font-bold font-mono text-xs sm:text-sm hover:bg-slate-100 transition-colors shrink-0 shadow-lg"
+              className="px-6 py-3 bg-white text-slate-950 font-black font-mono text-xs uppercase tracking-widest hover:bg-[#E31B3B] hover:text-white transition-colors shrink-0 border-2 border-white"
             >
-              Hubungi Admin via WA →
+              HUBUNGI ADMIN VIA WA <ArrowRight size={14} className="inline ml-1" />
             </a>
           </div>
         </div>

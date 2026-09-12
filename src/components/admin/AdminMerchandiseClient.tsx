@@ -11,7 +11,6 @@ import {
   Upload,
   ShoppingBag,
   Check,
-  Tag,
 } from "lucide-react";
 import { useSharedStore, getValidImageUrl, convertFileToBase64 } from "@/lib/sharedStore";
 import { type MerchandiseAdminItem } from "@/data/adminMockData";
@@ -149,46 +148,46 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b-2 border-slate-950 dark:border-white/20 pb-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <ShoppingBag size={24} className="text-red-600 dark:text-red-500" />
-            Kelola Official Merchandise HIMSI
+          <h1 className="text-2xl font-black font-heading uppercase tracking-tight text-slate-950 dark:text-white flex items-center gap-2">
+            <ShoppingBag size={24} className="text-[#C8102E] dark:text-[#E31B3B]" />
+            KELOLA OFFICIAL MERCHANDISE HIMSI
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
             Atur katalog produk, harga, stok, dan nomor WA pemesanan (Tersinkronisasi 100% dengan Supabase DB & Katalog Publik).
           </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 transition-all cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 hover:bg-slate-950 transition-colors cursor-pointer shrink-0"
         >
-          <Plus size={16} /> Tambah Produk Baru
+          <Plus size={16} /> TAMBAH PRODUK BARU
         </button>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="p-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-950 dark:text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari nama atau deskripsi produk..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-red-500"
+            className="w-full pl-9 pr-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 flex-wrap w-full md:w-auto">
+        <div className="flex items-center gap-2 flex-wrap w-full md:w-auto">
           {["Semua", "Apparel", "Aksesoris", "Bundling", "Lainnya"].map((cat) => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-black font-mono uppercase border-2 border-slate-950 cursor-pointer transition-colors ${
                 filterCategory === cat
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+                  ? "bg-[#C8102E] text-white"
+                  : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
               }`}
             >
               {cat}
@@ -199,91 +198,79 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
 
       {/* Grid Products */}
       {filteredItems.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800">
+        <div className="p-12 text-center bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20">
           <ShoppingBag size={40} className="mx-auto text-slate-400 mb-2" />
-          <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Belum ada produk merchandise</p>
-          <p className="text-xs text-slate-500">Klik &quot;Tambah Produk Baru&quot; untuk menambahkan katalog pertama.</p>
+          <p className="text-sm font-black font-heading uppercase text-slate-950 dark:text-white">Belum ada produk merchandise</p>
+          <p className="text-xs font-mono font-bold text-slate-500">Klik &quot;Tambah Produk Baru&quot; untuk menambahkan katalog pertama.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((item) => {
-            const isReady = item.status === "READY";
-            const isPreorder = item.status === "PRE-ORDER";
-
             return (
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="group rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                className="group bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(200,16,46,1)] transition-all flex flex-col justify-between"
               >
                 <div>
                   {/* Photo Preview */}
-                  <div className="relative h-48 bg-slate-950 overflow-hidden">
+                  <div className="relative h-48 bg-slate-950 border-b-2 border-slate-950 dark:border-white/20 overflow-hidden">
                     <img
                       src={getValidImageUrl(item.image, item.title)}
                       alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
 
                     <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                      <span className="px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold uppercase tracking-wider">
+                      <span className="px-2.5 py-1 bg-slate-950 text-white text-[10px] font-black font-mono border border-slate-950 uppercase tracking-wider">
                         {item.category}
                       </span>
                       {item.badge && (
-                        <span className="px-2.5 py-1 rounded-full bg-red-600/90 text-white text-[10px] font-extrabold">
+                        <span className="px-2.5 py-1 bg-[#C8102E] text-white text-[10px] font-black font-mono border border-slate-950">
                           {item.badge}
                         </span>
                       )}
                     </div>
 
                     <div className="absolute top-3 right-3">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-sm ${
-                          isReady
-                            ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40 backdrop-blur-md"
-                            : isPreorder
-                            ? "bg-amber-500/20 text-amber-400 border-amber-500/40 backdrop-blur-md"
-                            : "bg-red-500/20 text-red-400 border-red-500/40 backdrop-blur-md"
-                        }`}
-                      >
+                      <span className="px-2.5 py-1 bg-[#C8102E] text-white text-[10px] font-black font-mono border border-slate-950 uppercase tracking-wider">
                         {item.status}
                       </span>
                     </div>
                   </div>
 
                   <div className="p-5 space-y-2">
-                    <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100 line-clamp-1">
+                    <h3 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white line-clamp-1">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2 font-medium">
+                    <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 font-medium">
                       {item.description}
                     </p>
                     <div className="pt-2 flex items-center justify-between">
-                      <span className="text-sm font-black text-red-600 dark:text-red-400 font-mono">
+                      <span className="text-sm font-black text-[#C8102E] dark:text-[#E31B3B] font-mono">
                         {item.price}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-mono">
+                      <span className="text-[11px] text-slate-500 font-mono font-bold">
                         WA: +{item.whatsappNumber || "6281234567890"}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-slate-50/60 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+                <div className="p-3 bg-white dark:bg-slate-950 border-t-2 border-slate-950 dark:border-white/20 flex items-center justify-end gap-2">
                   <button
                     onClick={() => handleOpenModal(item)}
-                    className="p-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer text-xs font-bold flex items-center gap-1"
+                    className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer font-black font-mono text-xs uppercase hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors flex items-center gap-1"
                   >
-                    <Edit2 size={13} /> Edit
+                    <Edit2 size={13} /> EDIT
                   </button>
                   <button
                     onClick={() => setDeleteTargetId(item.id)}
-                    className="p-2 rounded-xl bg-red-50 dark:bg-red-950/60 hover:bg-red-100 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 transition-colors cursor-pointer text-xs font-bold flex items-center gap-1"
+                    className="p-2 bg-[#C8102E] text-white border border-slate-950 cursor-pointer font-black font-mono text-xs uppercase hover:bg-slate-950 transition-colors flex items-center gap-1"
                   >
-                    <Trash2 size={13} /> Hapus
+                    <Trash2 size={13} /> HAPUS
                   </button>
                 </div>
               </motion.div>
@@ -295,20 +282,20 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
       {/* CREATE / EDIT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 overflow-y-auto">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 my-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full max-w-lg bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] p-6 sm:p-8 space-y-6 my-8"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-                  {editingItem ? "Edit Produk Merchandise" : "Tambah Merchandise Baru"}
+              <div className="flex items-center justify-between pb-4 border-b-2 border-slate-950 dark:border-white/20">
+                <h2 className="text-lg font-black font-heading uppercase text-slate-950 dark:text-white">
+                  {editingItem ? "EDIT PRODUK MERCHANDISE" : "TAMBAH MERCHANDISE BARU"}
                 </h2>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer"
+                  className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -316,8 +303,8 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
 
               <form onSubmit={handleSave} className="space-y-4 text-xs sm:text-sm">
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Nama Produk Merchandise *
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    NAMA PRODUK MERCHANDISE *
                   </label>
                   <input
                     type="text"
@@ -325,19 +312,19 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g. Kaos Polo Official HIMSI UG 2025"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Kategori Produk
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      KATEGORI PRODUK
                     </label>
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     >
                       <option value="Apparel">Apparel (Baju/Jaket)</option>
                       <option value="Aksesoris">Aksesoris (Lanyard/Stiker)</option>
@@ -347,8 +334,8 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                   </div>
 
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Status Stok / PO
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      STATUS STOK / PO
                     </label>
                     <select
                       value={formData.status}
@@ -358,7 +345,7 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                           status: e.target.value as MerchandiseAdminItem["status"],
                         })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-semibold"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     >
                       <option value="READY">READY STOK</option>
                       <option value="PRE-ORDER">PRE-ORDER (PO)</option>
@@ -369,8 +356,8 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Harga Produk (Format Rp) *
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      HARGA PRODUK (FORMAT RP) *
                     </label>
                     <input
                       type="text"
@@ -378,41 +365,40 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                       placeholder="e.g. Rp 185.000"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono font-bold"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono font-bold"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                      Badge Promo / Label
+                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                      BADGE PROMO / LABEL
                     </label>
                     <input
                       type="text"
                       value={formData.badge}
                       onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
                       placeholder="e.g. 🔥 Wajib Maba / Free Stiker"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 text-xs"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-xs"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Nomor WhatsApp Admin Pemesanan
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    NOMOR WHATSAPP ADMIN PEMESANAN
                   </label>
                   <input
                     type="text"
                     value={formData.whatsappNumber}
                     onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
                     placeholder="Format 628xxx (tanpa tanda + / 0)"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono text-xs"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono text-xs"
                   />
                 </div>
 
-                {/* Upload Foto Galeri / URL */}
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Foto Produk (Galeri HP/PC atau URL)
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    FOTO PRODUK (GALERI OR URL)
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -420,14 +406,14 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                       value={formData.image}
                       onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                       placeholder="https://..."
-                      className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-mono text-xs"
+                      className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono text-xs"
                     />
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
+                      className="px-3 py-2.5 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer"
                     >
-                      <Upload size={14} /> Galeri
+                      <Upload size={14} /> GALERI
                     </button>
                     <input
                       ref={fileInputRef}
@@ -440,41 +426,40 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                 </div>
 
                 <div>
-                  <label className="block font-extrabold text-slate-700 dark:text-slate-300 mb-1">
-                    Deskripsi Singkat & Detail Produk
+                  <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-1">
+                    DESKRIPSI SINGKAT & DETAIL PRODUK
                   </label>
                   <textarea
                     rows={3}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Informasi bahan, ukuran ready, varian warna, bonus stiker..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-red-500 font-medium leading-relaxed resize-none"
+                    placeholder="Informasi bahan, ukuran ready, varian warna..."
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-medium leading-relaxed resize-none"
                   />
                 </div>
 
-                {/* Modal Buttons */}
-                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                <div className="pt-4 flex items-center justify-end gap-3 border-t-2 border-slate-950 dark:border-white/20">
                   <button
                     type="button"
                     disabled={isLoading}
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs hover:bg-slate-200 transition-colors cursor-pointer"
+                    className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-white font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-300 transition-colors cursor-pointer"
                   >
-                    Batal
+                    BATAL
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || !formData.title.trim() || !formData.price.trim()}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white font-extrabold text-xs shadow-lg shadow-red-900/20 disabled:opacity-50 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-6 py-2.5 bg-[#C8102E] dark:bg-[#E31B3B] hover:bg-slate-950 text-white font-black font-mono text-xs uppercase tracking-widest border-2 border-slate-950 transition-colors cursor-pointer flex items-center gap-2"
                   >
                     {isLoading ? (
                       <>
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                        <span>Menyimpan...</span>
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent animate-spin" />
+                        <span>MENYIMPAN...</span>
                       </>
                     ) : (
                       <>
-                        <Check size={15} /> Simpan Produk
+                        <Check size={15} /> SIMPAN PRODUK
                       </>
                     )}
                   </button>
@@ -485,7 +470,6 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
         )}
       </AnimatePresence>
 
-      {/* DELETE CONFIRMATION MODAL */}
       <ConfirmDeleteModal
         isOpen={!!deleteTargetId}
         onClose={() => setDeleteTargetId(null)}

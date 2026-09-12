@@ -17,43 +17,6 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
 };
 
-function FloatingOrb({
-  className,
-  delay = 0,
-}: {
-  className: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      className={`absolute rounded-full blur-[90px] pointer-events-none ${className}`}
-      animate={{ y: [0, -22, 0], opacity: [0.35, 0.7, 0.35] }}
-      transition={{
-        duration: 7,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay,
-      }}
-    />
-  );
-}
-
-function StatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="liquid-glass-card flex flex-col items-center sm:items-start text-center sm:text-left justify-center gap-0.5 px-6 py-4.5 w-full sm:w-48 min-w-[170px] max-w-[220px] shrink-0 flex-grow-0 rounded-2xl bg-white/85 dark:bg-slate-900/85 border border-slate-200/80 dark:border-slate-800 shadow-sm backdrop-blur-md"
-    >
-      <span className="text-2xl sm:text-3xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500 dark:from-red-500 dark:to-rose-400 tabular-nums">
-        {value}
-      </span>
-      <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-tight">
-        {label}
-      </span>
-    </motion.div>
-  );
-}
-
 export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) {
   const content = heroContent || INITIAL_HERO_CONTENT;
 
@@ -78,141 +41,139 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
   return (
     <section
       id="beranda"
-      className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 pt-24 pb-12 transition-colors duration-300 scroll-mt-28"
+      className="relative min-h-screen flex flex-col justify-center items-center bg-white dark:bg-black text-slate-950 dark:text-white pt-28 pb-16 transition-colors duration-300 border-b-2 border-slate-950 dark:border-white/20 overflow-hidden"
       aria-label="Beranda HIMSI UG"
     >
-      {/* ── Hacker Matrix Background Teks Kode (Samar & Eleggan) ── */}
       <HackerMatrixBackground />
 
-      {/* ── Ambient Radial Lighting & Grain Effects ── */}
-      <div className="absolute inset-0 pointer-events-none select-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(248,250,252,0.92)_0%,rgba(248,250,252,0.6)_50%,transparent_100%)] dark:bg-[radial-gradient(circle_at_center,rgba(10,14,31,0.92)_0%,rgba(10,14,31,0.6)_50%,transparent_100%)]" />
-
-        <div
-          className="absolute inset-0 opacity-[0.02] dark:opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-        <FloatingOrb className="w-[600px] h-[600px] bg-red-600/15 dark:bg-red-600/20 -top-40 -left-20" delay={0} />
-        <FloatingOrb className="w-[500px] h-[500px] bg-rose-600/12 dark:bg-rose-700/15 top-1/3 -right-28" delay={2} />
-        <FloatingOrb className="w-[400px] h-[400px] bg-red-700/15 dark:bg-red-900/20 bottom-0 left-1/3" delay={4} />
-      </div>
-
-      {/* ── FORMAT CENTERED LAYOUT (AURA Agency Headline & Copywriting) ── */}
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 z-10 flex flex-col items-center text-center justify-center">
+      {/* ── ASYMMETRIC 12-COLUMN EDITORIAL HERO LAYOUT ── */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-6 z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        {/* Left Column (7 cols): Oversized Headline & Copywriting */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="flex flex-col items-center text-center gap-7 max-w-5xl"
+          className="lg:col-span-7 flex flex-col items-start text-left gap-6"
         >
-          {/* Top Pill Badge (AURA Glow Badge) */}
+          {/* Tagline Pill */}
           <motion.div variants={itemVariants}>
-            <span className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-red-500/10 dark:bg-red-950/70 border border-red-500/30 text-red-600 dark:text-red-400 text-xs sm:text-sm font-bold tracking-widest font-mono backdrop-blur-md shadow-sm">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-600 dark:bg-red-500 animate-pulse shadow-sm shadow-red-500" />
-              {content.badgePrefix || "Himpunan Mahasiswa "}
-              <FlipWords words={badgeWords} duration={2000} className="font-bold font-mono text-red-600 dark:text-red-400" />
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#c8102e] dark:bg-[#e31b3b] text-white text-xs font-bold font-mono uppercase tracking-widest border border-slate-950 dark:border-transparent">
+              <span className="w-2 h-2 rounded-none bg-white animate-pulse" />
+              {content.badgePrefix || "HIMPUNAN MAHASISWA "}
+              <FlipWords words={badgeWords} duration={2000} className="font-bold font-mono text-white" />
             </span>
           </motion.div>
 
-          {/* Headline Centered (AURA Agency Oversized Title + Hover Outline Effect) */}
+          {/* Oversized Headline */}
           <motion.h1
             variants={itemVariants}
-            className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-heading text-slate-900 dark:text-slate-100 leading-[1.08] tracking-tight max-w-5xl hover-outline-text cursor-default transition-all duration-300"
+            className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-heading leading-[0.98] tracking-tighter text-slate-950 dark:text-white uppercase"
           >
-            {content.headlinePrefix || "Wadah "}
+            {content.headlinePrefix || "WADAH "}
             <FlipWords
               words={headlineWords}
               duration={2000}
-              className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-500 dark:via-rose-400 dark:to-red-500"
+              className="text-[#c8102e] dark:text-[#e31b3b]"
             />{" "}
-            {content.headlineSuffix}
+            <span className="block">{content.headlineSuffix || "SISTEM INFORMASI."}</span>
           </motion.h1>
 
-          {/* Subheadline Copywriting (Live Text) */}
+          {/* Subheadline Copywriting */}
           <motion.p
             variants={itemVariants}
-            className="text-slate-600 dark:text-slate-300 text-base sm:text-lg lg:text-xl max-w-2xl leading-relaxed font-medium"
+            className="text-slate-700 dark:text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed font-medium"
           >
             {content.descriptionBefore || "HIMSI UG adalah gerakan mahasiswa yang "}
             <FlipWords
               words={descriptionWords}
               duration={2000}
-              className="font-bold text-slate-900 dark:text-slate-100 underline decoration-red-500/60"
+              className="font-bold text-slate-950 dark:text-white underline decoration-[#c8102e] dark:decoration-[#e31b3b]"
             />
             {content.descriptionAfter}
           </motion.p>
 
-          {/* CTA Action Buttons (AURA Agency Pill Row) */}
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          {/* Action Buttons */}
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-2">
             <motion.a
               href="/#event"
-              whileHover={{ scale: 1.04, boxShadow: "0 0 35px rgba(220,38,38,0.45)" }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-red-700 via-red-600 to-rose-600 hover:from-red-600 hover:to-rose-500 text-white font-bold font-mono text-sm sm:text-base shadow-2xl shadow-red-900/30 transition-all duration-200"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center justify-center gap-2 px-7 py-3.5 bg-[#c8102e] dark:bg-[#e31b3b] hover:bg-[#a00c24] dark:hover:bg-[#ff2d4d] text-white font-bold font-mono text-xs uppercase tracking-wider border-2 border-slate-950 dark:border-transparent transition-all"
             >
-              Jelajahi Event & Proker
-              <ArrowRight size={18} />
+              JELAJAHI EVENT & PROKER
+              <ArrowRight size={16} />
             </motion.a>
 
             <motion.a
               href="/merchandise"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold font-mono text-sm sm:text-base border border-slate-200/80 dark:border-slate-800 shadow-md backdrop-blur-md transition-all duration-200"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 text-slate-950 dark:text-white font-bold font-mono text-xs uppercase tracking-wider border-2 border-slate-950 dark:border-white/20 transition-all"
             >
-              <ShoppingBag size={18} className="text-red-500" />
-              Merchandise Resmi
+              <ShoppingBag size={16} />
+              MERCHANDISE RESMI
             </motion.a>
           </motion.div>
 
-          {/* Centered Statistics Bar */}
+          {/* Statistics Grid */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="pt-4 flex flex-wrap justify-center items-center gap-4 w-full max-w-4xl mx-auto"
+            className="pt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 w-full"
           >
             {statsList.map((stat, idx) => (
-              <StatCard key={idx} value={stat.value} label={stat.label} />
+              <div
+                key={idx}
+                className="p-4 bg-slate-50 dark:bg-slate-900/90 border-2 border-slate-950 dark:border-white/20 flex flex-col items-start gap-1"
+              >
+                <span className="font-heading font-black text-2xl sm:text-3xl text-[#c8102e] dark:text-[#e31b3b]">
+                  {stat.value}
+                </span>
+                <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 uppercase leading-tight">
+                  {stat.label}
+                </span>
+              </div>
             ))}
           </motion.div>
         </motion.div>
+
+        {/* Right Column (5 cols): Visual Showcase Card with foto.jpg */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="lg:col-span-5 relative"
+        >
+          <div className="relative aspect-[4/4.5] border-2 border-slate-950 dark:border-[#E31B3B]/60 dark:group-hover:border-[#E31B3B] bg-slate-950 overflow-hidden group shadow-[8px_8px_0px_0px_rgba(200,16,46,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(227,27,59,0.3)]">
+            <img
+              src="/foto.jpg"
+              alt="HIMSI UG — Student Community"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10 gap-2">
+              <div>
+                <div className="font-heading font-black text-3xl text-[#e31b3b] tracking-tight">
+                  2025/2026
+                </div>
+                <div className="text-[11px] uppercase tracking-widest text-white font-mono font-bold">
+                  KABINET FORMASI • HIMSI UG
+                </div>
+              </div>
+              <span className="px-3 py-1 bg-[#c8102e] text-white font-mono font-bold text-[10px] uppercase tracking-widest border border-slate-950">
+                VERIFIED
+              </span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* ── AURA SEAMLESS INFINITE MARQUEE BANNER ── */}
-      <div className="w-full mt-10 py-3.5 bg-gradient-to-r from-red-600 via-rose-600 to-red-600 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-y border-red-700/50 dark:border-red-500/30 shadow-md overflow-hidden backdrop-blur-md z-10 transition-colors duration-300">
-        <div className="animate-marquee flex items-center gap-8 text-xs sm:text-sm font-bold font-mono tracking-widest text-white dark:text-slate-300 select-none">
-          <span>HIMPUNAN MAHASISWA SISTEM INFORMASI</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>UNIVERSITAS GUNADARMA</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>INTEGRITY & EXCELLENCE</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>INNOVATION IN DIGITAL ERA</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>HIMSI UG PERIODE 2025/2026</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>HIMPUNAN MAHASISWA SISTEM INFORMASI</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>UNIVERSITAS GUNADARMA</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>INTEGRITY & EXCELLENCE</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>INNOVATION IN DIGITAL ERA</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-          <span>HIMSI UG PERIODE 2025/2026</span>
-          <span className="text-red-200 dark:text-red-500">•</span>
-        </div>
-      </div>
-
-      {/* Scroll Down Indicator */}
-      <div className="mt-6 flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 text-xs font-semibold font-mono">
-        <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}>
-          <ChevronDown size={18} />
+      {/* Bottom Scroll Indicator */}
+      <div className="mt-4 flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs font-mono font-bold uppercase tracking-widest">
+        <span>SCROLL DOWN</span>
+        <motion.div animate={{ y: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+          <ChevronDown size={14} />
         </motion.div>
       </div>
     </section>

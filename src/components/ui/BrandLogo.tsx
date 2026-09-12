@@ -3,34 +3,54 @@
 import { useState } from "react";
 
 export function BrandLogo({ size = "md", className = "" }: { size?: "sm" | "md" | "lg"; className?: string }) {
-  const [imgError, setImgError] = useState(false);
+  const [himsiError, setHimsiError] = useState(false);
+  const [gundarError, setGundarError] = useState(false);
 
   const dimMap = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12",
+    sm: "h-7 sm:h-8",
+    md: "h-8 sm:h-9",
+    lg: "h-10 sm:h-12",
   };
 
-  const currentDim = dimMap[size] || dimMap.md;
-
-  if (imgError) {
-    return (
-      <div className={`${currentDim} rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-lg shadow-red-900/30 text-white font-black text-xs shrink-0 ${className}`}>
-        <span className="leading-none text-center">
-          HI<br />MS
-        </span>
-      </div>
-    );
-  }
+  const currentHeight = dimMap[size] || dimMap.md;
 
   return (
-    <div className={`relative ${currentDim} rounded-xl overflow-hidden shadow-md shrink-0 bg-transparent flex items-center justify-center ${className}`}>
-      <img
-        src="/himsigundar.png"
-        alt="Logo HIMSI UG"
-        className="w-full h-full object-contain"
-        onError={() => setImgError(true)}
-      />
+    <div className={`flex items-center gap-2 shrink-0 ${className}`}>
+      {/* HIMSI Logo */}
+      {!himsiError ? (
+        <div className={`relative ${currentHeight} w-auto flex items-center justify-center`}>
+          <img
+            src="/himsigundar.png"
+            alt="Logo HIMSI UG"
+            className={`${currentHeight} w-auto object-contain drop-shadow-md`}
+            onError={() => setHimsiError(true)}
+          />
+        </div>
+      ) : (
+        <div className="w-8 h-8 rounded-none bg-[#C8102E] text-white font-black font-heading text-xs flex items-center justify-center border border-slate-950">
+          HI
+        </div>
+      )}
+
+      {/* Divider */}
+      <span className="text-slate-400 dark:text-slate-600 font-mono text-xs font-bold">•</span>
+
+      {/* Gunadarma Logo */}
+      {!gundarError ? (
+        <div className={`relative ${currentHeight} w-auto flex items-center justify-center`}>
+          <img
+            src="/logogundar.png"
+            alt="Logo Universitas Gunadarma"
+            className={`${currentHeight} w-auto object-contain drop-shadow-md`}
+            onError={() => setGundarError(true)}
+          />
+        </div>
+      ) : (
+        <div className="w-8 h-8 rounded-none bg-amber-500 text-slate-950 font-black font-heading text-xs flex items-center justify-center border border-slate-950">
+          UG
+        </div>
+      )}
     </div>
   );
 }
+

@@ -22,37 +22,37 @@ export function ConfirmDeleteModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-4"
+          className="w-full max-w-md bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 p-6 shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] space-y-4"
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between border-b-2 border-slate-950 dark:border-white/20 pb-3">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800">
+              <div className="p-2.5 bg-[#C8102E] text-white border border-slate-950">
                 <AlertTriangle size={22} />
               </div>
               <div>
-                <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100">
+                <h3 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white">
                   {title}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Konfirmasi Tindakan Hapus
+                <p className="text-[10px] font-mono font-bold text-[#C8102E] dark:text-[#E31B3B] uppercase">
+                  KONFIRMASI TINDAKAN HAPUS
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="p-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950"
             >
               <X size={18} />
             </button>
           </div>
 
-          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+          <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium bg-slate-50 dark:bg-slate-900 p-3 border border-slate-950 dark:border-white/20">
             {description}
           </p>
 
@@ -60,9 +60,9 @@ export function ConfirmDeleteModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-white text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
             >
-              Batal
+              BATAL
             </button>
             <button
               type="button"
@@ -70,9 +70,9 @@ export function ConfirmDeleteModal({
                 onConfirm();
                 onClose();
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-md shadow-red-900/20"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#C8102E] hover:bg-slate-950 text-white text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 transition-colors"
             >
-              <Trash2 size={14} /> Hapus Permanen
+              <Trash2 size={14} /> HAPUS PERMANEN
             </button>
           </div>
         </motion.div>
