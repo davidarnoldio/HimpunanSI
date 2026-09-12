@@ -179,10 +179,6 @@ export function Footer() {
           <p className="text-center sm:text-left">
             © 2026 HIMSI Universitas Gunadarma. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-
-          </div>
         </div>
       </div>
     </footer>
