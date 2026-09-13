@@ -141,7 +141,7 @@ export const INITIAL_HERO_CONTENT: HeroContentData = {
     { value: "20+", label: "Proker / Tahun" },
     { value: "3", label: "Kampus Gunadarma" },
   ],
-  heroImageUrl: "/hero-editorial.jpg",
+  heroImageUrl: "/hero-editorial.webp",
 };
 
 export const INITIAL_HEADLINE_WORDS: string[] = INITIAL_HERO_CONTENT.headlineDynamicWords;

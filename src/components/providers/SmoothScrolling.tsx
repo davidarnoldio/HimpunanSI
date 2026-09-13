@@ -10,6 +10,10 @@ interface SmoothScrollingProps {
 
 export function SmoothScrolling({ children }: SmoothScrollingProps) {
   useEffect(() => {
+    // Skip Lenis smooth scroll on mobile touch devices to eliminate CPU main-thread TBT
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    if (isMobile) return;
+
     // Initialize Lenis with premium smooth scroll settings
     const lenis = new Lenis({
       lerp: 0.1,

@@ -4,22 +4,24 @@ import React from "react";
 
 const matrixKeyframes = `
 @keyframes matrix-scroll-down {
-  0% { transform: translateY(-50%); }
-  100% { transform: translateY(0%); }
+  0% { transform: translate3d(0, -50%, 0); }
+  100% { transform: translate3d(0, 0%, 0); }
 }
 @keyframes matrix-scroll-up {
-  0% { transform: translateY(0%); }
-  100% { transform: translateY(-50%); }
+  0% { transform: translate3d(0, 0%, 0); }
+  100% { transform: translate3d(0, -50%, 0); }
 }
 .matrix-col-down {
   display: flex;
   flex-direction: column;
   animation: matrix-scroll-down linear infinite;
+  will-change: transform;
 }
 .matrix-col-up {
   display: flex;
   flex-direction: column;
   animation: matrix-scroll-up linear infinite;
+  will-change: transform;
 }
 `;
 
@@ -49,7 +51,7 @@ export function HackerMatrixBackground({ className = "" }: { className?: string 
             const data = codeColumns[colIndex % codeColumns.length];
 
             return (
-              <div key={colIndex} className="overflow-hidden h-full py-4 flex flex-col items-center">
+              <div key={colIndex} className={`overflow-hidden h-full py-4 flex-col items-center ${colIndex >= 3 ? "hidden sm:flex" : "flex"}`}>
                 <div
                   className={isEven ? "matrix-col-down" : "matrix-col-up"}
                   style={{ animationDuration: `${speed}s` }}

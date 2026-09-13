@@ -61,7 +61,8 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
-        <link rel="preload" as="image" href="/hero-editorial.webp" type="image/webp" fetchPriority="high" />
+        <link rel="preload" as="image" href="/hero-editorial-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchPriority="high" />
+        <link rel="preload" as="image" href="/hero-editorial.webp" type="image/webp" media="(min-width: 641px)" fetchPriority="high" />
         <link rel="preload" as="image" href="/himsigundar.webp" type="image/webp" />
         <link rel="preload" as="image" href="/logogundar.webp" type="image/webp" />
       </head>
