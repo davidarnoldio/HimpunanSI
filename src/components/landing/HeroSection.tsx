@@ -153,9 +153,13 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
 
             {/* Editorial Photograph */}
             <img
-              src={content.heroImageUrl || "/hero-editorial.jpg"}
+              src={content.heroImageUrl || "/hero-editorial.webp"}
               alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              fetchPriority="high"
+              decoding="async"
+              width={800}
+              height={600}
             />
 
             {/* Cinematic Vignette */}

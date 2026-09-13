@@ -60,6 +60,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="preload" as="image" href="/hero-editorial.webp" type="image/webp" fetchPriority="high" />
+        <link rel="preload" as="image" href="/himsigundar.webp" type="image/webp" />
+        <link rel="preload" as="image" href="/logogundar.webp" type="image/webp" />
+      </head>
       <body
         suppressHydrationWarning
         className={`${plusJakarta.className} min-h-full bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300`}

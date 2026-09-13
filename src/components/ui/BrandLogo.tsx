@@ -20,10 +20,13 @@ export function BrandLogo({ size = "md", className = "" }: { size?: "sm" | "md" 
       {!HIMASIError ? (
         <div className={`relative ${currentHeight} w-auto flex items-center justify-center`}>
           <img
-            src="/himsigundar.png"
+            src="/himsigundar.webp"
             alt="Logo HIMASI UG"
             className={`${currentHeight} w-auto object-contain drop-shadow-md`}
             onError={() => setHIMASIError(true)}
+            decoding="async"
+            width={120}
+            height={120}
           />
         </div>
       ) : (
@@ -39,10 +42,13 @@ export function BrandLogo({ size = "md", className = "" }: { size?: "sm" | "md" 
       {!gundarError ? (
         <div className={`relative ${currentHeight} w-auto flex items-center justify-center`}>
           <img
-            src="/logogundar.png"
+            src="/logogundar.webp"
             alt="Logo Universitas Gunadarma"
             className={`${currentHeight} w-auto object-contain drop-shadow-md`}
             onError={() => setGundarError(true)}
+            decoding="async"
+            width={120}
+            height={120}
           />
         </div>
       ) : (

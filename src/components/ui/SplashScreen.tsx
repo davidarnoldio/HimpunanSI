@@ -31,15 +31,15 @@ export function SplashScreen() {
             clearInterval(interval);
             return 100;
           }
-          return prev + 5;
+          return prev + 10;
         });
-      }, 100);
+      }, 50);
 
       const timer = setTimeout(() => {
         sessionStorage.setItem("HIMASI_splash_shown", "true");
         setDismissed(true);
         document.body.style.overflow = "";
-      }, 2400);
+      }, 900);
 
       return () => {
         clearInterval(interval);
@@ -57,7 +57,7 @@ export function SplashScreen() {
   const isVisible = isMounted && !hasSeenSplash && !dismissed;
 
   if (!isMounted) {
-    return <div className="fixed inset-0 z-[9999] bg-black" />;
+    return null;
   }
 
   if (!isVisible) {
