@@ -27,6 +27,14 @@ export const metadata: Metadata = {
     "merchandise HIMASI",
     "Bank Soal HIMASI",
   ],
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/himsigundar.webp", type: "image/webp" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "HIMASI UG — Official Website",
     description: "Merchandise, kepengurusan, dan aspirasi HIMASI Universitas Gunadarma",
