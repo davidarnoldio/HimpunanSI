@@ -101,7 +101,7 @@ export function SplashScreen() {
           <div className="relative z-10 max-w-3xl w-full text-center flex flex-col items-center justify-center my-auto space-y-8">
             {/* Brutalist Twin Logo Card */}
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 3.5, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="p-5 sm:p-7 bg-slate-950 border-2 border-white/20 shadow-[8px_8px_0px_0px_rgba(227,27,59,1)]"
