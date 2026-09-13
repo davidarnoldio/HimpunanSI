@@ -24,22 +24,22 @@ export function SplashScreen() {
     if (!alreadySeen) {
       document.body.style.overflow = "hidden";
 
-      // Progress animation counter
+      // Progress animation counter (0 to 100% in ~2.5s)
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
             return 100;
           }
-          return prev + 10;
+          return prev + 2;
         });
-      }, 50);
+      }, 40);
 
       const timer = setTimeout(() => {
         sessionStorage.setItem("HIMASI_splash_shown", "true");
         setDismissed(true);
         document.body.style.overflow = "";
-      }, 900);
+      }, 2800);
 
       return () => {
         clearInterval(interval);
@@ -101,9 +101,9 @@ export function SplashScreen() {
           <div className="relative z-10 max-w-3xl w-full text-center flex flex-col items-center justify-center my-auto space-y-8">
             {/* Brutalist Twin Logo Card */}
             <motion.div
-              initial={{ scale: 2.4, opacity: 0, y: 20 }}
-              animate={{ scale: 3, opacity: 1, y: 0 }}
-              transition={{ duration: 5.5, ease: "easeOut" }}
+              initial={{ scale: 0.85, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
               className="p-5 sm:p-7 bg-slate-950 border-2 border-white/20 shadow-[8px_8px_0px_0px_rgba(227,27,59,1)]"
             >
               <BrandLogo size="lg" />
