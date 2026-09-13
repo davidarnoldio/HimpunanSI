@@ -1,28 +1,14 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Inconsolata } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { SmoothScrolling } from "@/components/providers/SmoothScrolling";
 import { SplashScreen } from "@/components/ui/SplashScreen";
 
-const spaceGrotesk = Space_Grotesk({
+const inconsolata = Inconsolata({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-plus-jakarta",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-jetbrains-mono",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inconsolata",
   display: "swap",
 });
 
@@ -58,7 +44,7 @@ export default function RootLayout({
     <html
       lang="id"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${inconsolata.variable} h-full antialiased`}
     >
       <head>
         <link rel="preload" as="image" href="/hero-editorial-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchPriority="high" />
@@ -68,7 +54,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${plusJakarta.className} min-h-full bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300`}
+        className={`${inconsolata.className} min-h-full bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300`}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <SplashScreen />

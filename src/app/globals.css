@@ -6,9 +6,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-heading: var(--font-space-grotesk), sans-serif;
-  --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-heading: var(--font-inconsolata), monospace;
+  --font-sans: var(--font-inconsolata), monospace;
+  --font-mono: var(--font-inconsolata), monospace;
 }
 
 :root {
@@ -19,7 +19,7 @@
   --border-color: #0a0a0a;
   --muted-text: #555555;
   --card-bg: #ffffff;
-  --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inconsolata), monospace;
   color-scheme: light;
 }
 
@@ -36,15 +36,15 @@
 
 /* Typography Utility Classes */
 .font-heading {
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-inconsolata), monospace;
 }
 
 .font-sans {
-  font-family: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inconsolata), monospace;
 }
 
 .font-mono {
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--font-inconsolata), monospace;
 }
 
 /* Code Vibe Rule: All buttons, CTAs, badges, micro-copy, and statistics counters automatically use font-mono */
@@ -54,7 +54,7 @@ button,
 [role="button"],
 input[type="submit"],
 input[type="button"] {
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--font-inconsolata), monospace;
 }
 
 /* Base reset */
