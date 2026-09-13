@@ -152,19 +152,26 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             <div className="absolute top-0 left-0 right-0 h-1 bg-[#C8102E] dark:bg-[#E31B3B] z-20" />
 
             {/* Editorial Photograph */}
-            <picture className="absolute inset-0 w-full h-full">
-              <source srcSet="/hero-editorial-mobile.webp" media="(max-width: 640px)" type="image/webp" />
-              <source srcSet={content.heroImageUrl || "/hero-editorial.webp"} type="image/webp" />
-              <img
-                src={content.heroImageUrl || "/hero-editorial.webp"}
-                alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                fetchPriority="high"
-                decoding="async"
-                width={800}
-                height={600}
-              />
-            </picture>
+            {(() => {
+              const rawUrl = content.heroImageUrl;
+              const desktopImg = !rawUrl || rawUrl === "/hero-editorial.jpg" ? "/hero-editorial.webp" : rawUrl;
+              const mobileImg = !rawUrl || rawUrl === "/hero-editorial.jpg" ? "/hero-editorial-mobile.webp" : desktopImg;
+              return (
+                <picture className="absolute inset-0 w-full h-full">
+                  <source srcSet={mobileImg} media="(max-width: 640px)" type="image/webp" />
+                  <source srcSet={desktopImg} type="image/webp" />
+                  <img
+                    src={desktopImg}
+                    alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    fetchPriority="high"
+                    decoding="async"
+                    width={800}
+                    height={600}
+                  />
+                </picture>
+              );
+            })()}
 
             {/* Cinematic Vignette */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />

@@ -270,7 +270,7 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
             {/* Image Preview Box */}
             <div className="md:col-span-4 relative aspect-[4/3] bg-slate-950 border-2 border-slate-950 dark:border-white/20 overflow-hidden shadow-[4px_4px_0px_0px_rgba(200,16,46,1)]">
               <img
-                src={formData.heroImageUrl || "/hero-editorial.jpg"}
+                src={formData.heroImageUrl || "/hero-editorial.webp"}
                 alt="Preview Hero Editorial"
                 className="w-full h-full object-cover"
               />
@@ -287,7 +287,7 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
                 </label>
                 <input
                   type="text"
-                  value={formData.heroImageUrl || "/hero-editorial.jpg"}
+                  value={formData.heroImageUrl || "/hero-editorial.webp"}
                   onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
                   placeholder="Isi URL foto atau upload file foto baru..."
                   className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-bold focus:outline-none focus:border-[#C8102E] text-slate-950 dark:text-white font-mono"
