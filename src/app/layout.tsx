@@ -79,6 +79,9 @@ export const metadata: Metadata = {
     images: ["/hero-editorial.webp"],
     creator: "@himasi_gunadarma",
   },
+  verification: {
+    google: "oSzct-941h5G252FAV04J6ni32gAC7x2UyGqb_9AIL0",
+  },
   robots: {
     index: true,
     follow: true,
@@ -129,6 +132,7 @@ export default function RootLayout({
       className={`${inconsolata.variable} h-full antialiased`}
     >
       <head>
+        <meta name="google-site-verification" content="oSzct-941h5G252FAV04J6ni32gAC7x2UyGqb_9AIL0" />
         <link rel="preload" as="image" href="/hero-editorial-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchPriority="high" />
         <link rel="preload" as="image" href="/hero-editorial.webp" type="image/webp" media="(min-width: 641px)" fetchPriority="high" />
         <link rel="preload" as="image" href="/himsigundar.webp" type="image/webp" />
