@@ -12,8 +12,6 @@ const inconsolata = Inconsolata({
   display: "swap",
 });
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://himsigundar.vercel.app";
 

@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import { fetchDivisiFromDB, fetchAnggotaDivisiFromDB } from "@/lib/supabaseData";
 import { DetailDivisiClient } from "@/components/landing/DetailDivisiClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

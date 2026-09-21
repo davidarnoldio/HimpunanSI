@@ -20,7 +20,7 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
-import { useSharedStore } from "@/lib/sharedStore";
+import { useSharedStore, convertFileToBase64 } from "@/lib/sharedStore";
 import {
   INITIAL_HERO_CONTENT,
   type HeroContentData,
@@ -127,18 +127,24 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleHeroPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeroPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      if (base64) {
-        setFormData((prev) => ({ ...prev, heroImageUrl: base64 }));
-      }
-    };
-    reader.readAsDataURL(file);
+    const maxBytes = 2 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 2 MB.`);
+      return;
+    }
+
+    try {
+      const base64 = await convertFileToBase64(file);
+      setFormData((prev) => ({ ...prev, heroImageUrl: base64 }));
+    } catch (err) {
+      console.error("Gagal mengunggah foto hero:", err);
+      alert("Gagal membaca foto hero dari perangkat.");
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {

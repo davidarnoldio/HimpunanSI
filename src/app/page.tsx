@@ -17,7 +17,6 @@ import {
 } from "@/lib/supabaseData";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 /**
  * Halaman Utama — Portal Landing Page HIMASI UG

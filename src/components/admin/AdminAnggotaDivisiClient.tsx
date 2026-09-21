@@ -14,8 +14,9 @@ import {
   Crown,
   Filter,
   Check,
+  RotateCw,
 } from "lucide-react";
-import { useSharedStore, convertFileToBase64, getValidImageUrl } from "@/lib/sharedStore";
+import { useSharedStore, convertFileToBase64, getValidImageUrl, rotateBase64Image } from "@/lib/sharedStore";
 import type { AnggotaDivisiItem, DivisiAdminItem } from "@/data/adminMockData";
 import { saveAnggotaDivisiAction } from "@/app/actions/adminActions";
 
@@ -28,10 +29,11 @@ export function AdminAnggotaDivisiClient({
   initialAnggota,
   initialDivisi,
 }: AdminAnggotaDivisiClientProps) {
-  const { anggotaDivisi, setAnggotaDivisi, divisiData, mounted } = useSharedStore();
+  const { pengurus, anggotaDivisi, setAnggotaDivisi, divisiData, mounted } = useSharedStore();
 
-  const activeAnggotaList = mounted ? anggotaDivisi : initialAnggota;
-  const activeDivisiList = mounted ? divisiData : initialDivisi;
+  const activeBphPeriode = pengurus.find((p) => p.divisi === "BPH" && p.periode)?.periode || "2026/2027";
+  const activeAnggotaList = mounted && anggotaDivisi && anggotaDivisi.length > 0 ? anggotaDivisi : initialAnggota;
+  const activeDivisiList = mounted && divisiData && divisiData.length > 0 ? divisiData : initialDivisi;
 
   const [selectedDivisiFilter, setSelectedDivisiFilter] = useState<string>("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,10 +44,10 @@ export function AdminAnggotaDivisiClient({
   const [nama, setNama] = useState("");
   const [npm, setNpm] = useState("");
   const [divisiId, setDivisiId] = useState("akademik");
-  const [role, setRole] = useState<"Ketua Divisi" | "Anggota Divisi">("Anggota Divisi");
+  const [role, setRole] = useState<"Ketua Divisi" | "Wakil Ketua Divisi" | "Anggota Divisi">("Anggota Divisi");
   const [jabatanBadge, setJabatanBadge] = useState("");
   const [fotoUrl, setFotoUrl] = useState("");
-  const [periode, setPeriode] = useState("2025/2026");
+  const [periode, setPeriode] = useState(activeBphPeriode);
   const [instagram, setInstagram] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [toastMsg, setToastMsg] = useState("");
@@ -68,7 +70,7 @@ export function AdminAnggotaDivisiClient({
     setRole("Anggota Divisi");
     setJabatanBadge("Staff Divisi");
     setFotoUrl("");
-    setPeriode("2025/2026");
+    setPeriode(activeBphPeriode);
     setInstagram("");
     setLinkedin("");
     setIsModalOpen(true);
@@ -82,7 +84,7 @@ export function AdminAnggotaDivisiClient({
     setRole(item.role);
     setJabatanBadge(item.jabatanBadge || "");
     setFotoUrl(item.fotoUrl || "");
-    setPeriode(item.periode || "2025/2026");
+    setPeriode(item.periode || activeBphPeriode);
     setInstagram(item.instagram || "");
     setLinkedin(item.linkedin || "");
     setIsModalOpen(true);
@@ -91,13 +93,32 @@ export function AdminAnggotaDivisiClient({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const maxBytes = 2 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 2 MB.`);
+      return;
+    }
+
     try {
       const base64 = await convertFileToBase64(file);
       setFotoUrl(base64);
       showToast("Foto profil anggota berhasil diunggah.");
     } catch (err) {
       console.error(err);
-      alert("Gagal memuat gambar.");
+      alert("Gagal membaca foto dari perangkat. Coba file gambar lain.");
+    }
+  };
+
+  const handleRotatePhoto = async () => {
+    if (!fotoUrl) return;
+    try {
+      const rotated = await rotateBase64Image(fotoUrl, 90);
+      setFotoUrl(rotated);
+      showToast("Foto berhasil diputar 90°.");
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -219,8 +240,8 @@ export function AdminAnggotaDivisiClient({
           <button
             onClick={() => setSelectedDivisiFilter("ALL")}
             className={`px-3 py-1.5 font-mono text-xs font-black uppercase transition-all cursor-pointer shrink-0 border border-slate-950 ${selectedDivisiFilter === "ALL"
-                ? "bg-slate-950 text-white dark:bg-white dark:text-slate-950"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+              ? "bg-slate-950 text-white dark:bg-white dark:text-slate-950"
+              : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
               }`}
           >
             SEMUA DIVISI ({activeAnggotaList.length})
@@ -230,8 +251,8 @@ export function AdminAnggotaDivisiClient({
               key={d.id}
               onClick={() => setSelectedDivisiFilter(d.id)}
               className={`px-3 py-1.5 font-mono text-xs font-black uppercase transition-all cursor-pointer shrink-0 border border-slate-950 ${selectedDivisiFilter === d.id
-                  ? "bg-[#C8102E] text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                ? "bg-[#C8102E] text-white"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
                 }`}
             >
               {d.singkatan} ({activeAnggotaList.filter((a) => a.divisiId === d.id).length})
@@ -252,6 +273,8 @@ export function AdminAnggotaDivisiClient({
           {filteredMembers.map((member) => {
             const divisiObj = activeDivisiList.find((d) => d.id === member.divisiId);
             const isKadiv = member.role === "Ketua Divisi";
+            const isWakadiv = member.role === "Wakil Ketua Divisi";
+            const memberPeriode = (!member.periode || member.periode === "2025/2026") ? activeBphPeriode : member.periode;
 
             return (
               <motion.div
@@ -269,8 +292,13 @@ export function AdminAnggotaDivisiClient({
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     {isKadiv && (
-                      <div className="absolute top-1 right-1 p-1 bg-amber-400 text-slate-950 font-bold border border-slate-950 shadow-sm">
+                      <div className="absolute top-1 right-1 p-1 bg-amber-400 text-slate-950 font-bold border border-slate-950 shadow-sm" title="Ketua Divisi (Kadiv)">
                         <Crown size={12} />
+                      </div>
+                    )}
+                    {isWakadiv && (
+                      <div className="absolute top-1 right-1 p-1 bg-sky-400 text-slate-950 font-bold border border-slate-950 shadow-sm" title="Wakil Ketua Divisi (Wakadiv)">
+                        <Users size={12} />
                       </div>
                     )}
                   </div>
@@ -280,7 +308,7 @@ export function AdminAnggotaDivisiClient({
                       {member.nama}
                     </h3>
                     <p className="text-xs font-mono font-bold text-[#C8102E] dark:text-[#E31B3B] uppercase">
-                      {isKadiv ? "Ketua Divisi (Kadiv)" : "Anggota Staff Divisi"}
+                      {isKadiv ? "Ketua Divisi (Kadiv)" : isWakadiv ? "Wakil Ketua Divisi (Wakadiv)" : "Anggota Staff Divisi"}
                     </p>
                     <span className="inline-block text-[10px] font-mono font-bold uppercase text-slate-950 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 border border-slate-950">
                       Divisi {divisiObj?.singkatan || member.divisiId.toUpperCase()}
@@ -290,7 +318,7 @@ export function AdminAnggotaDivisiClient({
 
                 <div className="p-3 bg-slate-100 dark:bg-slate-800 border-t-2 border-slate-950 dark:border-white/20 flex items-center justify-between">
                   <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 uppercase">
-                    {member.npm ? `NPM: ${member.npm}` : `Periode ${member.periode}`}
+                    {member.npm ? `NPM: ${member.npm}` : `Periode ${memberPeriode}`}
                   </span>
                   <div className="flex items-center gap-1.5">
                     <button
@@ -369,19 +397,23 @@ export function AdminAnggotaDivisiClient({
                       ))}
                     </select>
                   </div>
-
                   <div>
                     <label className="block font-mono font-black uppercase text-xs text-slate-950 dark:text-white mb-1">
                       Peran / Role *
                     </label>
                     <select
                       value={role}
-                      onChange={(e) =>
-                        setRole(e.target.value as "Ketua Divisi" | "Anggota Divisi")
-                      }
+                      onChange={(e) => {
+                        const newRole = e.target.value as "Ketua Divisi" | "Wakil Ketua Divisi" | "Anggota Divisi";
+                        setRole(newRole);
+                        if (newRole === "Ketua Divisi") setJabatanBadge("Kadiv");
+                        else if (newRole === "Wakil Ketua Divisi") setJabatanBadge("Wakadiv");
+                        else setJabatanBadge("Staff Divisi");
+                      }}
                       className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     >
                       <option value="Anggota Divisi">Anggota Staff Divisi</option>
+                      <option value="Wakil Ketua Divisi">Wakil Ketua Divisi (Wakadiv)</option>
                       <option value="Ketua Divisi">Ketua Divisi (Kadiv)</option>
                     </select>
                   </div>
@@ -402,14 +434,17 @@ export function AdminAnggotaDivisiClient({
                   </div>
 
                   <div>
-                    <label className="block font-mono font-black uppercase text-xs text-slate-950 dark:text-white mb-1">
-                      Periode Kepengurusan
+                    <label className="flex items-center justify-between font-mono font-black uppercase text-xs text-slate-950 dark:text-white mb-1">
+                      <span>Periode Kepengurusan</span>
+                      <span className="text-[10px] text-[#C8102E] dark:text-[#E31B3B] font-bold">
+                        (OTOMATIS BPH: {activeBphPeriode})
+                      </span>
                     </label>
                     <input
                       type="text"
                       value={periode}
                       onChange={(e) => setPeriode(e.target.value)}
-                      placeholder="2025/2026"
+                      placeholder={activeBphPeriode}
                       className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-mono text-xs font-bold"
                     />
                   </div>
@@ -417,7 +452,7 @@ export function AdminAnggotaDivisiClient({
 
                 <div>
                   <label className="block font-mono font-black uppercase text-xs text-slate-950 dark:text-white mb-1">
-                    Foto Profil (Galeri HP/PC atau URL)
+                    Foto Profil (Maksimal 2 MB — Ambil dari Perangkat/Galeri atau URL)
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -436,7 +471,28 @@ export function AdminAnggotaDivisiClient({
                         className="hidden"
                       />
                     </label>
+                    <button
+                      type="button"
+                      onClick={handleRotatePhoto}
+                      disabled={!fotoUrl}
+                      className="px-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black font-mono text-xs uppercase border-2 border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-40 transition-colors"
+                      title="Putar Foto 90 Derajat"
+                    >
+                      <RotateCw size={14} /> PUTAR 90°
+                    </button>
                   </div>
+
+                  {fotoUrl && (
+                    <div className="mt-2 p-3 bg-slate-100 dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 flex items-center gap-4">
+                      <div className="w-16 h-20 bg-slate-950 border border-slate-950 overflow-hidden shrink-0">
+                        <img src={getValidImageUrl(fotoUrl, nama)} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs font-mono font-bold text-slate-900 dark:text-white">PREVIEW FOTO ANGGOTA</p>
+                        <p className="text-[11px] font-mono text-slate-500">Jika foto miring, klik <strong className="text-amber-600 dark:text-amber-400">PUTAR 90°</strong> untuk menegakkannya.</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-4 flex items-center justify-end gap-3 border-t-2 border-slate-950 dark:border-white/20">

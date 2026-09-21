@@ -3,7 +3,6 @@ import { fetchMerchandiseFromDB } from "@/lib/supabaseData";
 import { MerchandiseClient } from "@/components/merchandise/MerchandiseClient";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Katalog Merchandise Resmi JAHIM",

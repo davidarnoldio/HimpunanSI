@@ -259,7 +259,7 @@ export function MerchandiseModal({ item, onClose }: MerchandiseModalProps) {
               {/* Name & tagline */}
               <div>
                 <h2 className="text-2xl font-extrabold text-slate-100 leading-tight">{item.name}</h2>
-                <p className="text-sm text-slate-500 mt-1 italic">"{item.tagline}"</p>
+                <p className="text-sm text-slate-500 mt-1 italic">&quot;{item.tagline}&quot;</p>
               </div>
 
               {/* Price */}

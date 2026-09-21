@@ -229,7 +229,7 @@ export const EVENT_LIST: EventItem[] = [
     lokasi: "Auditorium Kampus E Gunadarma",
     isOnline: false,
     status: "Segera Hadir",
-    deskripsi: "Pelantikan resmi pengurus kabinet HIMASI UG periode 2025/2026. Disertai rangkaian acara budaya dan networking.",
+    deskripsi: "Pelantikan resmi pengurus kabinet HIMASI UG periode 2026/2027. Disertai rangkaian acara budaya dan networking.",
     link: "#detail",
   },
   {

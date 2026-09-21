@@ -14,8 +14,9 @@ import {
   User,
   Check,
   AlertCircle,
+  RotateCw,
 } from "lucide-react";
-import { useSharedStore, getValidImageUrl, convertFileToBase64 } from "@/lib/sharedStore";
+import { useSharedStore, getValidImageUrl, convertFileToBase64, rotateBase64Image } from "@/lib/sharedStore";
 import { type PengurusItem } from "@/data/adminMockData";
 import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
 import { savePengurusAction } from "@/app/actions/adminActions";
@@ -40,7 +41,6 @@ function LinkedinIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-const MAX_BASE64_KB = 200;
 const JABATAN_OPTIONS = [
   "Ketua Himpunan",
   "Wakil Ketua Himpunan",
@@ -72,13 +72,14 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
     nama: "",
     jabatan: "",
     divisi: "BPH",
-    periode: "2025/2026",
+    periode: "2026/2027",
     fotoUrl: "",
     visiMotto: "",
     linkedin: "",
     instagram: "",
   };
 
+  const [isCustomJabatan, setIsCustomJabatan] = useState(false);
   const [formData, setFormData] = useState<Omit<PengurusItem, "id">>(EMPTY_FORM);
 
   const bphPengurus = activePengurus.filter((item) => item.divisi === "BPH");
@@ -88,15 +89,18 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
       item.jabatan.toLowerCase().includes(search.toLowerCase())
   );
 
+  const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB Limit
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const fileSizeKB = file.size / 1024;
-    if (fileSizeKB > MAX_BASE64_KB) {
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
       setFotoWarning(
-        `⚠️ Foto terlalu besar (${Math.round(fileSizeKB)} KB). Disarankan pakai URL eksternal agar tidak gagal upload.`
+        `⚠️ Ukuran foto melebihi 2 MB (${sizeMB} MB). Harap pilih foto dengan ukuran maksimal 2 MB.`
       );
+      return;
     } else {
       setFotoWarning("");
     }
@@ -106,24 +110,40 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
       setFormData((prev) => ({ ...prev, fotoUrl: base64 }));
     } catch (err) {
       console.error("Gagal mengunggah foto:", err);
-      setFotoWarning("Gagal membaca file foto. Coba gunakan URL gambar langsung.");
+      setFotoWarning("Gagal membaca file foto dari perangkat. Pastikan format gambar valid (JPG, PNG, WebP).");
+    }
+  };
+
+  const handleRotatePhoto = async () => {
+    if (!formData.fotoUrl) return;
+    try {
+      const rotated = await rotateBase64Image(formData.fotoUrl, 90);
+      setFormData((prev) => ({ ...prev, fotoUrl: rotated }));
+    } catch (err) {
+      console.error("Gagal memutar foto:", err);
     }
   };
 
   const handleOpenAdd = () => {
     setEditingItem(null);
-    setFormData(EMPTY_FORM);
+    setFormData({
+      ...EMPTY_FORM,
+      jabatan: JABATAN_OPTIONS[0],
+    });
+    setIsCustomJabatan(false);
     setFotoWarning("");
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (item: PengurusItem) => {
     setEditingItem(item);
+    const isCustom = !JABATAN_OPTIONS.includes(item.jabatan);
+    setIsCustomJabatan(isCustom);
     setFormData({
       nama: item.nama,
       jabatan: item.jabatan,
       divisi: "BPH",
-      periode: item.periode || "2025/2026",
+      periode: item.periode || "2026/2027",
       fotoUrl: item.fotoUrl || "",
       visiMotto: item.visiMotto || "",
       linkedin: item.linkedin || "",
@@ -244,7 +264,7 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
                   <img
                     src={getValidImageUrl(item.fotoUrl, item.nama)}
                     alt={item.nama}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                    className="w-full h-full object-cover transition-all"
                   />
                 </div>
 
@@ -335,24 +355,37 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
                       JABATAN *
                     </label>
                     <select
-                      value={JABATAN_OPTIONS.includes(formData.jabatan) ? formData.jabatan : "custom"}
+                      value={isCustomJabatan ? "custom" : formData.jabatan}
                       onChange={(e) => {
-                        if (e.target.value !== "custom") {
-                          setFormData({ ...formData, jabatan: e.target.value });
+                        const val = e.target.value;
+                        if (val === "custom") {
+                          setIsCustomJabatan(true);
+                          setFormData((prev) => ({
+                            ...prev,
+                            jabatan: JABATAN_OPTIONS.includes(prev.jabatan) ? "" : prev.jabatan,
+                          }));
+                        } else {
+                          setIsCustomJabatan(false);
+                          setFormData((prev) => ({ ...prev, jabatan: val }));
                         }
                       }}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-sm"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-sm cursor-pointer"
                     >
-                      {JABATAN_OPTIONS.map((j) => <option key={j} value={j}>{j}</option>)}
+                      {JABATAN_OPTIONS.map((j) => (
+                        <option key={j} value={j}>
+                          {j}
+                        </option>
+                      ))}
                       <option value="custom">Lainnya (ketik manual)</option>
                     </select>
-                    {!JABATAN_OPTIONS.includes(formData.jabatan) && (
+                    {isCustomJabatan && (
                       <input
                         type="text"
                         required
+                        autoFocus
                         value={formData.jabatan}
                         onChange={(e) => setFormData({ ...formData, jabatan: e.target.value })}
-                        placeholder="Tulis jabatan manual..."
+                        placeholder="Ketik jabatan manual (contoh: Koordinator Utama)..."
                         className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-[#C8102E] text-slate-950 dark:text-white focus:outline-none font-bold text-sm mt-2"
                       />
                     )}
@@ -366,14 +399,14 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
                       type="text"
                       value={formData.periode}
                       onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
-                      placeholder="e.g. 2025/2026"
+                      placeholder="e.g. 2026/2027"
                       className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold text-sm"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
-                      FOTO PROFIL
+                      FOTO PROFIL (MAKSIMAL 2 MB — BISA PILIH DARI PERANGKAT / GALERI)
                     </label>
                     <div className="flex items-center gap-2">
                       <input
@@ -389,31 +422,39 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-3 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer"
+                        className="px-3 py-3 bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors"
                       >
                         <Upload size={14} /> GALERI
                       </button>
+                      <button
+                        type="button"
+                        onClick={handleRotatePhoto}
+                        disabled={!formData.fotoUrl}
+                        className="px-3 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black font-mono text-xs uppercase border border-slate-950 flex items-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-40 transition-colors"
+                        title="Putar Foto 90 Derajat Searah Jarum Jam"
+                      >
+                        <RotateCw size={14} /> PUTAR 90°
+                      </button>
                       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                     </div>
+
+                    {formData.fotoUrl && (
+                      <div className="mt-2 p-3 bg-slate-100 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 flex items-center gap-4">
+                        <div className="w-16 h-20 bg-slate-950 border border-slate-950 overflow-hidden shrink-0">
+                          <img src={getValidImageUrl(formData.fotoUrl, formData.nama)} alt="Preview" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs font-mono font-bold text-slate-900 dark:text-white">PREVIEW FOTO PROFIL</p>
+                          <p className="text-[11px] font-mono text-slate-500">Jika foto miring/terbalik, klik <strong className="text-amber-600 dark:text-amber-400">PUTAR 90°</strong> untuk menegakkannya.</p>
+                        </div>
+                      </div>
+                    )}
                     {fotoWarning && (
                       <div className="flex items-start gap-2 p-3 bg-[#C8102E] text-white text-xs font-mono font-bold">
                         <AlertCircle size={14} className="shrink-0 mt-0.5" />
                         <span>{fotoWarning}</span>
                       </div>
                     )}
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
-                      VISI / MOTTO (OPSIONAL)
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={formData.visiMotto || ""}
-                      onChange={(e) => setFormData({ ...formData, visiMotto: e.target.value })}
-                      placeholder="e.g. Bersatu, Bergerak, Berdampak untuk HIMASI UG..."
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-medium text-sm resize-none"
-                    />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

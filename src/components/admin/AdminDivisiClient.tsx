@@ -48,10 +48,11 @@ interface AdminDivisiClientProps {
 }
 
 export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisiClientProps) {
-  const { divisiData, setDivisiData, anggotaDivisi, setAnggotaDivisi, mounted } = useSharedStore();
+  const { pengurus, divisiData, setDivisiData, anggotaDivisi, setAnggotaDivisi, mounted } = useSharedStore();
 
-  const activeDivisiList = mounted ? divisiData : initialDivisi;
-  const activeAnggotaList = mounted ? anggotaDivisi : initialAnggota;
+  const activeBphPeriode = pengurus.find((p) => p.divisi === "BPH" && p.periode)?.periode || "2026/2027";
+  const activeDivisiList = mounted && divisiData && divisiData.length > 0 ? divisiData : initialDivisi;
+  const activeAnggotaList = mounted && anggotaDivisi && anggotaDivisi.length > 0 ? anggotaDivisi : initialAnggota;
 
   const [activeDivisiTab, setActiveDivisiTab] = useState<string>("akademik");
 
@@ -76,10 +77,10 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
   // Anggota Form State
   const [angNama, setAngNama] = useState("");
   const [angNpm, setAngNpm] = useState("");
-  const [angRole, setAngRole] = useState<"Ketua Divisi" | "Anggota Divisi">("Anggota Divisi");
+  const [angRole, setAngRole] = useState<"Ketua Divisi" | "Wakil Ketua Divisi" | "Anggota Divisi">("Anggota Divisi");
   const [angBadge, setAngBadge] = useState("");
   const [angFotoUrl, setAngFotoUrl] = useState("");
-  const [angPeriode, setAngPeriode] = useState("2025/2026");
+  const [angPeriode, setAngPeriode] = useState(activeBphPeriode);
   const [angInstagram, setAngInstagram] = useState("");
   const [angLinkedin, setAngLinkedin] = useState("");
 
@@ -200,7 +201,7 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       setAngRole(item.role);
       setAngBadge(item.jabatanBadge || "");
       setAngFotoUrl(item.fotoUrl || "");
-      setAngPeriode(item.periode || "2025/2026");
+      setAngPeriode(item.periode || activeBphPeriode);
       setAngInstagram(item.instagram || "");
       setAngLinkedin(item.linkedin || "");
     } else {
@@ -210,7 +211,7 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       setAngRole("Anggota Divisi");
       setAngBadge("");
       setAngFotoUrl("");
-      setAngPeriode("2025/2026");
+      setAngPeriode(activeBphPeriode);
       setAngInstagram("");
       setAngLinkedin("");
     }
@@ -292,13 +293,21 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
 
   const handleAnggotaFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      try {
-        const base64 = await convertFileToBase64(file);
-        setAngFotoUrl(base64);
-      } catch (err) {
-        console.error("Gagal membaca foto:", err);
-      }
+    if (!file) return;
+
+    const maxBytes = 2 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 2 MB.`);
+      return;
+    }
+
+    try {
+      const base64 = await convertFileToBase64(file);
+      setAngFotoUrl(base64);
+    } catch (err) {
+      console.error("Gagal membaca foto:", err);
+      alert("Gagal membaca foto anggota dari perangkat.");
     }
   };
 
@@ -424,8 +433,8 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
               key={d.id}
               onClick={() => setActiveDivisiTab(d.id)}
               className={`px-4 py-2 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 cursor-pointer shrink-0 transition-colors ${activeDivisiTab === d.id
-                  ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white"
-                  : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
+                ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white"
+                : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200"
                 }`}
             >
               DIVISI {d.singkatan} ({activeAnggotaList.filter((a) => a.divisiId === d.id).length})
@@ -445,6 +454,8 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredMembers.map((member) => {
               const isKetua = member.role === "Ketua Divisi";
+              const isWakadiv = member.role === "Wakil Ketua Divisi";
+              const memberPeriode = (!member.periode || member.periode === "2025/2026") ? activeBphPeriode : member.periode;
 
               return (
                 <div
@@ -464,14 +475,14 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                         {member.nama}
                       </h4>
                       <p className="text-[11px] font-mono font-bold text-[#C8102E] dark:text-[#E31B3B] uppercase truncate">
-                        {isKetua ? "👑 KADIV" : "STAFF DIVISI"}
+                        {isKetua ? "👑 KADIV" : isWakadiv ? "🛡️ WAKADIV" : "STAFF DIVISI"}
                       </p>
                     </div>
                   </div>
 
                   <div className="pt-2 border-t-2 border-slate-950/20 dark:border-white/20 flex items-center justify-between">
                     <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">
-                      {member.npm ? `NPM: ${member.npm}` : `PERIODE ${member.periode}`}
+                      {member.npm ? `NPM: ${member.npm}` : `PERIODE ${memberPeriode}`}
                     </span>
                     <div className="flex items-center gap-1.5">
                       <button
@@ -639,12 +650,17 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
                     </label>
                     <select
                       value={angRole}
-                      onChange={(e) =>
-                        setAngRole(e.target.value as "Ketua Divisi" | "Anggota Divisi")
-                      }
+                      onChange={(e) => {
+                        const newRole = e.target.value as "Ketua Divisi" | "Wakil Ketua Divisi" | "Anggota Divisi";
+                        setAngRole(newRole);
+                        if (newRole === "Ketua Divisi") setAngBadge("Kadiv");
+                        else if (newRole === "Wakil Ketua Divisi") setAngBadge("Wakadiv");
+                        else setAngBadge("Staff Divisi");
+                      }}
                       className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] font-bold"
                     >
                       <option value="Anggota Divisi">Anggota Staff Divisi</option>
+                      <option value="Wakil Ketua Divisi">Wakil Ketua Divisi (Wakadiv)</option>
                       <option value="Ketua Divisi">Ketua Divisi (Kadiv)</option>
                     </select>
                   </div>

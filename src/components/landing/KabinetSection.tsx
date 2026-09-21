@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Sparkles, ShieldQuestion, User, Quote, RotateCw, CheckCircle2 } from "lucide-react";
+import { motion, useMotionValue, useTransform, type Variants } from "framer-motion";
+import { Sparkles, ShieldQuestion, User, RotateCw, CheckCircle2 } from "lucide-react";
 import type { PengurusItem, VisiMisiData } from "@/data/adminMockData";
 import { INITIAL_PENGURUS, INITIAL_VISI_MISI } from "@/data/adminMockData";
+import { useSharedStore } from "@/lib/sharedStore";
 import { LiveText } from "@/components/ui/LiveText";
 
 // GLOBAL PERIODE KONFIGURASI KEPENGURUSAN
-export const TAHUN_KEPENGURUSAN = "Periode 2025/2026";
+export const TAHUN_KEPENGURUSAN = "PERIODE 2026/2027";
 
 function SocialIcon({ href, type }: { href?: string; type: "linkedin" | "instagram" }) {
   if (!href) return null;
@@ -52,8 +53,47 @@ function getNameColorByRole(jabatan: string): string {
   return "text-slate-950 dark:text-white";
 }
 
-export function KabinetCard3D({ item }: { item: PengurusItem }) {
+const dropVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: -160,
+    rotate: -6,
+    scale: 0.85,
+  },
+  visible: (idx: number) => ({
+    opacity: 1,
+    y: 0,
+    rotate: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 140,
+      damping: 13,
+      mass: 1.1,
+      delay: idx * 0.16,
+    },
+  }),
+};
+
+export function KabinetCard3D({ item, index = 0 }: { item: PengurusItem; index?: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
+
+  // Framer motion values to track 2D drag position for dynamic lanyard strap physics
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  // Dynamic Bezier curves for the Left and Right Lanyard Straps
+  const strapPathLeft = useTransform([x, y], ([latestX, latestY]) => {
+    const lx = Number(latestX) || 0;
+    const ly = Number(latestY) || 0;
+    return `M 25 0 C ${32 + lx * 0.3} ${15 + ly * 0.3}, ${45 + lx * 0.7} ${35 + ly * 0.6}, ${50 + lx} ${52 + ly}`;
+  });
+
+  const strapPathRight = useTransform([x, y], ([latestX, latestY]) => {
+    const lx = Number(latestX) || 0;
+    const ly = Number(latestY) || 0;
+    return `M 75 0 C ${68 + lx * 0.3} ${15 + ly * 0.3}, ${55 + lx * 0.7} ${35 + ly * 0.6}, ${50 + lx} ${52 + ly}`;
+  });
 
   const isTBA =
     !item.nama ||
@@ -66,112 +106,243 @@ export function KabinetCard3D({ item }: { item: PengurusItem }) {
     : getNameColorByRole(item.jabatan);
 
   return (
-    <div
-      className="relative w-full h-full min-h-[470px] [perspective:1000px] cursor-pointer group"
-      onDoubleClick={() => setIsFlipped(!isFlipped)}
+    <motion.div
+      custom={index}
+      variants={dropVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-40px" }}
+      className="flex flex-col items-center group w-full h-[550px] relative"
     >
-      <motion.div
-        animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="relative w-full h-full [transform-style:preserve-3d] bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.15)]"
-      >
-        {/* ── BAGIAN DEPAN (FRONT FACE) ── */}
-        <div className="absolute inset-0 w-full h-full p-5 pt-10 flex flex-col justify-between [backface-visibility:hidden] bg-white dark:bg-slate-950">
-          {/* Badge Jabatan */}
-          <span className="absolute -top-3 left-4 px-3 py-1 bg-[#C8102E] dark:bg-[#E31B3B] text-white text-[11px] font-black font-mono tracking-widest uppercase border border-slate-950 dark:border-white/20">
-            {item.jabatan || "PENGURUS BPH"}
-          </span>
+      {/* ── DYNAMIC SVG LANYARD STRAP THAT FLEXES & SWAYS WITH CARD DRAG ── */}
+      <div className="relative w-full h-16 -mb-4 pointer-events-none select-none z-20 overflow-visible">
+        <svg viewBox="0 0 100 65" className="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id={`lanyardGrad-${item.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#900A1E" />
+              <stop offset="50%" stopColor="#C8102E" />
+              <stop offset="100%" stopColor="#E31B3B" />
+            </linearGradient>
+            <linearGradient id={`metalGrad-${item.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#cbd5e1" />
+              <stop offset="50%" stopColor="#f8fafc" />
+              <stop offset="100%" stopColor="#94a3b8" />
+            </linearGradient>
+            <filter id={`strapShadow-${item.id}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="1.5" floodColor="#000" floodOpacity="0.5" />
+            </filter>
+          </defs>
 
-          {/* Photo Box */}
-          <div className="relative w-full h-64 border-2 border-slate-950 dark:border-white/20 overflow-hidden bg-slate-100 dark:bg-slate-900 flex flex-col items-center justify-center">
-            {photoAvailable ? (
-              <img
-                src={item.fotoUrl}
-                alt={item.nama}
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 bg-slate-900 text-center p-4 space-y-2 select-none w-full">
-                <div className="p-3 bg-slate-800 text-slate-400 border border-slate-700">
-                  <User size={44} strokeWidth={1.5} />
-                </div>
-                <span className="text-[11px] font-bold font-mono uppercase text-slate-400 mt-2 tracking-wider">
-                  Foto Belum Tersedia
-                </span>
-              </div>
-            )}
+          {/* Left Red Lanyard Fabric Strap */}
+          <motion.path
+            d={strapPathLeft}
+            stroke={`url(#lanyardGrad-${item.id})`}
+            strokeWidth="7"
+            strokeLinecap="round"
+            fill="none"
+            filter={`url(#strapShadow-${item.id})`}
+          />
+          <motion.path
+            d={strapPathLeft}
+            stroke="#ffffff"
+            strokeWidth="1"
+            strokeDasharray="2 3"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.6"
+          />
 
-            {/* Flip Hint Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsFlipped(!isFlipped);
-              }}
-              className="absolute bottom-2 right-2 px-2.5 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 border border-slate-950 text-[10px] font-black font-mono flex items-center gap-1 hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors"
-            >
-              <RotateCw size={11} /> FLIP CARD
-            </button>
-          </div>
+          {/* Right Red Lanyard Fabric Strap */}
+          <motion.path
+            d={strapPathRight}
+            stroke={`url(#lanyardGrad-${item.id})`}
+            strokeWidth="7"
+            strokeLinecap="round"
+            fill="none"
+            filter={`url(#strapShadow-${item.id})`}
+          />
+          <motion.path
+            d={strapPathRight}
+            stroke="#ffffff"
+            strokeWidth="1"
+            strokeDasharray="2 3"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.6"
+          />
 
-          {/* Bottom Card Footer */}
-          <div className="mt-3 flex flex-col justify-center text-center space-y-1.5 w-full">
-            <h3 className={`text-lg sm:text-xl font-black font-heading tracking-tight truncate px-1 uppercase ${nameColorClass}`}>
-              {isTBA ? "TBA (To Be Announced)" : item.nama}
-            </h3>
-            <p className="text-[11px] font-black font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400">
-              {TAHUN_KEPENGURUSAN}
-            </p>
-
-            {/* Social links */}
-            {!isTBA && (
-              <div className="flex items-center justify-center gap-2 pt-2 border-t border-slate-950/20 dark:border-white/20">
-                <SocialIcon href={item.linkedin} type="linkedin" />
-                <SocialIcon href={item.instagram} type="instagram" />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ── BAGIAN BELAKANG (BACK FACE) ── */}
-        <div className="absolute inset-0 w-full h-full p-6 flex flex-col items-center justify-between text-center [transform:rotateY(180deg)] [backface-visibility:hidden] bg-slate-950 text-white border-2 border-slate-950">
-          <div className="p-3 bg-[#C8102E] text-white font-mono font-bold text-xs uppercase tracking-wider">
-            MOTTO & VISI
-          </div>
-
-          {/* Center Quotes */}
-          <div className="flex-1 flex flex-col justify-center items-center px-2 py-4 space-y-3">
-            <Quote size={28} className="text-[#E31B3B]" />
-            <LiveText
-              text={`"${item.visiMotto || "Mewujudkan HIMASI UG yang solid, unggul, dan berdaya saing tinggi dalam era digital."}"`}
-              className="text-slate-200 text-sm sm:text-base font-semibold leading-relaxed italic text-center"
-              wordDelay={0.06}
+          {/* Metallic Connector Ring & Clip attached to moving x, y */}
+          <motion.g style={{ x, y }}>
+            {/* Metallic Clip Box */}
+            <rect
+              x="42"
+              y="44"
+              width="16"
+              height="12"
+              rx="1.5"
+              fill={`url(#metalGrad-${item.id})`}
+              stroke="#0f172a"
+              strokeWidth="1"
             />
+            {/* Slot Punch Connector Hole */}
+            <rect x="46" y="52" width="8" height="3" rx="1" fill="#0f172a" />
+          </motion.g>
+        </svg>
+      </div>
+
+      {/* ── INTERACTIVE DRAGGABLE 3D ID CARD CONTAINER ── */}
+      <motion.div
+        drag
+        style={{ x, y }}
+        dragConstraints={{ left: -50, right: 50, top: -20, bottom: 60 }}
+        dragElastic={0.3}
+        dragSnapToOrigin={true}
+        whileDrag={{ scale: 1.04, cursor: "grabbing" }}
+        className="relative w-full h-[490px] [perspective:1200px] cursor-grab active:cursor-grabbing select-none"
+        onClick={() => setIsFlipped(!isFlipped)}
+      >
+        <motion.div
+          animate={{ rotateY: isFlipped ? 180 : 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full h-full [transform-style:preserve-3d] bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 shadow-[6px_6px_0px_0px_rgba(200,16,46,1)] dark:shadow-[6px_6px_0px_0px_rgba(227,27,59,0.3)] transition-shadow duration-300 hover:shadow-[10px_10px_0px_0px_rgba(200,16,46,1)]"
+        >
+          {/* ── FRONT FACE OF ID CARD ── */}
+          <div className="absolute inset-0 w-full h-full p-5 pt-8 flex flex-col justify-between [backface-visibility:hidden] bg-white dark:bg-slate-950 border-t-8 border-t-[#C8102E]">
+            {/* Lanyard Slot Hole Punch */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-2 bg-slate-900 border border-slate-950 rounded-full" />
+
+            {/* Top Tag */}
+            <div className="flex items-center justify-between border-b border-slate-950/20 dark:border-white/20 pb-2 mb-2">
+              <span className="px-2.5 py-0.5 bg-[#C8102E] text-white text-[10px] font-black font-mono tracking-widest uppercase border border-slate-950">
+                {item.jabatan || "PENGURUS BPH"}
+              </span>
+              <span className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider">
+                ID CARD • BPH
+              </span>
+            </div>
+
+            {/* Photo Box */}
+            <div className="relative w-full h-60 border-2 border-slate-950 dark:border-white/20 overflow-hidden bg-slate-100 dark:bg-slate-900 flex flex-col items-center justify-center my-auto">
+              {photoAvailable ? (
+                <img
+                  src={item.fotoUrl}
+                  alt={item.nama}
+                  className="w-full h-full object-cover transition-transform duration-300 scale-100 group-hover:scale-105 pointer-events-none"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-60 bg-slate-100 dark:bg-slate-900 text-center p-4 space-y-2 select-none w-full transition-colors duration-200">
+                  <div className="p-3 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700">
+                    <User size={40} strokeWidth={1.5} />
+                  </div>
+                  <span className="text-[11px] font-bold font-mono uppercase text-slate-600 dark:text-slate-400 mt-2 tracking-wider">
+                    Foto Belum Tersedia
+                  </span>
+                </div>
+              )}
+
+              {/* Flip Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFlipped(!isFlipped);
+                }}
+                className="absolute bottom-2 right-2 px-2.5 py-1 bg-[#C8102E] text-white border border-slate-950 text-[10px] font-black font-mono flex items-center gap-1 hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950 transition-colors shadow-md"
+              >
+                <RotateCw size={11} /> BALIK KARTU
+              </button>
+            </div>
+
+            {/* Member Details */}
+            <div className="mt-2 flex flex-col justify-center text-center space-y-1 w-full">
+              <h3 className={`text-base sm:text-lg font-black font-heading tracking-tight break-words line-clamp-2 leading-tight px-1 uppercase ${nameColorClass}`}>
+                {isTBA ? "TBA (To Be Announced)" : item.nama}
+              </h3>
+              <p className="text-[10px] font-extrabold font-mono uppercase tracking-widest text-[#C8102E] dark:text-[#E31B3B]">
+                {item.periode ? (item.periode.startsWith("PERIODE") || item.periode.startsWith("Periode") ? item.periode : `PERIODE ${item.periode}`) : TAHUN_KEPENGURUSAN}
+              </p>
+
+              {/* Social links */}
+              {!isTBA && (
+                <div className="flex items-center justify-center gap-2 pt-2 border-t border-slate-950/20 dark:border-white/20">
+                  <SocialIcon href={item.linkedin} type="linkedin" />
+                  <SocialIcon href={item.instagram} type="instagram" />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="w-full pt-4 border-t border-white/20 space-y-1">
-            <h4 className="text-base font-black font-heading tracking-tight uppercase text-white">
-              {item.nama}
-            </h4>
-            <p className="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider truncate">
-              {item.jabatan} • {TAHUN_KEPENGURUSAN}
-            </p>
+          {/* ── BACK FACE OF ID CARD (PURE HIMASI LOGO CENTERED) ── */}
+          <div className="absolute inset-0 w-full h-full p-6 flex flex-col items-center justify-between text-center [transform:rotateY(180deg)] [backface-visibility:hidden] bg-slate-950 text-white border-2 border-[#C8102E] overflow-hidden">
+            {/* Dark Red Radial Glow Background Accent */}
+            <div className="absolute inset-0 bg-radial from-[#C8102E]/30 via-transparent to-transparent pointer-events-none" />
+
+            {/* Card Slot Punch on Back Face */}
+            <div className="w-8 h-2 bg-slate-900 border border-slate-700 rounded-full z-10" />
+
+            {/* Top Red Header Badge */}
+            <div className="z-10 w-full py-1.5 px-3 bg-[#C8102E] text-white font-mono font-black text-[11px] uppercase tracking-widest border border-slate-900 shadow-md">
+              HIMPUNAN MAHASISWA SISTEM INFORMASI
+            </div>
+
+            {/* ── CENTER: PURE PROMINENT HIMASI LOGO IN THE MIDDLE (NO QUOTES) ── */}
+            <div className="relative z-10 flex flex-col items-center justify-center my-auto">
+              <div className="relative p-6 sm:p-7 bg-slate-900/90 border-2 border-[#C8102E] rounded-full shadow-[0_0_35px_rgba(200,16,46,0.7)] group-hover:scale-110 transition-transform duration-300">
+                <img
+                  src="/himsigundar.webp"
+                  alt="Logo HIMASI UG"
+                  className="w-24 h-24 sm:w-28 sm:h-28 object-contain filter drop-shadow-[0_0_12px_rgba(227,27,59,0.9)] pointer-events-none"
+                />
+              </div>
+            </div>
+
+            {/* Bottom Card Footer Info */}
+            <div className="z-10 w-full pt-3 border-t border-white/20 flex flex-col items-center justify-center space-y-1">
+              <h4 className="text-sm sm:text-base font-black font-heading tracking-tight uppercase text-white truncate max-w-full px-1">
+                {item.nama}
+              </h4>
+              <div className="flex flex-col items-center text-[10px] sm:text-[11px] font-mono font-extrabold uppercase tracking-wider text-[#E31B3B] leading-tight">
+                <span>UNIVERSITAS GUNADARMA</span>
+                <span>{item.periode ? (item.periode.startsWith("PERIODE") || item.periode.startsWith("Periode") ? item.periode : `PERIODE ${item.periode}`) : TAHUN_KEPENGURUSAN}</span>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
 export function KabinetSection({
-  pengurus = INITIAL_PENGURUS,
-  visiMisi = INITIAL_VISI_MISI,
+  pengurus: serverPengurus = INITIAL_PENGURUS,
+  visiMisi: serverVisiMisi = INITIAL_VISI_MISI,
 }: {
   pengurus?: PengurusItem[];
   visiMisi?: VisiMisiData;
 }) {
+  const { pengurus: storePengurus, visiMisi: storeVisiMisi, mounted } = useSharedStore();
+  const pengurus = mounted && storePengurus && storePengurus.length > 0 ? storePengurus : serverPengurus;
+  const visiMisi = mounted && storeVisiMisi ? storeVisiMisi : serverVisiMisi;
+
   const bphItems = pengurus.filter((p) => p.divisi === "BPH");
   const displayItems = bphItems.length >= 1 ? bphItems : pengurus;
   const isDataEmpty = pengurus.length === 0;
+
+  // Separate Kahim & Wakahim for Pyramid Top Tier (2 cards centered)
+  const kahimItem = displayItems.find(
+    (item) =>
+      item.jabatan.toLowerCase().includes("ketua") &&
+      !item.jabatan.toLowerCase().includes("wakil")
+  );
+
+  const wakahimItem = displayItems.find((item) =>
+    item.jabatan.toLowerCase().includes("wakil ketua")
+  );
+
+  const topLeaders = [kahimItem, wakahimItem].filter(Boolean) as PengurusItem[];
+  const topLeaderIds = topLeaders.map((l) => l.id);
+
+  // Remaining BPH members (Sekretaris & Bendahara: 3 cards per row centered)
+  const remainingBph = displayItems.filter((item) => !topLeaderIds.includes(item.id));
 
   return (
     <section
@@ -269,7 +440,7 @@ export function KabinetSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="text-left space-y-3 border-b-2 border-slate-950 dark:border-white/20 pb-6"
+          className="text-center max-w-3xl mx-auto space-y-3 border-b-2 border-slate-950 dark:border-white/20 pb-6 flex flex-col items-center"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-xs font-mono font-bold tracking-widest uppercase">
             <Sparkles size={12} />
@@ -279,11 +450,11 @@ export function KabinetSection({
             PIMPINAN <span className="text-[#C8102E] dark:text-[#E31B3B]">HIMPUNAN</span>
           </h2>
           <p className="text-slate-700 dark:text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed font-medium">
-            Badan Pengurus Harian (BPH) yang memimpin dan mengarahkan gerakan HIMASI UG dengan komitmen tinggi. Double-click kartu untuk melihat visi & quotes.
+            Badan Pengurus Harian (BPH) yang memimpin dan mengarahkan gerakan HIMASI UG. Tarik kartu lanyard dengan kursor & klik untuk melihat visi & logo!
           </p>
         </motion.div>
 
-        {/* KONDISI EMPTY STATE ATAU GRID KABINET */}
+        {/* KONDISI EMPTY STATE ATAU PIRAMIDA KABINET */}
         {isDataEmpty ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
@@ -300,16 +471,44 @@ export function KabinetSection({
                 Kabinet Sedang Dalam Masa Formatur
               </h3>
               <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium">
-                Struktur kepengurusan HIMASI UG periode meini sedang dalam proses penyusunan. Nantikan formasi pemimpin baru kita!
+                Struktur kepengurusan HIMASI UG periode ini sedang dalam proses penyusunan. Nantikan formasi pemimpin baru kita!
               </p>
             </div>
           </motion.div>
         ) : (
-          /* AUTO SCALING GRID 3D FLIP CARDS */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {displayItems.map((item) => (
-              <KabinetCard3D key={item.id} item={item} />
-            ))}
+          /* STRUKTUR PIRAMIDA KABINET BPH */
+          <div className="space-y-12">
+            {/* BARIS 1 (PUNCAK PIRAMIDA): 2 KARTU CENTER (KAHIM & WAKAHIM) */}
+            {topLeaders.length > 0 && (
+              <div className="space-y-4 flex flex-col items-center">
+                <span className="px-3 py-1 bg-[#C8102E] text-white font-mono font-black text-xs uppercase tracking-widest border border-slate-950">
+                  PUNCAK PIMPINAN (KAHIM & WAKAHIM)
+                </span>
+                <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 pt-4 w-full max-w-4xl mx-auto">
+                  {topLeaders.map((item, index) => (
+                    <div key={item.id} className="w-full h-[550px] max-w-[280px] sm:max-w-[300px]">
+                      <KabinetCard3D item={item} index={index} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* BARIS 2+ (TINGKAT STRUKTURAL): 3 KARTU CENTER PER BARIS (SEKRETARIS & BENDAHARA) */}
+            {remainingBph.length > 0 && (
+              <div className="space-y-4 pt-6 flex flex-col items-center">
+                <span className="px-3 py-1 bg-slate-950 text-white dark:bg-slate-800 font-mono font-black text-xs uppercase tracking-widest border border-slate-950">
+                  JAJARAN SEKRETARIS & BENDAHARA BPH
+                </span>
+                <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-10 pt-4 w-full max-w-6xl mx-auto">
+                  {remainingBph.map((item, index) => (
+                    <div key={item.id} className="w-full h-[550px] max-w-[280px] sm:max-w-[290px]">
+                      <KabinetCard3D item={item} index={topLeaders.length + index} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

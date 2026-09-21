@@ -178,7 +178,7 @@ export function MerchandiseClient({ merchandise }: { merchandise: MerchandiseAdm
                       <img
                         src={getValidImageUrl(image, title)}
                         alt={title}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                        className="w-full h-full object-cover transition-all duration-300"
                       />
 
                       {/* Status Badge */}

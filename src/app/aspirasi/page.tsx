@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { AspirasiClient } from "@/components/aspirasi/AspirasiClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Portal Aspirasi Mahasiswa",

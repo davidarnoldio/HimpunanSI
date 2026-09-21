@@ -51,7 +51,7 @@ async function runTddSuite() {
     nama: 'TDD Test BPH Member',
     jabatan: 'Ketua Himpunan',
     divisi: 'BPH',
-    periode: '2025/2026',
+    periode: '2026/2027',
     fotoUrl: 'https://placehold.co/600x800',
     urutan: 0,
     createdAt: new Date().toISOString(),

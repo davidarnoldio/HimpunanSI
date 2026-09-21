@@ -70,7 +70,7 @@ const STORAGE_KEYS = {
  * Increment this number every time a breaking schema change is deployed.
  * On mismatch, all stored keys are wiped and re-seeded from INITIAL data.
  */
-const DATA_SCHEMA_VERSION = 4; // bumped: semua data dummy dihapus
+const DATA_SCHEMA_VERSION = 8; // bumped: sanitize all legacy 2025/2026 periods to 2026/2027
 const SCHEMA_VERSION_KEY = "HIMASI_data_schema_version";
 
 /**
@@ -128,10 +128,132 @@ export function formatWhatsAppUrl(input?: string | null, defaultMessage?: string
  * Convert selected File from file input into Base64 string for persistent storage
  */
 export function convertFileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
+  return compressAndConvertFileToBase64(file, 2);
+}
+
+/**
+ * Rotates an image (Base64 data URL or HTTP URL) by specified degrees (default 90 deg clockwise)
+ */
+export function rotateBase64Image(imageUrl: string, degrees = 90): Promise<string> {
+  return new Promise((resolve) => {
+    if (!imageUrl || typeof imageUrl !== "string") return resolve(imageUrl);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return resolve(imageUrl);
+
+      const normalizedDeg = ((degrees % 360) + 360) % 360;
+      if (normalizedDeg === 90 || normalizedDeg === 270) {
+        canvas.width = img.height;
+        canvas.height = img.width;
+      } else {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      }
+
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((normalizedDeg * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+      const rotatedBase64 = canvas.toDataURL("image/jpeg", 0.88);
+      resolve(rotatedBase64);
+    };
+    img.onerror = () => resolve(imageUrl);
+    img.src = imageUrl;
+  });
+}
+
+/**
+ * Convert selected File from device file picker into Base64 with canvas compression (Max 2 MB guarantee)
+ */
+export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    const maxBytes = maxMB * 1024 * 1024;
+
+    if (file.size > maxBytes && !file.type.startsWith("image/")) {
+      return reject(new Error(`Ukuran file melebihi batas maksimal ${maxMB} MB.`));
+    }
+
+    // Try createImageBitmap for automatic EXIF orientation normalization
+    if (typeof createImageBitmap === "function") {
+      try {
+        let bitmap: ImageBitmap | null = null;
+        try {
+          bitmap = await createImageBitmap(file, { imageOrientation: "from-image" } as ImageBitmapOptions);
+        } catch {
+          bitmap = await createImageBitmap(file);
+        }
+
+        if (bitmap) {
+          const maxDim = 1200;
+          let width = bitmap.width;
+          let height = bitmap.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+
+          if (ctx) {
+            ctx.drawImage(bitmap, 0, 0, width, height);
+            bitmap.close();
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+            return resolve(compressedBase64);
+          }
+          bitmap.close();
+        }
+      } catch (e) {
+        console.warn("createImageBitmap failed, falling back to FileReader:", e);
+      }
+    }
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = (event) => {
+      const src = event.target?.result as string;
+      if (!src) return reject(new Error("Gagal membaca file gambar dari perangkat."));
+
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1200;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(src);
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+        resolve(compressedBase64);
+      };
+      img.onerror = () => resolve(src);
+    };
     reader.onerror = (error) => reject(error);
   });
 }
@@ -171,7 +293,9 @@ function setStoredData<T>(key: string, data: T): void {
 export const store = {
   getPengurus: (): PengurusItem[] => {
     const data = getStoredData(STORAGE_KEYS.PENGURUS, INITIAL_PENGURUS);
-    return data.filter((p) => p.divisi === "BPH");
+    return data
+      .map((p) => (!p.periode || p.periode === "2025/2026" ? { ...p, periode: "2026/2027" } : p))
+      .filter((p) => p.divisi === "BPH");
   },
   setPengurus: (data: PengurusItem[]) => {
     const cleaned = data.filter((p) => p.divisi === "BPH");
@@ -200,7 +324,10 @@ export const store = {
   getVisiMisi: (): VisiMisiData => getStoredData(STORAGE_KEYS.VISI_MISI, INITIAL_VISI_MISI),
   setVisiMisi: (data: VisiMisiData) => setStoredData(STORAGE_KEYS.VISI_MISI, data),
 
-  getAnggotaDivisi: (): AnggotaDivisiItem[] => getStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, INITIAL_ANGGOTA_DIVISI),
+  getAnggotaDivisi: (): AnggotaDivisiItem[] => {
+    const data = getStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, INITIAL_ANGGOTA_DIVISI);
+    return data.map((a) => (!a.periode || a.periode === "2025/2026" ? { ...a, periode: "2026/2027" } : a));
+  },
   setAnggotaDivisi: (data: AnggotaDivisiItem[]) => setStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, data),
 
   getDivisiList: (): string[] => getStoredData(STORAGE_KEYS.DIVISI, ["Akademik", "Medinfo", "PSDM", "Humas"]),
@@ -218,6 +345,53 @@ export const store = {
   getHeroContent: (): HeroContentData => getStoredData(STORAGE_KEYS.HERO_CONTENT, INITIAL_HERO_CONTENT),
   setHeroContent: (data: HeroContentData) => setStoredData(STORAGE_KEYS.HERO_CONTENT, data),
 };
+
+let primarySyncPromise: Promise<void> | null = null;
+let lastPrimarySyncTime = 0;
+const SYNC_COOLDOWN_MS = 15000; // 15 seconds request deduplication
+
+function triggerPrimarySync(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+
+  const now = Date.now();
+  if (primarySyncPromise) {
+    return primarySyncPromise;
+  }
+
+  if (now - lastPrimarySyncTime < SYNC_COOLDOWN_MS) {
+    return Promise.resolve();
+  }
+
+  lastPrimarySyncTime = now;
+  primarySyncPromise = Promise.all([
+    fetchPengurusFromDB(),     // [0] → pengurus
+    fetchEventsFromDB(),       // [1] → events
+    fetchMerchandiseFromDB(),  // [2] → merchandise
+    fetchHeroContentFromDB(),  // [3] → heroContent
+    fetchVisiMisiFromDB(),     // [4] → visiMisi
+    fetchDivisiFromDB(),       // [5] → divisi
+    fetchAnggotaDivisiFromDB(), // [6] → anggota
+    fetchAspirasiFromDB(),     // [7] → aspirasi
+  ])
+    .then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
+      store.setPengurus(pengurus);
+      store.setEvents(events);
+      store.setMerchandise(merchandise);
+      store.setHeroContent(heroContent);
+      store.setVisiMisi(visiMisi);
+      store.setDivisiFull(divisi);
+      store.setAnggotaDivisi(anggota);
+      store.setAspirasi(aspirasi);
+    })
+    .catch((err) => {
+      console.warn("[HIMASI Store] Supabase primary sync error:", err);
+    })
+    .finally(() => {
+      primarySyncPromise = null;
+    });
+
+  return primarySyncPromise;
+}
 
 /**
  * React Hook for automatically syncing public & admin pages with shared store
@@ -267,46 +441,8 @@ export function useSharedStore() {
     });
 
     // PRIMARY SYNC: Fetch latest data from Supabase (overrides localStorage)
-    // This ensures cross-device/cross-browser sync when admin panel changes data
-    Promise.all([
-      fetchPengurusFromDB(),     // [0] → pengurus
-      fetchEventsFromDB(),       // [1] → events
-      fetchMerchandiseFromDB(),  // [2] → merchandise
-      fetchHeroContentFromDB(),  // [3] → heroContent
-      fetchVisiMisiFromDB(),     // [4] → visiMisi
-      fetchDivisiFromDB(),       // [5] → divisi
-      fetchAnggotaDivisiFromDB(), // [6] → anggota
-      fetchAspirasiFromDB(),     // [7] → aspirasi
-    ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
-      // Update localStorage and state with fresh DB data
-      store.setPengurus(pengurus);
-      setPengurusState(pengurus);
-
-      store.setEvents(events);
-      setEventsState(events);
-
-      store.setMerchandise(merchandise);
-      setMerchandiseState(merchandise);
-
-      store.setHeroContent(heroContent);
-      setHeroContentState(heroContent);
-      if (heroContent.headlineDynamicWords) setHeadlineWordsState(heroContent.headlineDynamicWords);
-      if (heroContent.badgeDynamicWords) setBadgeWordsState(heroContent.badgeDynamicWords);
-      if (heroContent.descriptionDynamicWords) setSubheadlineWordsState(heroContent.descriptionDynamicWords);
-
-      store.setVisiMisi(visiMisi);
-      setVisiMisiState(visiMisi);
-
-      store.setDivisiFull(divisi);
-      setDivisiDataState(divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph"));
-
-      store.setAnggotaDivisi(anggota);
-      setAnggotaDivisiState(anggota);
-
-      store.setAspirasi(aspirasi);
-      setAspirasiState(aspirasi);
-    }).catch((err) => {
-      console.warn("[HIMASI Store] Supabase primary sync error:", err);
+    triggerPrimarySync().then(() => {
+      reloadAll();
     });
 
     const handleUpdate = () => {

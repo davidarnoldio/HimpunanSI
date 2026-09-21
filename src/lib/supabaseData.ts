@@ -90,7 +90,11 @@ export async function fetchSettingJSON<T>(key: string, fallback: T): Promise<T> 
     if (!res.ok) return fallback;
     const rows: { value: unknown }[] = await res.json();
     if (!rows || rows.length === 0) return fallback;
-    return rows[0].value as T;
+    const val = rows[0].value;
+    if (Array.isArray(val) && val.length === 0 && Array.isArray(fallback) && fallback.length > 0) {
+      return fallback;
+    }
+    return val as T;
   } catch (err) {
     console.warn(`[supabaseData] fetchSettingJSON(${key}) error/timeout:`, err);
     return fallback;
@@ -163,7 +167,7 @@ export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
       nama: row.nama,
       jabatan: row.jabatan,
       divisi: "BPH", // Normalize to strict upper-case "BPH"
-      periode: row.periode ?? "2025/2026",
+      periode: row.periode ?? "2026/2027",
       fotoUrl: row.fotoUrl ?? "",
       linkedin: row.linkedin ?? "",
       instagram: row.instagram ?? "",
@@ -217,7 +221,7 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
       nama: p.nama,
       jabatan: p.jabatan,
       divisi: "BPH",
-      periode: p.periode ?? "2025/2026",
+      periode: p.periode ?? "2026/2027",
       fotoUrl: p.fotoUrl ?? null,
       linkedin: p.linkedin ?? null,
       instagram: p.instagram ?? null,
