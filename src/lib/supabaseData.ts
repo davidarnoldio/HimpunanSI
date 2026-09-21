@@ -59,6 +59,26 @@ const SETTINGS_KEYS = {
 
 // ─── GENERIC SETTINGS JSON HELPERS ───────────────────────────────────────────
 
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = 2500
+): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
 /**
  * Fetch a JSON blob from the `settings` table by key.
  * Falls back to `fallback` if key not found or on error.
@@ -66,13 +86,13 @@ const SETTINGS_KEYS = {
 export async function fetchSettingJSON<T>(key: string, fallback: T): Promise<T> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/settings?select=value&key=eq.${encodeURIComponent(key)}`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_NO_STORE, 2500);
     if (!res.ok) return fallback;
     const rows: { value: unknown }[] = await res.json();
     if (!rows || rows.length === 0) return fallback;
     return rows[0].value as T;
   } catch (err) {
-    console.warn(`[supabaseData] fetchSettingJSON(${key}) error:`, err);
+    console.warn(`[supabaseData] fetchSettingJSON(${key}) error/timeout:`, err);
     return fallback;
   }
 }
@@ -117,7 +137,7 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
 export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/Pengurus?order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_NO_STORE, 2500);
     if (!res.ok) {
       const errText = await res.text().catch(() => res.status.toString());
       console.warn("[supabaseData] fetchPengurusFromDB failed:", res.status, errText);
@@ -249,7 +269,7 @@ const EVENT_STATUS_REVERSE: Record<string, string> = {
 export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/Event?order=createdAt.desc&select=id,title,kategori,tanggal,waktu,lokasi,isOnline,status,deskripsi,bannerUrl,linkPendaftaran`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_NO_STORE, 2500);
     if (!res.ok) {
       console.warn("[supabaseData] fetchEventsFromDB failed:", res.status);
       return INITIAL_EVENTS;
@@ -339,7 +359,7 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
 export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,email,status,createdAt`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_NO_STORE, 2500);
     if (!res.ok) return INITIAL_ASPIRASI;
     const rows: Array<{
       id: string;
