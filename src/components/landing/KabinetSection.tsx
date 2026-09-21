@@ -271,22 +271,22 @@ export function KabinetCard3D({ item, index = 0 }: { item: PengurusItem; index?:
             </div>
           </div>
 
-          {/* ── BACK FACE OF ID CARD (PURE HIMASI LOGO CENTERED) ── */}
-          <div className="absolute inset-0 w-full h-full p-6 flex flex-col items-center justify-between text-center [transform:rotateY(180deg)] [backface-visibility:hidden] bg-slate-950 text-white border-2 border-[#C8102E] overflow-hidden">
-            {/* Dark Red Radial Glow Background Accent */}
-            <div className="absolute inset-0 bg-radial from-[#C8102E]/30 via-transparent to-transparent pointer-events-none" />
+          {/* ── BACK FACE OF ID CARD (PURE HIMASI LOGO CENTERED — ADAPTIVE LIGHT/DARK THEME) ── */}
+          <div className="absolute inset-0 w-full h-full p-6 flex flex-col items-center justify-between text-center [transform:rotateY(180deg)] [backface-visibility:hidden] bg-white dark:bg-slate-950 text-slate-950 dark:text-white border-2 border-slate-950 dark:border-[#C8102E] overflow-hidden">
+            {/* Red Radial Glow Background Accent */}
+            <div className="absolute inset-0 bg-radial from-[#C8102E]/10 dark:from-[#C8102E]/30 via-transparent to-transparent pointer-events-none" />
 
             {/* Card Slot Punch on Back Face */}
-            <div className="w-8 h-2 bg-slate-900 border border-slate-700 rounded-full z-10" />
+            <div className="w-8 h-2 bg-slate-200 dark:bg-slate-900 border border-slate-950 dark:border-slate-700 rounded-full z-10" />
 
             {/* Top Red Header Badge */}
-            <div className="z-10 w-full py-1.5 px-3 bg-[#C8102E] text-white font-mono font-black text-[11px] uppercase tracking-widest border border-slate-900 shadow-md">
+            <div className="z-10 w-full py-1.5 px-3 bg-[#C8102E] text-white font-mono font-black text-[11px] uppercase tracking-widest border border-slate-950 dark:border-slate-900 shadow-md">
               HIMPUNAN MAHASISWA SISTEM INFORMASI
             </div>
 
-            {/* ── CENTER: PURE PROMINENT HIMASI LOGO IN THE MIDDLE (NO QUOTES) ── */}
+            {/* ── CENTER: PURE PROMINENT HIMASI LOGO IN THE MIDDLE ── */}
             <div className="relative z-10 flex flex-col items-center justify-center my-auto">
-              <div className="relative p-6 sm:p-7 bg-slate-900/90 border-2 border-[#C8102E] rounded-full shadow-[0_0_35px_rgba(200,16,46,0.7)] group-hover:scale-110 transition-transform duration-300">
+              <div className="relative p-6 sm:p-7 bg-white dark:bg-slate-900/90 border-2 border-slate-950 dark:border-[#C8102E] rounded-full shadow-[0_0_20px_rgba(200,16,46,0.25)] dark:shadow-[0_0_35px_rgba(200,16,46,0.7)] group-hover:scale-110 transition-transform duration-300">
                 <img
                   src="/himsigundar.webp"
                   alt="Logo HIMASI UG"
@@ -296,11 +296,11 @@ export function KabinetCard3D({ item, index = 0 }: { item: PengurusItem; index?:
             </div>
 
             {/* Bottom Card Footer Info */}
-            <div className="z-10 w-full pt-3 border-t border-white/20 flex flex-col items-center justify-center space-y-1">
-              <h4 className="text-sm sm:text-base font-black font-heading tracking-tight uppercase text-white truncate max-w-full px-1">
+            <div className="z-10 w-full pt-3 border-t border-slate-950/20 dark:border-white/20 flex flex-col items-center justify-center space-y-1">
+              <h4 className="text-sm sm:text-base font-black font-heading tracking-tight uppercase text-slate-950 dark:text-white truncate max-w-full px-1">
                 {item.nama}
               </h4>
-              <div className="flex flex-col items-center text-[10px] sm:text-[11px] font-mono font-extrabold uppercase tracking-wider text-[#E31B3B] leading-tight">
+              <div className="flex flex-col items-center text-[10px] sm:text-[11px] font-mono font-extrabold uppercase tracking-wider text-[#C8102E] dark:text-[#E31B3B] leading-tight">
                 <span>UNIVERSITAS GUNADARMA</span>
                 <span>{item.periode ? (item.periode.startsWith("PERIODE") || item.periode.startsWith("Periode") ? item.periode : `PERIODE ${item.periode}`) : TAHUN_KEPENGURUSAN}</span>
               </div>
