@@ -44,7 +44,7 @@ const COMMON_HEADERS = {
 };
 
 const FETCH_NO_STORE: RequestInit = {
-  cache: "no-store",
+  next: { revalidate: 60 },
   headers: COMMON_HEADERS,
 };
 
@@ -138,6 +138,15 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
  * Filter dilakukan di sisi aplikasi setelah fetch agar tidak bergantung
  * pada nilai enum yang tepat di database.
  */
+function sanitizeFotoUrl(fotoUrl?: string | null): string {
+  if (!fotoUrl) return "";
+  // Truncate raw uncompressed Base64 data URLs over 150 KB to preserve cache efficiency & speed
+  if (fotoUrl.startsWith("data:") && fotoUrl.length > 150000) {
+    return "";
+  }
+  return fotoUrl;
+}
+
 export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/Pengurus?order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
@@ -168,7 +177,7 @@ export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
       jabatan: row.jabatan,
       divisi: "BPH", // Normalize to strict upper-case "BPH"
       periode: row.periode ?? "2026/2027",
-      fotoUrl: row.fotoUrl ?? "",
+      fotoUrl: sanitizeFotoUrl(row.fotoUrl),
       linkedin: row.linkedin ?? "",
       instagram: row.instagram ?? "",
     }));

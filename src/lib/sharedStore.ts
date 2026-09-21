@@ -1,7 +1,7 @@
 // Shared Data Store with Permanent LocalStorage Persistence and Real-time Event Bus
 // Keeps Admin CMS & Public Pages in sync live
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import {
   triggerRevalidateDivisi,
   triggerRevalidateMerchandise,
@@ -276,6 +276,15 @@ function getStoredData<T>(key: string, initialData: T): T {
   }
 }
 
+function setStoredDataSilent<T>(key: string, data: T): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.error(`Error writing ${key} to localStorage:`, e);
+  }
+}
+
 /**
  * Save item to LocalStorage and notify all open tabs/pages
  */
@@ -348,7 +357,7 @@ export const store = {
 
 let primarySyncPromise: Promise<void> | null = null;
 let lastPrimarySyncTime = 0;
-const SYNC_COOLDOWN_MS = 15000; // 15 seconds request deduplication
+const SYNC_COOLDOWN_MS = 30000; // 30 seconds request deduplication
 
 function triggerPrimarySync(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
@@ -374,14 +383,18 @@ function triggerPrimarySync(): Promise<void> {
     fetchAspirasiFromDB(),     // [7] → aspirasi
   ])
     .then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
-      store.setPengurus(pengurus);
-      store.setEvents(events);
-      store.setMerchandise(merchandise);
-      store.setHeroContent(heroContent);
-      store.setVisiMisi(visiMisi);
-      store.setDivisiFull(divisi);
-      store.setAnggotaDivisi(anggota);
-      store.setAspirasi(aspirasi);
+      // Use silent updates to avoid 8 sequential custom event re-render storms
+      setStoredDataSilent(STORAGE_KEYS.PENGURUS, pengurus.filter((p) => p.divisi === "BPH"));
+      setStoredDataSilent(STORAGE_KEYS.EVENTS, events);
+      setStoredDataSilent(STORAGE_KEYS.MERCHANDISE, merchandise);
+      setStoredDataSilent(STORAGE_KEYS.HERO_CONTENT, heroContent);
+      setStoredDataSilent(STORAGE_KEYS.VISI_MISI, visiMisi);
+      setStoredDataSilent(STORAGE_KEYS.DIVISI_FULL, divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph"));
+      setStoredDataSilent(STORAGE_KEYS.ANGGOTA_DIVISI, anggota);
+      setStoredDataSilent(STORAGE_KEYS.ASPIRASI, aspirasi);
+
+      // Dispatch single consolidated update event
+      window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
     })
     .catch((err) => {
       console.warn("[HIMASI Store] Supabase primary sync error:", err);
@@ -397,9 +410,6 @@ function triggerPrimarySync(): Promise<void> {
  * React Hook for automatically syncing public & admin pages with shared store
  */
 export function useSharedStore() {
-  // Initialize with INITIAL constants (not empty arrays!) so the first SSR/CSR
-  // render already has meaningful content — no blank flash while waiting for useEffect.
-  // When useEffect runs, localStorage data overwrites these defaults.
   const [pengurus, setPengurusState] = useState<PengurusItem[]>(INITIAL_PENGURUS.filter((p) => p.divisi === "BPH"));
   const [events, setEventsState] = useState<EventAdminItem[]>(INITIAL_EVENTS);
   const [aspirasi, setAspirasiState] = useState<AspirasiAdminItem[]>(INITIAL_ASPIRASI);
@@ -414,36 +424,38 @@ export function useSharedStore() {
   const [badgeWords, setBadgeWordsState] = useState<string[]>(INITIAL_BADGE_WORDS);
   const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(INITIAL_SUBHEADLINE_WORDS);
   const [heroContent, setHeroContentState] = useState<HeroContentData>(INITIAL_HERO_CONTENT);
-  // mounted = true setelah localStorage dibaca (bukan untuk gating render)
   const [mounted, setMounted] = useState(false);
 
   const reloadAll = () => {
-    setPengurusState(store.getPengurus());
-    setEventsState(store.getEvents());
-    setAspirasiState(store.getAspirasi());
-    setMerchandiseState(store.getMerchandise());
-    setDivisiDataState(store.getDivisiFull());
-    setVisiMisiState(store.getVisiMisi());
-    setAnggotaDivisiState(store.getAnggotaDivisi());
-    setDivisiListState(store.getDivisiList());
-    setHeadlineWordsState(store.getHeadlineWords());
-    setBadgeWordsState(store.getBadgeWords());
-    setSubheadlineWordsState(store.getSubheadlineWords());
-    setHeroContentState(store.getHeroContent());
+    startTransition(() => {
+      setPengurusState(store.getPengurus());
+      setEventsState(store.getEvents());
+      setAspirasiState(store.getAspirasi());
+      setMerchandiseState(store.getMerchandise());
+      setDivisiDataState(store.getDivisiFull());
+      setVisiMisiState(store.getVisiMisi());
+      setAnggotaDivisiState(store.getAnggotaDivisi());
+      setDivisiListState(store.getDivisiList());
+      setHeadlineWordsState(store.getHeadlineWords());
+      setBadgeWordsState(store.getBadgeWords());
+      setSubheadlineWordsState(store.getSubheadlineWords());
+      setHeroContentState(store.getHeroContent());
+    });
   };
 
   useEffect(() => {
-    // Run migration check first — ensures stale localStorage data is wiped
     runStoreMigration();
     queueMicrotask(() => {
       setMounted(true);
       reloadAll();
     });
 
-    // PRIMARY SYNC: Fetch latest data from Supabase (overrides localStorage)
-    triggerPrimarySync().then(() => {
-      reloadAll();
-    });
+    // Defer client-side DB re-fetching until main thread paint is complete (eliminates TBT)
+    const timerId = setTimeout(() => {
+      triggerPrimarySync().then(() => {
+        reloadAll();
+      });
+    }, 400);
 
     const handleUpdate = () => {
       reloadAll();
@@ -453,6 +465,7 @@ export function useSharedStore() {
     window.addEventListener("storage", handleUpdate);
 
     return () => {
+      clearTimeout(timerId);
       window.removeEventListener(STORE_EVENT_NAME, handleUpdate);
       window.removeEventListener("storage", handleUpdate);
     };

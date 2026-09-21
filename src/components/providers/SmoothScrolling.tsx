@@ -20,13 +20,13 @@ export function SmoothScrolling({ children }: SmoothScrollingProps) {
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     if (isMobile) return;
 
-    // Initialize Lenis with premium smooth scroll settings
+    // Initialize Lenis with fast, responsive smooth scroll settings
     const lenis = new Lenis({
-      lerp: 0.1,
-      duration: 1.2,
+      lerp: 0.12,
+      duration: 0.8,
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.5,
+      touchMultiplier: 1.2,
     });
 
     // Expose lenis to window object for smooth navbar anchor navigation without jitter

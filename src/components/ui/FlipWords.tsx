@@ -29,11 +29,11 @@ export function FlipWords({
       <AnimatePresence mode="wait">
         <motion.span
           key={currentWord}
-          initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -14, filter: "blur(4px)" }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
           transition={{
-            duration: 0.35,
+            duration: 0.3,
             ease: [0.22, 1, 0.36, 1],
           }}
           className={`inline-block whitespace-nowrap ${className}`}
