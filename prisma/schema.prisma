@@ -94,6 +94,7 @@ model Aspirasi {
   pesan     String   @db.Text
   isAnonim  Boolean  @default(true)
   nama      String?
+  npm       String?
   email     String?
   status    String   @default("BARU") // BARU, DIPROSES, SELESAI
   createdAt DateTime @default(now())

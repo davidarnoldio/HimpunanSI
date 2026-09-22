@@ -371,7 +371,7 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
 
 export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,email,status,createdAt`;
+    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,npm,email,status,createdAt`;
     const res = await fetchWithTimeout(url, FETCH_NO_STORE, 2500);
     if (!res.ok) return INITIAL_ASPIRASI;
     const rows: Array<{
@@ -379,6 +379,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       pesan: string;
       isAnonim: boolean;
       nama?: string | null;
+      npm?: string | null;
       email?: string | null;
       status: string;
       createdAt: string;
@@ -389,6 +390,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       pesan: row.pesan,
       isAnonim: row.isAnonim,
       nama: row.nama ?? undefined,
+      npm: row.npm ?? undefined,
       email: row.email ?? undefined,
       tanggal: row.createdAt ? row.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
       status: (row.status === "BARU"
@@ -410,6 +412,7 @@ export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boole
       pesan: item.pesan,
       isAnonim: item.isAnonim,
       nama: item.isAnonim ? null : item.nama ?? null,
+      npm: item.isAnonim ? null : item.npm ?? null,
       email: item.email ?? null,
       status: "BARU",
     };
