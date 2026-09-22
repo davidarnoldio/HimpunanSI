@@ -58,7 +58,9 @@ input[type="button"] {
 }
 
 /* Base reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -173,6 +175,7 @@ html {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -196,5 +199,3 @@ html {
   color: transparent !important;
   -webkit-text-stroke: 1.5px var(--accent-red);
 }
-
-

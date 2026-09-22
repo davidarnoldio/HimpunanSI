@@ -236,7 +236,7 @@ export const INITIAL_ANGGOTA_DIVISI: AnggotaDivisiItem[] = [
 
   // ── DIVISI WIRAUSAHA ──
   { id: "wu_1", nama: "Muhammad Rifki Aditya", divisiId: "wirausaha", role: "Ketua Divisi", jabatanBadge: "Kadiv Wirausaha", fotoUrl: "", periode: "2026/2027" },
-  { id: "wu_2", nama: "Moreno Nabiel Putratama", divisiId: "wirausaha", role: "Wakil Ketua Divisi", jabatanBadge: "Wakadiv Wirausaha", fotoUrl: "", periode: "2026/2027" },
+  { id: "wu_2", nama: "Moreno Nabiel Putratama", divisiId: "wirausaha", role: "Anggota Divisi", jabatanBadge: "Staff Wirausaha", fotoUrl: "", periode: "2026/2027" },
   { id: "wu_3", nama: "Handanta Venusi Hermawan", divisiId: "wirausaha", role: "Anggota Divisi", jabatanBadge: "Staff Wirausaha", fotoUrl: "", periode: "2026/2027" },
   { id: "wu_4", nama: "Rafif Syauqi Novriyanto", divisiId: "wirausaha", role: "Anggota Divisi", jabatanBadge: "Staff Wirausaha", fotoUrl: "", periode: "2026/2027" },
 

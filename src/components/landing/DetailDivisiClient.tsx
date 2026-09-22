@@ -82,16 +82,18 @@ export function DivisiMemberCard3D({
   });
 
   const photoAvailable = hasRealPhoto(member.fotoUrl);
-  const badgeText = member.jabatanBadge || member.role || "STAFF DIVISI";
 
-  const isKadiv =
-    member.role === "Ketua Divisi" ||
-    (member.jabatanBadge &&
-      member.jabatanBadge.toLowerCase().includes("kadiv") &&
-      !member.jabatanBadge.toLowerCase().includes("wakadiv"));
+  const isKadiv = member.role === "Ketua Divisi";
+  const isWakadiv = member.role === "Wakil Ketua Divisi";
 
-  const isWakadiv =
-    member.jabatanBadge && member.jabatanBadge.toLowerCase().includes("wakadiv");
+  let badgeText = "STAFF DIVISI";
+  if (isKadiv) {
+    badgeText = member.jabatanBadge && member.jabatanBadge.toLowerCase().includes("kadiv") ? member.jabatanBadge : `KADIV ${singkatanDivisi}`;
+  } else if (isWakadiv) {
+    badgeText = member.jabatanBadge && member.jabatanBadge.toLowerCase().includes("wakadiv") ? member.jabatanBadge : `WAKADIV ${singkatanDivisi}`;
+  } else {
+    badgeText = member.jabatanBadge && !member.jabatanBadge.toLowerCase().includes("kadiv") && !member.jabatanBadge.toLowerCase().includes("wakadiv") ? member.jabatanBadge : "STAFF DIVISI";
+  }
 
   const badgeBgClass = isKadiv
     ? "bg-[#C8102E] text-white"
@@ -303,21 +305,9 @@ export function DetailDivisiClient({ targetDivisi, members: serverMembers }: Det
       ? anggotaDivisi.filter((m) => m.divisiId === targetDivisi?.id)
       : serverMembers;
 
-  // Separate Kadiv vs Wakadiv vs Staff List
-  const kadiv = members.find(
-    (m) =>
-      m.role === "Ketua Divisi" ||
-      (m.jabatanBadge &&
-        m.jabatanBadge.toLowerCase().includes("kadiv") &&
-        !m.jabatanBadge.toLowerCase().includes("wakadiv"))
-  );
-
-  const wakadiv = members.find(
-    (m) =>
-      m.role === "Wakil Ketua Divisi" ||
-      (m.jabatanBadge && m.jabatanBadge.toLowerCase().includes("wakadiv")) ||
-      (m.jabatanBadge && m.jabatanBadge.toLowerCase().includes("wakil"))
-  );
+  // Separate Kadiv vs Wakadiv vs Staff List strictly by Admin role
+  const kadiv = members.find((m) => m.role === "Ketua Divisi");
+  const wakadiv = members.find((m) => m.role === "Wakil Ketua Divisi");
 
   const leaders = [kadiv, wakadiv].filter(Boolean) as AnggotaDivisiItem[];
   const leaderIds = leaders.map((l) => l.id);

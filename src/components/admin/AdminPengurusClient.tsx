@@ -406,7 +406,7 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
 
                   <div className="space-y-1.5">
                     <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white">
-                      FOTO PROFIL (MAKSIMAL 2 MB — BISA PILIH DARI PERANGKAT / GALERI)
+                      FOTO PROFIL (MAKSIMAL 2 MB — BISA PILIH DARI PERANGKAT / GALERI ATAU URL)
                     </label>
                     <div className="flex items-center gap-2">
                       <input

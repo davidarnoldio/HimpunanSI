@@ -140,8 +140,8 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
  */
 function sanitizeFotoUrl(fotoUrl?: string | null): string {
   if (!fotoUrl) return "";
-  // Truncate raw uncompressed Base64 data URLs over 150 KB to preserve cache efficiency & speed
-  if (fotoUrl.startsWith("data:") && fotoUrl.length > 150000) {
+  // Truncate malformed or excessively huge Base64 data URLs over 3MB length
+  if (fotoUrl.startsWith("data:") && fotoUrl.length > 3000000) {
     return "";
   }
   return fotoUrl;
