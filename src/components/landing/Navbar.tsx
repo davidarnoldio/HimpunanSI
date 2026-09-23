@@ -41,7 +41,7 @@ export function Navbar() {
   useEffect(() => {
     if (pathname !== "/") return;
 
-    const sections = ["beranda", "kabinet", "divisi", "event"];
+    const sections = ["beranda", "kabinet", "divisi", "legalitas", "event"];
     const observerOptions = {
       root: null,
       rootMargin: "-20% 0px -40% 0px",

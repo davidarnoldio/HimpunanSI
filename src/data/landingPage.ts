@@ -20,6 +20,7 @@ export const NAV_LINKS = [
   { label: "Beranda", href: "/#beranda" },
   { label: "Kabinet", href: "/#kabinet" },
   { label: "Divisi", href: "/#divisi" },
+  { label: "Legalitas", href: "/#legalitas" },
   { label: "Event & Proker", href: "/#event" },
   { label: "Merchandise", href: "/merchandise" },
   { label: "Aspirasi", href: "/aspirasi" },

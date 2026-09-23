@@ -67,6 +67,7 @@ export interface VisiMisiData {
   visi: string;
   misi: string[];
   pilar?: string;
+  suratLegalitasUrl?: string;
 }
 
 export interface AnggotaDivisiItem {
@@ -209,6 +210,7 @@ export const INITIAL_VISI_MISI: VisiMisiData = {
     "Mengoptimalkan tata kelola himpunan berbasis teknologi digital yang transparan dan akuntabel.",
   ],
   pilar: "Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik.",
+  suratLegalitasUrl: "",
 };
 
 export const INITIAL_ANGGOTA_DIVISI: AnggotaDivisiItem[] = [

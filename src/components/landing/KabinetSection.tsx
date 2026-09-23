@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, useMotionValue, useTransform, type Variants } from "framer-motion";
-import { Sparkles, ShieldQuestion, User, RotateCw, CheckCircle2 } from "lucide-react";
+import { Sparkles, ShieldQuestion, User, CheckCircle2 } from "lucide-react";
 import type { PengurusItem, VisiMisiData } from "@/data/adminMockData";
 import { INITIAL_PENGURUS, INITIAL_VISI_MISI } from "@/data/adminMockData";
 import { useSharedStore } from "@/lib/sharedStore";
@@ -239,17 +239,6 @@ export function KabinetCard3D({ item, index = 0 }: { item: PengurusItem; index?:
                   </span>
                 </div>
               )}
-
-              {/* Flip Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFlipped(!isFlipped);
-                }}
-                className="absolute bottom-2 right-2 px-2.5 py-1 bg-[#C8102E] text-white border border-slate-950 text-[10px] font-black font-mono flex items-center gap-1 hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950 transition-colors shadow-md"
-              >
-                <RotateCw size={11} /> BALIK KARTU
-              </button>
             </div>
 
             {/* Member Details */}

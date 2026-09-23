@@ -9,7 +9,6 @@ import {
   Users as UsersIcon,
   Sparkles,
   Layers,
-  RotateCw,
 } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/landing/Navbar";
@@ -228,16 +227,6 @@ export function DivisiMemberCard3D({
                   </span>
                 </div>
               )}
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFlipped(!isFlipped);
-                }}
-                className="absolute bottom-2 right-2 px-2.5 py-1 bg-[#C8102E] text-white border border-slate-950 text-[10px] font-black font-mono flex items-center gap-1 hover:bg-slate-950 dark:hover:bg-white dark:hover:text-slate-950 transition-colors shadow-md"
-              >
-                <RotateCw size={11} /> BALIK KARTU
-              </button>
             </div>
 
             <div className="mt-2 flex flex-col justify-center text-center space-y-1 w-full">

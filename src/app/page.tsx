@@ -3,6 +3,7 @@ import {
   HeroSection,
   KabinetSection,
   DivisiSection,
+  LegalitasSection,
   EventSection,
   Footer,
 } from "@/components/landing";
@@ -51,6 +52,9 @@ export default async function HomePage() {
 
         {/* 3. Overview Divisi */}
         <DivisiSection divisiData={divisiData} anggotaDivisi={anggotaDivisi} />
+
+        {/* 3.5 Surat Legalitas Himpunan */}
+        <LegalitasSection visiMisi={visiMisi} />
 
         {/* 4. Upcoming Events & Proker */}
         <EventSection events={events} />
