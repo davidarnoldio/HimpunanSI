@@ -17,7 +17,8 @@ import {
   fetchHeroContentFromDB,
 } from "@/lib/supabaseData";
 
-export const dynamic = "force-dynamic";
+// Revalidate homepage every 60s + On-demand revalidation via revalidatePath("/") in Admin Actions
+export const revalidate = 60;
 
 /**
  * Halaman Utama — Portal Landing Page HIMASI UG
