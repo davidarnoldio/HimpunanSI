@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useSharedStore, convertFileToBase64, getValidImageUrl, rotateBase64Image } from "@/lib/sharedStore";
 import type { AnggotaDivisiItem, DivisiAdminItem } from "@/data/adminMockData";
-import { saveAnggotaDivisiAction } from "@/app/actions/adminActions";
+import { saveAnggotaDivisiAction, uploadFotoStorageAction } from "@/app/actions/adminActions";
 
 interface AdminAnggotaDivisiClientProps {
   initialAnggota: AnggotaDivisiItem[];
@@ -155,7 +155,18 @@ export function AdminAnggotaDivisiClient({
 
     setIsLoading(true);
     try {
-      const finalFoto = getValidImageUrl(fotoUrl, nama);
+      let finalFoto = getValidImageUrl(fotoUrl, nama);
+
+      if (finalFoto.startsWith("data:")) {
+        try {
+          const uploadRes = await uploadFotoStorageAction(finalFoto, nama);
+          if (uploadRes.success && uploadRes.url) {
+            finalFoto = uploadRes.url;
+          }
+        } catch (uploadErr) {
+          console.warn("Client storage upload failed, falling back to server action:", uploadErr);
+        }
+      }
 
       let updated: AnggotaDivisiItem[];
       if (editingItem) {
@@ -192,7 +203,10 @@ export function AdminAnggotaDivisiClient({
       }
 
       setAnggotaDivisi(updated);
-      await saveAnggotaDivisiAction(updated);
+      const res = await saveAnggotaDivisiAction(updated);
+      if (res && res.success === false) {
+        throw new Error("Server action returned success=false");
+      }
       showToast(editingItem ? "Data anggota diperbarui!" : "Anggota baru berhasil ditambahkan!");
       setIsModalOpen(false);
     } catch (err) {

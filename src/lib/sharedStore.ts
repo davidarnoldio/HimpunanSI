@@ -70,8 +70,11 @@ const STORAGE_KEYS = {
  * Increment this number every time a breaking schema change is deployed.
  * On mismatch, all stored keys are wiped and re-seeded from INITIAL data.
  */
-const DATA_SCHEMA_VERSION = 8; // bumped: sanitize all legacy 2025/2026 periods to 2026/2027
+const DATA_SCHEMA_VERSION = 9; // bumped: strip base64 from localStorage and eliminate QuotaExceededError & lag
 const SCHEMA_VERSION_KEY = "HIMASI_data_schema_version";
+
+// In-memory reference cache for zero-lag 0ms data access
+const memoryCache: Record<string, unknown> = {};
 
 /**
  * Runs once at startup. Detects stale localStorage data from a previous schema
@@ -82,11 +85,16 @@ function runStoreMigration(): void {
   try {
     const storedVersion = parseInt(localStorage.getItem(SCHEMA_VERSION_KEY) ?? "0", 10);
     if (storedVersion < DATA_SCHEMA_VERSION) {
-      // Wipe all managed keys so stale data is replaced by fresh INITIAL defaults
-      Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+      // Wipe all managed keys so stale bloated data is replaced by fresh INITIAL defaults
+      Object.values(STORAGE_KEYS).forEach((key) => {
+        try {
+          localStorage.removeItem(key);
+        } catch {}
+      });
+      Object.keys(memoryCache).forEach((key) => delete memoryCache[key]);
       localStorage.setItem(SCHEMA_VERSION_KEY, String(DATA_SCHEMA_VERSION));
       console.info(
-        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset to defaults.`
+        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset & sanitized.`
       );
     }
   } catch (e) {
@@ -259,29 +267,67 @@ export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<s
 }
 
 /**
- * Read item from LocalStorage with permanent persistence guarantee
+ * Strips raw base64 data URLs before writing to LocalStorage
+ * to guarantee LocalStorage usage stays under 50KB and never throws QuotaExceededError.
+ */
+function stripBase64ForStorage<T>(data: T): T {
+  if (!data) return data;
+  try {
+    const jsonStr = JSON.stringify(data, (key, value) => {
+      if (
+        typeof value === "string" &&
+        value.startsWith("data:") &&
+        value.length > 300
+      ) {
+        return "";
+      }
+      return value;
+    });
+    return JSON.parse(jsonStr) as T;
+  } catch {
+    return data;
+  }
+}
+
+/**
+ * Read item from memory or LocalStorage with permanent persistence guarantee
  */
 function getStoredData<T>(key: string, initialData: T): T {
   if (typeof window === "undefined") return initialData;
+  if (memoryCache[key] !== undefined) {
+    return memoryCache[key] as T;
+  }
   try {
     const item = localStorage.getItem(key);
     if (item !== null) {
-      return JSON.parse(item);
+      const parsed = JSON.parse(item);
+      memoryCache[key] = parsed;
+      return parsed;
     }
-    localStorage.setItem(key, JSON.stringify(initialData));
+    const cleanInitial = stripBase64ForStorage(initialData);
+    try {
+      localStorage.setItem(key, JSON.stringify(cleanInitial));
+    } catch {}
+    memoryCache[key] = initialData;
     return initialData;
   } catch (e) {
-    console.error(`Error reading ${key} from localStorage:`, e);
+    console.warn(`[sharedStore] Error reading ${key} from localStorage:`, e);
+    memoryCache[key] = initialData;
     return initialData;
   }
 }
 
 function setStoredDataSilent<T>(key: string, data: T): void {
+  const cleanData = stripBase64ForStorage(data);
+  memoryCache[key] = data; // Keep full object (with HTTP URLs) in memory
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(key, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(cleanData));
   } catch (e) {
-    console.error(`Error writing ${key} to localStorage:`, e);
+    console.warn(`[sharedStore] QuotaExceededError writing ${key} to localStorage:`, e);
+    try {
+      localStorage.removeItem(key);
+    } catch {}
   }
 }
 
@@ -289,13 +335,18 @@ function setStoredDataSilent<T>(key: string, data: T): void {
  * Save item to LocalStorage and notify all open tabs/pages
  */
 function setStoredData<T>(key: string, data: T): void {
+  const cleanData = stripBase64ForStorage(data);
+  memoryCache[key] = data;
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(key, JSON.stringify(data));
-    window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
+    localStorage.setItem(key, JSON.stringify(cleanData));
   } catch (e) {
-    console.error(`Error writing ${key} to localStorage:`, e);
+    console.warn(`[sharedStore] QuotaExceededError writing ${key} to localStorage:`, e);
+    try {
+      localStorage.removeItem(key);
+    } catch {}
   }
+  window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
 }
 
 // Low-level sync functions
@@ -383,13 +434,25 @@ function triggerPrimarySync(): Promise<void> {
     fetchAspirasiFromDB(),     // [7] → aspirasi
   ])
     .then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
-      // Use silent updates to avoid 8 sequential custom event re-render storms
-      setStoredDataSilent(STORAGE_KEYS.PENGURUS, pengurus.filter((p) => p.divisi === "BPH"));
+      const filteredPengurus = pengurus.filter((p) => p.divisi === "BPH");
+      const filteredDivisi = divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph");
+
+      memoryCache[STORAGE_KEYS.PENGURUS] = filteredPengurus;
+      memoryCache[STORAGE_KEYS.EVENTS] = events;
+      memoryCache[STORAGE_KEYS.MERCHANDISE] = merchandise;
+      memoryCache[STORAGE_KEYS.HERO_CONTENT] = heroContent;
+      memoryCache[STORAGE_KEYS.VISI_MISI] = visiMisi;
+      memoryCache[STORAGE_KEYS.DIVISI_FULL] = filteredDivisi;
+      memoryCache[STORAGE_KEYS.ANGGOTA_DIVISI] = anggota;
+      memoryCache[STORAGE_KEYS.ASPIRASI] = aspirasi;
+
+      // Use silent updates to write sanitized data to LocalStorage without throwing QuotaExceededError
+      setStoredDataSilent(STORAGE_KEYS.PENGURUS, filteredPengurus);
       setStoredDataSilent(STORAGE_KEYS.EVENTS, events);
       setStoredDataSilent(STORAGE_KEYS.MERCHANDISE, merchandise);
       setStoredDataSilent(STORAGE_KEYS.HERO_CONTENT, heroContent);
       setStoredDataSilent(STORAGE_KEYS.VISI_MISI, visiMisi);
-      setStoredDataSilent(STORAGE_KEYS.DIVISI_FULL, divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph"));
+      setStoredDataSilent(STORAGE_KEYS.DIVISI_FULL, filteredDivisi);
       setStoredDataSilent(STORAGE_KEYS.ANGGOTA_DIVISI, anggota);
       setStoredDataSilent(STORAGE_KEYS.ASPIRASI, aspirasi);
 

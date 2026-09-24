@@ -19,7 +19,7 @@ import {
 import { useSharedStore, getValidImageUrl, convertFileToBase64, rotateBase64Image } from "@/lib/sharedStore";
 import { type PengurusItem } from "@/data/adminMockData";
 import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
-import { savePengurusAction } from "@/app/actions/adminActions";
+import { savePengurusAction, uploadFotoStorageAction } from "@/app/actions/adminActions";
 
 function InstagramIcon({ size = 14 }: { size?: number }) {
   return (
@@ -159,7 +159,18 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
 
     setIsLoading(true);
     try {
-      const finalFotoUrl = getValidImageUrl(formData.fotoUrl, formData.nama);
+      let finalFotoUrl = getValidImageUrl(formData.fotoUrl, formData.nama);
+
+      if (finalFotoUrl.startsWith("data:")) {
+        try {
+          const uploadRes = await uploadFotoStorageAction(finalFotoUrl, formData.nama);
+          if (uploadRes.success && uploadRes.url) {
+            finalFotoUrl = uploadRes.url;
+          }
+        } catch (uploadErr) {
+          console.warn("Client storage upload failed, falling back to server action:", uploadErr);
+        }
+      }
 
       let updated: PengurusItem[];
       if (editingItem) {
@@ -179,7 +190,10 @@ export function AdminPengurusClient({ initialPengurus }: AdminPengurusClientProp
       }
 
       setPengurus(updated);
-      await savePengurusAction(updated);
+      const res = await savePengurusAction(updated);
+      if (res && res.success === false) {
+        throw new Error("Server action returned success=false");
+      }
       router.refresh();
       setIsModalOpen(false);
     } catch (err) {

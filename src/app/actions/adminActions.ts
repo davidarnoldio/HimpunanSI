@@ -22,7 +22,23 @@ import type {
 
 export async function savePengurusAction(data: PengurusItem[]): Promise<{ success: boolean }> {
   try {
-    await syncPengurusToDB(data);
+    const processedData = await Promise.all(
+      data.map(async (item) => {
+        if (item.fotoUrl && item.fotoUrl.startsWith("data:")) {
+          try {
+            const res = await uploadFotoStorageAction(item.fotoUrl, item.nama || "pengurus");
+            if (res.success && res.url) {
+              return { ...item, fotoUrl: res.url };
+            }
+          } catch (err) {
+            console.warn(`[adminActions] Auto-upload foto BPH ${item.nama} failed:`, err);
+          }
+        }
+        return item;
+      })
+    );
+
+    await syncPengurusToDB(processedData);
     // Revalidate di level layout agar Server Component halaman utama ikut ter-refresh
     revalidatePath("/", "layout");
     revalidatePath("/");
@@ -97,10 +113,27 @@ export async function saveDivisiAction(data: DivisiAdminItem[]): Promise<{ succe
 
 export async function saveAnggotaDivisiAction(data: AnggotaDivisiItem[]): Promise<{ success: boolean }> {
   try {
-    await syncAnggotaDivisiToDB(data);
+    const processedData = await Promise.all(
+      data.map(async (item) => {
+        if (item.fotoUrl && item.fotoUrl.startsWith("data:")) {
+          try {
+            const res = await uploadFotoStorageAction(item.fotoUrl, item.nama || "anggota");
+            if (res.success && res.url) {
+              return { ...item, fotoUrl: res.url };
+            }
+          } catch (err) {
+            console.warn(`[adminActions] Auto-upload foto ${item.nama} failed:`, err);
+          }
+        }
+        return item;
+      })
+    );
+
+    await syncAnggotaDivisiToDB(processedData);
     revalidatePath("/");
     revalidatePath("/divisi/[slug]", "page");
     revalidatePath("/admin/anggota-divisi");
+    revalidatePath("/admin/divisi");
     return { success: true };
   } catch (err) {
     console.error("[adminActions] saveAnggotaDivisiAction error:", err);
@@ -150,6 +183,14 @@ export async function uploadFotoStorageAction(
   pengurusNama: string
 ): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
+    if (!base64DataUrl || typeof base64DataUrl !== "string") {
+      return { success: false, error: "URL foto tidak valid." };
+    }
+
+    if (!base64DataUrl.startsWith("data:")) {
+      return { success: true, url: base64DataUrl };
+    }
+
     // 1. Ensure bucket and public RLS policies exist in Supabase DB via Prisma
     await ensureStorageBucketAndPolicy();
 
@@ -160,7 +201,8 @@ export async function uploadFotoStorageAction(
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2a2ZldmF2amRnY2JmbGVxeG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDY0MjksImV4cCI6MjEwMDgyMjQyOX0.Ds5dLTviUjvQOfaeDK3zur3K0zl5i_Qjd-Dsp7KT79g";
 
     let buffer: Buffer;
-    let contentType = "image/avif";
+    let contentType = "image/jpeg";
+    let ext = "jpg";
 
     if (base64DataUrl.startsWith("data:")) {
       const parts = base64DataUrl.split(",");
@@ -171,14 +213,20 @@ export async function uploadFotoStorageAction(
       buffer = Buffer.from(base64DataUrl, "base64");
     }
 
+    if (contentType.includes("png")) ext = "png";
+    else if (contentType.includes("webp")) ext = "webp";
+    else if (contentType.includes("avif")) ext = "avif";
+    else if (contentType.includes("gif")) ext = "gif";
+    else ext = "jpg";
+
     const slugNama = pengurusNama
       ? pengurusNama
           .toLowerCase()
           .replace(/[^a-z0-9]/g, "-")
           .replace(/-+/g, "-")
           .slice(0, 30)
-      : "pengurus";
-    const fileName = `profile/${Date.now()}_${slugNama}.avif`;
+      : "foto";
+    const fileName = `profile/${Date.now()}_${slugNama}.${ext}`;
 
     const uploadUrl = `${SUPABASE_URL}/storage/v1/object/pengurus-photos/${fileName}`;
     const uploadRes = await fetch(uploadUrl, {

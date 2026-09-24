@@ -26,7 +26,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useSharedStore, convertFileToBase64, getValidImageUrl } from "@/lib/sharedStore";
 import type { DivisiAdminItem, AnggotaDivisiItem } from "@/data/adminMockData";
-import { saveDivisiAction, saveAnggotaDivisiAction } from "@/app/actions/adminActions";
+import { saveDivisiAction, saveAnggotaDivisiAction, uploadFotoStorageAction } from "@/app/actions/adminActions";
 
 const AVAILABLE_ICONS: { name: string; icon: LucideIcon }[] = [
   { name: "Award", icon: Award },
@@ -225,7 +225,18 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
 
     setIsLoading(true);
     try {
-      const finalFoto = getValidImageUrl(angFotoUrl, angNama);
+      let finalFoto = getValidImageUrl(angFotoUrl, angNama);
+
+      if (finalFoto.startsWith("data:")) {
+        try {
+          const uploadRes = await uploadFotoStorageAction(finalFoto, angNama);
+          if (uploadRes.success && uploadRes.url) {
+            finalFoto = uploadRes.url;
+          }
+        } catch (uploadErr) {
+          console.warn("Client storage upload failed, falling back to server action:", uploadErr);
+        }
+      }
 
       let updated: AnggotaDivisiItem[];
       if (editingAnggota) {
@@ -261,7 +272,10 @@ export function AdminDivisiClient({ initialDivisi, initialAnggota }: AdminDivisi
       }
 
       setAnggotaDivisi(updated, activeDivisiTab);
-      await saveAnggotaDivisiAction(updated);
+      const res = await saveAnggotaDivisiAction(updated);
+      if (res && res.success === false) {
+        throw new Error("Server action returned success=false");
+      }
       setIsAnggotaModalOpen(false);
       showToast("Data Anggota Divisi berhasil disimpan.");
     } catch (err) {
