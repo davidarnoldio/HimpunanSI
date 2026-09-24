@@ -76,7 +76,19 @@ export async function saveMerchandiseAction(data: MerchandiseAdminItem[]): Promi
 
 export async function saveHeroContentAction(data: HeroContentData): Promise<{ success: boolean }> {
   try {
-    await syncHeroContentToDB(data);
+    const payload = { ...data };
+    if (payload.heroImageUrl && payload.heroImageUrl.startsWith("data:")) {
+      try {
+        const uploadRes = await uploadFotoStorageAction(payload.heroImageUrl, "hero-editorial");
+        if (uploadRes.success && uploadRes.url) {
+          payload.heroImageUrl = uploadRes.url;
+        }
+      } catch (err) {
+        console.warn("[adminActions] Auto-upload hero image failed:", err);
+      }
+    }
+
+    await syncHeroContentToDB(payload);
     revalidatePath("/");
     revalidatePath("/admin/beranda");
     return { success: true };
@@ -141,43 +153,6 @@ export async function saveAnggotaDivisiAction(data: AnggotaDivisiItem[]): Promis
   }
 }
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-async function ensureStorageBucketAndPolicy() {
-  try {
-    await prisma.$executeRawUnsafe(`
-      INSERT INTO storage.buckets (id, name, public)
-      VALUES ('pengurus-photos', 'pengurus-photos', true)
-      ON CONFLICT (id) DO UPDATE SET public = true;
-    `);
-
-    await prisma.$executeRawUnsafe(`
-      DO $$
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Public Insert Pengurus Photos'
-        ) THEN
-          CREATE POLICY "Public Insert Pengurus Photos" ON storage.objects FOR INSERT TO public WITH CHECK (bucket_id = 'pengurus-photos');
-        END IF;
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Public Select Pengurus Photos'
-        ) THEN
-          CREATE POLICY "Public Select Pengurus Photos" ON storage.objects FOR SELECT TO public USING (bucket_id = 'pengurus-photos');
-        END IF;
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Public Update Pengurus Photos'
-        ) THEN
-          CREATE POLICY "Public Update Pengurus Photos" ON storage.objects FOR UPDATE TO public USING (bucket_id = 'pengurus-photos');
-        END IF;
-      END $$;
-    `);
-  } catch (err) {
-    console.warn("[adminActions] ensureStorageBucketAndPolicy error:", err);
-  }
-}
-
 export async function uploadFotoStorageAction(
   base64DataUrl: string,
   pengurusNama: string
@@ -191,14 +166,11 @@ export async function uploadFotoStorageAction(
       return { success: true, url: base64DataUrl };
     }
 
-    // 1. Ensure bucket and public RLS policies exist in Supabase DB via Prisma
-    await ensureStorageBucketAndPolicy();
-
     const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://avkfevavjdgcbfleqxmn.supabase.co";
     const SUPABASE_KEY =
       process.env.SUPABASE_SERVICE_ROLE_KEY ||
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2a2ZldmF2amRnY2JmbGVxeG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDY0MjksImV4cCI6MjEwMDgyMjQyOX0.Ds5dLTviUjvQOfaeDK3zur3K0zl5i_Qjd-Dsp7KT79g";
+      "";
 
     let buffer: Buffer;
     let contentType = "image/jpeg";

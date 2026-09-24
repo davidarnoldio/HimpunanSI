@@ -154,22 +154,34 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             {/* Editorial Photograph */}
             {(() => {
               const rawUrl = content.heroImageUrl;
-              const desktopImg = !rawUrl || rawUrl === "/hero-editorial.jpg" ? "/hero-editorial.webp" : rawUrl;
-              const mobileImg = !rawUrl || rawUrl === "/hero-editorial.jpg" ? "/hero-editorial-mobile.webp" : desktopImg;
+              const isDefault = !rawUrl || rawUrl === "/hero-editorial.jpg" || rawUrl === "/hero-editorial.webp";
+              if (isDefault) {
+                return (
+                  <picture className="absolute inset-0 w-full h-full">
+                    <source srcSet="/hero-editorial-mobile.webp" media="(max-width: 640px)" type="image/webp" />
+                    <source srcSet="/hero-editorial.webp" type="image/webp" />
+                    <img
+                      src="/hero-editorial.webp"
+                      alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      fetchPriority="high"
+                      decoding="async"
+                      width={800}
+                      height={600}
+                    />
+                  </picture>
+                );
+              }
               return (
-                <picture className="absolute inset-0 w-full h-full">
-                  <source srcSet={mobileImg} media="(max-width: 640px)" type="image/webp" />
-                  <source srcSet={desktopImg} type="image/webp" />
-                  <img
-                    src={desktopImg}
-                    alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                    fetchPriority="high"
-                    decoding="async"
-                    width={800}
-                    height={600}
-                  />
-                </picture>
+                <img
+                  src={rawUrl}
+                  alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  fetchPriority="high"
+                  decoding="async"
+                  width={800}
+                  height={600}
+                />
               );
             })()}
 

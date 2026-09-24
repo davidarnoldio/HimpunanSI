@@ -9,8 +9,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@HIMASIug.ac.id";
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "HIMASI2025!";
+import { loginAdminAction } from "@/app/actions/adminAuthActions";
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -27,20 +26,15 @@ export function AdminLoginForm() {
     setLoading(true);
 
     try {
-      await new Promise((r) => setTimeout(r, 400));
+      const res = await loginAdminAction(email, password);
 
-      const emailMatch = email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
-      const passwordMatch = password === ADMIN_PASSWORD;
-
-      if (!emailMatch || !passwordMatch) {
-        setError("Email atau password salah. Silakan coba lagi.");
+      if (!res.success) {
+        setError(res.error || "Email atau password salah. Silakan coba lagi.");
         return;
       }
 
-      document.cookie =
-        "HIMASI_admin_session=authenticated; path=/; max-age=86400; SameSite=Lax";
-
       router.push("/admin/dashboard");
+      router.refresh();
     } catch (err) {
       console.error("[AdminLogin] Error:", err);
       setError("Terjadi kesalahan sistem saat proses login.");

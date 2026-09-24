@@ -17,7 +17,7 @@ import {
   fetchHeroContentFromDB,
 } from "@/lib/supabaseData";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 /**
  * Halaman Utama — Portal Landing Page HIMASI UG

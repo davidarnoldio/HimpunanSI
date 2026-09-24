@@ -4,18 +4,11 @@ import { notFound } from "next/navigation";
 import { fetchDivisiFromDB, fetchAnggotaDivisiFromDB } from "@/lib/supabaseData";
 import { DetailDivisiClient } from "@/components/landing/DetailDivisiClient";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
-// Deduplicate fetches across metadata generation, static params, and page rendering
+// Deduplicate fetches across metadata generation and page rendering
 const getCachedDivisi = cache(async () => fetchDivisiFromDB());
 const getCachedAnggota = cache(async () => fetchAnggotaDivisiFromDB());
-
-export async function generateStaticParams() {
-  const divisiData = await getCachedDivisi();
-  return divisiData.map((d) => ({
-    slug: d.id,
-  }));
-}
 
 export async function generateMetadata({
   params,

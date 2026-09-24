@@ -26,7 +26,7 @@ import {
   type HeroContentData,
   type HeroStatItem,
 } from "@/data/adminMockData";
-import { saveHeroContentAction } from "@/app/actions/adminActions";
+import { saveHeroContentAction, uploadFotoStorageAction } from "@/app/actions/adminActions";
 
 interface WordTagInputProps {
   title: string;
@@ -131,19 +131,27 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const maxBytes = 2 * 1024 * 1024;
+    const maxBytes = 3 * 1024 * 1024;
     if (file.size > maxBytes) {
       const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 2 MB.`);
+      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 3 MB.`);
       return;
     }
 
     try {
+      setIsLoading(true);
       const base64 = await convertFileToBase64(file);
-      setFormData((prev) => ({ ...prev, heroImageUrl: base64 }));
+      const uploadRes = await uploadFotoStorageAction(base64, "hero-editorial");
+      if (uploadRes.success && uploadRes.url) {
+        setFormData((prev) => ({ ...prev, heroImageUrl: uploadRes.url }));
+      } else {
+        setFormData((prev) => ({ ...prev, heroImageUrl: base64 }));
+      }
     } catch (err) {
       console.error("Gagal mengunggah foto hero:", err);
       alert("Gagal membaca foto hero dari perangkat.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -155,8 +163,21 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
     setSaveSuccess(false);
 
     try {
-      setHeroContent(formData);
-      await saveHeroContentAction(formData);
+      const payload = { ...formData };
+      if (payload.heroImageUrl && payload.heroImageUrl.startsWith("data:")) {
+        try {
+          const uploadRes = await uploadFotoStorageAction(payload.heroImageUrl, "hero-editorial");
+          if (uploadRes.success && uploadRes.url) {
+            payload.heroImageUrl = uploadRes.url;
+            setFormData(payload);
+          }
+        } catch (uploadErr) {
+          console.warn("Client storage upload failed for hero image, using payload:", uploadErr);
+        }
+      }
+
+      setHeroContent(payload);
+      await saveHeroContentAction(payload);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err) {
