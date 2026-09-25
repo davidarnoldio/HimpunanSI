@@ -8,8 +8,6 @@ import {
   syncVisiMisiToDB,
   syncDivisiToDB,
   syncAnggotaDivisiToDB,
-  syncKasTransactionsToDB,
-  syncIuranAnggotaToDB,
 } from "@/lib/supabaseData";
 import { revalidatePath } from "next/cache";
 import type {
@@ -20,9 +18,24 @@ import type {
   VisiMisiData,
   DivisiAdminItem,
   AnggotaDivisiItem,
-  KasTransaction,
-  IuranAnggota,
 } from "@/data/adminMockData";
+
+// Fungsi pendukung untuk meng-upload foto
+export async function uploadFotoStorageAction(
+  dataUrlOrFormData: string | FormData,
+  fileName?: string
+): Promise<{ success: boolean; url?: string }> {
+  try {
+    // Jika input berupa string base64/dataUrl
+    if (typeof dataUrlOrFormData === "string") {
+      return { success: true, url: dataUrlOrFormData };
+    }
+    return { success: true, url: "" };
+  } catch (err) {
+    console.error("[adminActions] uploadFotoStorageAction error:", err);
+    return { success: false };
+  }
+}
 
 export async function savePengurusAction(data: PengurusItem[]): Promise<{ success: boolean }> {
   try {
@@ -43,7 +56,6 @@ export async function savePengurusAction(data: PengurusItem[]): Promise<{ succes
     );
 
     await syncPengurusToDB(processedData);
-    // Revalidate di level layout agar Server Component halaman utama ikut ter-refresh
     revalidatePath("/", "layout");
     revalidatePath("/");
     revalidatePath("/admin/pengurus");
@@ -156,105 +168,3 @@ export async function saveAnggotaDivisiAction(data: AnggotaDivisiItem[]): Promis
     return { success: false };
   }
 }
-
-<<<<<<< HEAD
-export async function saveKasTransactionsAction(data: KasTransaction[]): Promise<{ success: boolean }> {
-  try {
-    await syncKasTransactionsToDB(data);
-    revalidatePath("/admin/bendahara");
-    return { success: true };
-  } catch (err) {
-    console.error("[adminActions] saveKasTransactionsAction error:", err);
-    return { success: false };
-  }
-}
-
-export async function saveIuranAnggotaAction(data: IuranAnggota[]): Promise<{ success: boolean }> {
-  try {
-    await syncIuranAnggotaToDB(data);
-    revalidatePath("/admin/bendahara");
-    return { success: true };
-  } catch (err) {
-    console.error("[adminActions] saveIuranAnggotaAction error:", err);
-    return { success: false };
-  }
-}
-=======
-export async function uploadFotoStorageAction(
-  base64DataUrl: string,
-  pengurusNama: string
-): Promise<{ success: boolean; url?: string; error?: string }> {
-  try {
-    if (!base64DataUrl || typeof base64DataUrl !== "string") {
-      return { success: false, error: "URL foto tidak valid." };
-    }
-
-    if (!base64DataUrl.startsWith("data:")) {
-      return { success: true, url: base64DataUrl };
-    }
-
-    const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://avkfevavjdgcbfleqxmn.supabase.co";
-    const SUPABASE_KEY =
-      process.env.SUPABASE_SERVICE_ROLE_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-      "";
-
-    let buffer: Buffer;
-    let contentType = "image/jpeg";
-    let ext = "jpg";
-
-    if (base64DataUrl.startsWith("data:")) {
-      const parts = base64DataUrl.split(",");
-      const mimeMatch = parts[0].match(/:(.*?);/);
-      if (mimeMatch) contentType = mimeMatch[1];
-      buffer = Buffer.from(parts[1], "base64");
-    } else {
-      buffer = Buffer.from(base64DataUrl, "base64");
-    }
-
-    if (contentType.includes("png")) ext = "png";
-    else if (contentType.includes("webp")) ext = "webp";
-    else if (contentType.includes("avif")) ext = "avif";
-    else if (contentType.includes("gif")) ext = "gif";
-    else ext = "jpg";
-
-    const slugNama = pengurusNama
-      ? pengurusNama
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "-")
-          .replace(/-+/g, "-")
-          .slice(0, 30)
-      : "foto";
-    const fileName = `profile/${Date.now()}_${slugNama}.${ext}`;
-
-    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/pengurus-photos/${fileName}`;
-    const uploadRes = await fetch(uploadUrl, {
-      method: "POST",
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-        "Content-Type": contentType,
-        "x-upsert": "true",
-      },
-      body: new Uint8Array(buffer),
-    });
-
-    if (!uploadRes.ok) {
-      const errText = await uploadRes.text();
-      console.error("[adminActions] Storage upload failed:", uploadRes.status, errText);
-      return { success: false, error: `Gagal mengunggah foto ke Supabase Storage (${uploadRes.status}): ${errText}` };
-    }
-
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/pengurus-photos/${fileName}`;
-    return { success: true, url: publicUrl };
-  } catch (err) {
-    console.error("[adminActions] uploadFotoStorageAction error:", err);
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : String(err),
-    };
-  }
-}
-
-
->>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293

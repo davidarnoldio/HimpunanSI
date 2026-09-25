@@ -93,7 +93,10 @@ const memoryCache: Record<string, unknown> = {};
 function runStoreMigration(): void {
   if (typeof window === "undefined") return;
   try {
-    const storedVersion = parseInt(localStorage.getItem(SCHEMA_VERSION_KEY) ?? "0", 10);
+    const storedVersion = parseInt(
+      localStorage.getItem(SCHEMA_VERSION_KEY) ?? "0",
+      10,
+    );
     if (storedVersion < DATA_SCHEMA_VERSION) {
       // Wipe all managed keys so stale bloated data is replaced by fresh INITIAL defaults
       Object.values(STORAGE_KEYS).forEach((key) => {
@@ -104,7 +107,7 @@ function runStoreMigration(): void {
       Object.keys(memoryCache).forEach((key) => delete memoryCache[key]);
       localStorage.setItem(SCHEMA_VERSION_KEY, String(DATA_SCHEMA_VERSION));
       console.info(
-        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset & sanitized.`
+        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset & sanitized.`,
       );
     }
   } catch (e) {
@@ -117,7 +120,10 @@ const STORE_EVENT_NAME = "HIMASI_store_updated";
 /**
  * Helper to ensure image URLs are valid non-empty strings
  */
-export function getValidImageUrl(url?: string | null, fallbackText = "HIMASI"): string {
+export function getValidImageUrl(
+  url?: string | null,
+  fallbackText = "HIMASI",
+): string {
   if (!url || typeof url !== "string" || url.trim() === "") {
     const encodedText = encodeURIComponent(fallbackText);
     return `https://placehold.co/600x800/0f172a/dc2626?text=${encodedText}`;
@@ -128,9 +134,14 @@ export function getValidImageUrl(url?: string | null, fallbackText = "HIMASI"): 
 /**
  * Format WhatsApp Link seamlessly whether user inputs full URL (https://wa.me/...) or phone number
  */
-export function formatWhatsAppUrl(input?: string | null, defaultMessage?: string): string {
+export function formatWhatsAppUrl(
+  input?: string | null,
+  defaultMessage?: string,
+): string {
   if (!input || typeof input !== "string" || input.trim() === "") {
-    const msg = defaultMessage ? `?text=${encodeURIComponent(defaultMessage)}` : "";
+    const msg = defaultMessage
+      ? `?text=${encodeURIComponent(defaultMessage)}`
+      : "";
     return `https://wa.me/6281234567890${msg}`;
   }
   const trimmed = input.trim();
@@ -138,7 +149,9 @@ export function formatWhatsAppUrl(input?: string | null, defaultMessage?: string
     return trimmed;
   }
   const cleaned = trimmed.replace(/[^0-9]/g, "");
-  const msg = defaultMessage ? `?text=${encodeURIComponent(defaultMessage)}` : "";
+  const msg = defaultMessage
+    ? `?text=${encodeURIComponent(defaultMessage)}`
+    : "";
   return `https://wa.me/${cleaned}${msg}`;
 }
 
@@ -152,7 +165,10 @@ export function convertFileToBase64(file: File): Promise<string> {
 /**
  * Rotates an image (Base64 data URL or HTTP URL) by specified degrees (default 90 deg clockwise)
  */
-export function rotateBase64Image(imageUrl: string, degrees = 90): Promise<string> {
+export function rotateBase64Image(
+  imageUrl: string,
+  degrees = 90,
+): Promise<string> {
   return new Promise((resolve) => {
     if (!imageUrl || typeof imageUrl !== "string") return resolve(imageUrl);
     const img = new Image();
@@ -186,12 +202,17 @@ export function rotateBase64Image(imageUrl: string, degrees = 90): Promise<strin
 /**
  * Convert selected File from device file picker into Base64 with canvas compression (Max 2 MB guarantee)
  */
-export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<string> {
+export function compressAndConvertFileToBase64(
+  file: File,
+  maxMB = 2,
+): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const maxBytes = maxMB * 1024 * 1024;
 
     if (file.size > maxBytes && !file.type.startsWith("image/")) {
-      return reject(new Error(`Ukuran file melebihi batas maksimal ${maxMB} MB.`));
+      return reject(
+        new Error(`Ukuran file melebihi batas maksimal ${maxMB} MB.`),
+      );
     }
 
     // Try createImageBitmap for automatic EXIF orientation normalization
@@ -199,7 +220,9 @@ export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<s
       try {
         let bitmap: ImageBitmap | null = null;
         try {
-          bitmap = await createImageBitmap(file, { imageOrientation: "from-image" } as ImageBitmapOptions);
+          bitmap = await createImageBitmap(file, {
+            imageOrientation: "from-image",
+          } as ImageBitmapOptions);
         } catch {
           bitmap = await createImageBitmap(file);
         }
@@ -233,7 +256,10 @@ export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<s
           bitmap.close();
         }
       } catch (e) {
-        console.warn("createImageBitmap failed, falling back to FileReader:", e);
+        console.warn(
+          "createImageBitmap failed, falling back to FileReader:",
+          e,
+        );
       }
     }
 
@@ -241,7 +267,8 @@ export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<s
     reader.readAsDataURL(file);
     reader.onload = (event) => {
       const src = event.target?.result as string;
-      if (!src) return reject(new Error("Gagal membaca file gambar dari perangkat."));
+      if (!src)
+        return reject(new Error("Gagal membaca file gambar dari perangkat."));
 
       const img = new Image();
       img.src = src;
@@ -334,7 +361,10 @@ function setStoredDataSilent<T>(key: string, data: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(cleanData));
   } catch (e) {
-    console.warn(`[sharedStore] QuotaExceededError writing ${key} to localStorage:`, e);
+    console.warn(
+      `[sharedStore] QuotaExceededError writing ${key} to localStorage:`,
+      e,
+    );
     try {
       localStorage.removeItem(key);
     } catch {}
@@ -351,7 +381,10 @@ function setStoredData<T>(key: string, data: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(cleanData));
   } catch (e) {
-    console.warn(`[sharedStore] QuotaExceededError writing ${key} to localStorage:`, e);
+    console.warn(
+      `[sharedStore] QuotaExceededError writing ${key} to localStorage:`,
+      e,
+    );
     try {
       localStorage.removeItem(key);
     } catch {}
@@ -364,7 +397,11 @@ export const store = {
   getPengurus: (): PengurusItem[] => {
     const data = getStoredData(STORAGE_KEYS.PENGURUS, INITIAL_PENGURUS);
     return data
-      .map((p) => (!p.periode || p.periode === "2025/2026" ? { ...p, periode: "2026/2027" } : p))
+      .map((p) =>
+        !p.periode || p.periode === "2025/2026"
+          ? { ...p, periode: "2026/2027" }
+          : p,
+      )
       .filter((p) => p.divisi === "BPH");
   },
   setPengurus: (data: PengurusItem[]) => {
@@ -372,54 +409,92 @@ export const store = {
     setStoredData(STORAGE_KEYS.PENGURUS, cleaned);
   },
 
-  getEvents: (): EventAdminItem[] => getStoredData(STORAGE_KEYS.EVENTS, INITIAL_EVENTS),
-  setEvents: (data: EventAdminItem[]) => setStoredData(STORAGE_KEYS.EVENTS, data),
+  getEvents: (): EventAdminItem[] =>
+    getStoredData(STORAGE_KEYS.EVENTS, INITIAL_EVENTS),
+  setEvents: (data: EventAdminItem[]) =>
+    setStoredData(STORAGE_KEYS.EVENTS, data),
 
-  getAspirasi: (): AspirasiAdminItem[] => getStoredData(STORAGE_KEYS.ASPIRASI, INITIAL_ASPIRASI),
-  setAspirasi: (data: AspirasiAdminItem[]) => setStoredData(STORAGE_KEYS.ASPIRASI, data),
+  getAspirasi: (): AspirasiAdminItem[] =>
+    getStoredData(STORAGE_KEYS.ASPIRASI, INITIAL_ASPIRASI),
+  setAspirasi: (data: AspirasiAdminItem[]) =>
+    setStoredData(STORAGE_KEYS.ASPIRASI, data),
 
-  getMerchandise: (): MerchandiseAdminItem[] => getStoredData(STORAGE_KEYS.MERCHANDISE, INITIAL_MERCHANDISE),
-  setMerchandise: (data: MerchandiseAdminItem[]) => setStoredData(STORAGE_KEYS.MERCHANDISE, data),
+  getMerchandise: (): MerchandiseAdminItem[] =>
+    getStoredData(STORAGE_KEYS.MERCHANDISE, INITIAL_MERCHANDISE),
+  setMerchandise: (data: MerchandiseAdminItem[]) =>
+    setStoredData(STORAGE_KEYS.MERCHANDISE, data),
 
   // STRICT RULE 1: Filter out BPH explicitly from Master Divisi Data
   getDivisiFull: (): DivisiAdminItem[] => {
     const data = getStoredData(STORAGE_KEYS.DIVISI_FULL, INITIAL_DIVISI_FULL);
-    return data.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph");
+    return data.filter(
+      (d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph",
+    );
   },
   setDivisiFull: (data: DivisiAdminItem[]) => {
-    const cleaned = data.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph");
+    const cleaned = data.filter(
+      (d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph",
+    );
     setStoredData(STORAGE_KEYS.DIVISI_FULL, cleaned);
   },
 
-  getVisiMisi: (): VisiMisiData => getStoredData(STORAGE_KEYS.VISI_MISI, INITIAL_VISI_MISI),
-  setVisiMisi: (data: VisiMisiData) => setStoredData(STORAGE_KEYS.VISI_MISI, data),
+  getVisiMisi: (): VisiMisiData =>
+    getStoredData(STORAGE_KEYS.VISI_MISI, INITIAL_VISI_MISI),
+  setVisiMisi: (data: VisiMisiData) =>
+    setStoredData(STORAGE_KEYS.VISI_MISI, data),
 
   getAnggotaDivisi: (): AnggotaDivisiItem[] => {
-    const data = getStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, INITIAL_ANGGOTA_DIVISI);
-    return data.map((a) => (!a.periode || a.periode === "2025/2026" ? { ...a, periode: "2026/2027" } : a));
+    const data = getStoredData(
+      STORAGE_KEYS.ANGGOTA_DIVISI,
+      INITIAL_ANGGOTA_DIVISI,
+    );
+    return data.map((a) =>
+      !a.periode || a.periode === "2025/2026"
+        ? { ...a, periode: "2026/2027" }
+        : a,
+    );
   },
-  setAnggotaDivisi: (data: AnggotaDivisiItem[]) => setStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, data),
+  setAnggotaDivisi: (data: AnggotaDivisiItem[]) =>
+    setStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, data),
 
-  getDivisiList: (): string[] => getStoredData(STORAGE_KEYS.DIVISI, ["Akademik", "Medinfo", "PSDM", "Humas"]),
+  getDivisiList: (): string[] =>
+    getStoredData(STORAGE_KEYS.DIVISI, [
+      "Akademik",
+      "Medinfo",
+      "PSDM",
+      "Humas",
+    ]),
   setDivisiList: (data: string[]) => setStoredData(STORAGE_KEYS.DIVISI, data),
 
-  getHeadlineWords: (): string[] => getStoredData(STORAGE_KEYS.HEADLINE_WORDS, INITIAL_HEADLINE_WORDS),
-  setHeadlineWords: (data: string[]) => setStoredData(STORAGE_KEYS.HEADLINE_WORDS, data),
+  getHeadlineWords: (): string[] =>
+    getStoredData(STORAGE_KEYS.HEADLINE_WORDS, INITIAL_HEADLINE_WORDS),
+  setHeadlineWords: (data: string[]) =>
+    setStoredData(STORAGE_KEYS.HEADLINE_WORDS, data),
 
-  getBadgeWords: (): string[] => getStoredData(STORAGE_KEYS.BADGE_WORDS, INITIAL_BADGE_WORDS),
-  setBadgeWords: (data: string[]) => setStoredData(STORAGE_KEYS.BADGE_WORDS, data),
+  getBadgeWords: (): string[] =>
+    getStoredData(STORAGE_KEYS.BADGE_WORDS, INITIAL_BADGE_WORDS),
+  setBadgeWords: (data: string[]) =>
+    setStoredData(STORAGE_KEYS.BADGE_WORDS, data),
 
-  getSubheadlineWords: (): string[] => getStoredData(STORAGE_KEYS.SUBHEADLINE_WORDS, INITIAL_SUBHEADLINE_WORDS),
-  setSubheadlineWords: (data: string[]) => setStoredData(STORAGE_KEYS.SUBHEADLINE_WORDS, data),
+  getSubheadlineWords: (): string[] =>
+    getStoredData(STORAGE_KEYS.SUBHEADLINE_WORDS, INITIAL_SUBHEADLINE_WORDS),
+  setSubheadlineWords: (data: string[]) =>
+    setStoredData(STORAGE_KEYS.SUBHEADLINE_WORDS, data),
 
-  getHeroContent: (): HeroContentData => getStoredData(STORAGE_KEYS.HERO_CONTENT, INITIAL_HERO_CONTENT),
-  setHeroContent: (data: HeroContentData) => setStoredData(STORAGE_KEYS.HERO_CONTENT, data),
+  getHeroContent: (): HeroContentData =>
+    getStoredData(STORAGE_KEYS.HERO_CONTENT, INITIAL_HERO_CONTENT),
+  setHeroContent: (data: HeroContentData) =>
+    setStoredData(STORAGE_KEYS.HERO_CONTENT, data),
 
-  getKasTransactions: (): KasTransaction[] => getStoredData(STORAGE_KEYS.KAS_TRANSACTIONS, INITIAL_KAS_TRANSACTIONS),
-  setKasTransactions: (data: KasTransaction[]) => setStoredData(STORAGE_KEYS.KAS_TRANSACTIONS, data),
+  getKasTransactions: (): KasTransaction[] =>
+    getStoredData(STORAGE_KEYS.KAS_TRANSACTIONS, INITIAL_KAS_TRANSACTIONS),
+  setKasTransactions: (data: KasTransaction[]) =>
+    setStoredData(STORAGE_KEYS.KAS_TRANSACTIONS, data),
 
-  getIuranAnggota: (): IuranAnggota[] => getStoredData(STORAGE_KEYS.IURAN_ANGGOTA, INITIAL_IURAN_ANGGOTA),
-  setIuranAnggota: (data: IuranAnggota[]) => setStoredData(STORAGE_KEYS.IURAN_ANGGOTA, data),
+  getIuranAnggota: (): IuranAnggota[] =>
+    getStoredData(STORAGE_KEYS.IURAN_ANGGOTA, INITIAL_IURAN_ANGGOTA),
+  setIuranAnggota: (data: IuranAnggota[]) =>
+    setStoredData(STORAGE_KEYS.IURAN_ANGGOTA, data),
 };
 
 let primarySyncPromise: Promise<void> | null = null;
@@ -440,41 +515,54 @@ function triggerPrimarySync(): Promise<void> {
 
   lastPrimarySyncTime = now;
   primarySyncPromise = Promise.all([
-    fetchPengurusFromDB(),     // [0] → pengurus
-    fetchEventsFromDB(),       // [1] → events
-    fetchMerchandiseFromDB(),  // [2] → merchandise
-    fetchHeroContentFromDB(),  // [3] → heroContent
-    fetchVisiMisiFromDB(),     // [4] → visiMisi
-    fetchDivisiFromDB(),       // [5] → divisi
+    fetchPengurusFromDB(), // [0] → pengurus
+    fetchEventsFromDB(), // [1] → events
+    fetchMerchandiseFromDB(), // [2] → merchandise
+    fetchHeroContentFromDB(), // [3] → heroContent
+    fetchVisiMisiFromDB(), // [4] → visiMisi
+    fetchDivisiFromDB(), // [5] → divisi
     fetchAnggotaDivisiFromDB(), // [6] → anggota
-    fetchAspirasiFromDB(),     // [7] → aspirasi
+    fetchAspirasiFromDB(), // [7] → aspirasi
   ])
-    .then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
-      const filteredPengurus = pengurus.filter((p) => p.divisi === "BPH");
-      const filteredDivisi = divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph");
+    .then(
+      ([
+        pengurus,
+        events,
+        merchandise,
+        heroContent,
+        visiMisi,
+        divisi,
+        anggota,
+        aspirasi,
+      ]) => {
+        const filteredPengurus = pengurus.filter((p) => p.divisi === "BPH");
+        const filteredDivisi = divisi.filter(
+          (d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph",
+        );
 
-      memoryCache[STORAGE_KEYS.PENGURUS] = filteredPengurus;
-      memoryCache[STORAGE_KEYS.EVENTS] = events;
-      memoryCache[STORAGE_KEYS.MERCHANDISE] = merchandise;
-      memoryCache[STORAGE_KEYS.HERO_CONTENT] = heroContent;
-      memoryCache[STORAGE_KEYS.VISI_MISI] = visiMisi;
-      memoryCache[STORAGE_KEYS.DIVISI_FULL] = filteredDivisi;
-      memoryCache[STORAGE_KEYS.ANGGOTA_DIVISI] = anggota;
-      memoryCache[STORAGE_KEYS.ASPIRASI] = aspirasi;
+        memoryCache[STORAGE_KEYS.PENGURUS] = filteredPengurus;
+        memoryCache[STORAGE_KEYS.EVENTS] = events;
+        memoryCache[STORAGE_KEYS.MERCHANDISE] = merchandise;
+        memoryCache[STORAGE_KEYS.HERO_CONTENT] = heroContent;
+        memoryCache[STORAGE_KEYS.VISI_MISI] = visiMisi;
+        memoryCache[STORAGE_KEYS.DIVISI_FULL] = filteredDivisi;
+        memoryCache[STORAGE_KEYS.ANGGOTA_DIVISI] = anggota;
+        memoryCache[STORAGE_KEYS.ASPIRASI] = aspirasi;
 
-      // Use silent updates to write sanitized data to LocalStorage without throwing QuotaExceededError
-      setStoredDataSilent(STORAGE_KEYS.PENGURUS, filteredPengurus);
-      setStoredDataSilent(STORAGE_KEYS.EVENTS, events);
-      setStoredDataSilent(STORAGE_KEYS.MERCHANDISE, merchandise);
-      setStoredDataSilent(STORAGE_KEYS.HERO_CONTENT, heroContent);
-      setStoredDataSilent(STORAGE_KEYS.VISI_MISI, visiMisi);
-      setStoredDataSilent(STORAGE_KEYS.DIVISI_FULL, filteredDivisi);
-      setStoredDataSilent(STORAGE_KEYS.ANGGOTA_DIVISI, anggota);
-      setStoredDataSilent(STORAGE_KEYS.ASPIRASI, aspirasi);
+        // Use silent updates to write sanitized data to LocalStorage without throwing QuotaExceededError
+        setStoredDataSilent(STORAGE_KEYS.PENGURUS, filteredPengurus);
+        setStoredDataSilent(STORAGE_KEYS.EVENTS, events);
+        setStoredDataSilent(STORAGE_KEYS.MERCHANDISE, merchandise);
+        setStoredDataSilent(STORAGE_KEYS.HERO_CONTENT, heroContent);
+        setStoredDataSilent(STORAGE_KEYS.VISI_MISI, visiMisi);
+        setStoredDataSilent(STORAGE_KEYS.DIVISI_FULL, filteredDivisi);
+        setStoredDataSilent(STORAGE_KEYS.ANGGOTA_DIVISI, anggota);
+        setStoredDataSilent(STORAGE_KEYS.ASPIRASI, aspirasi);
 
-      // Dispatch single consolidated update event
-      window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
-    })
+        // Dispatch single consolidated update event
+        window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
+      },
+    )
     .catch((err) => {
       console.warn("[HIMASI Store] Supabase primary sync error:", err);
     })
@@ -489,22 +577,46 @@ function triggerPrimarySync(): Promise<void> {
  * React Hook for automatically syncing public & admin pages with shared store
  */
 export function useSharedStore() {
-  const [pengurus, setPengurusState] = useState<PengurusItem[]>(INITIAL_PENGURUS.filter((p) => p.divisi === "BPH"));
-  const [events, setEventsState] = useState<EventAdminItem[]>(INITIAL_EVENTS);
-  const [aspirasi, setAspirasiState] = useState<AspirasiAdminItem[]>(INITIAL_ASPIRASI);
-  const [merchandise, setMerchandiseState] = useState<MerchandiseAdminItem[]>(INITIAL_MERCHANDISE);
-  const [divisiData, setDivisiDataState] = useState<DivisiAdminItem[]>(
-    INITIAL_DIVISI_FULL.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph")
+  const [pengurus, setPengurusState] = useState<PengurusItem[]>(
+    INITIAL_PENGURUS.filter((p) => p.divisi === "BPH"),
   );
-  const [visiMisi, setVisiMisiState] = useState<VisiMisiData>(INITIAL_VISI_MISI);
-  const [anggotaDivisi, setAnggotaDivisiState] = useState<AnggotaDivisiItem[]>(INITIAL_ANGGOTA_DIVISI);
-  const [divisiList, setDivisiListState] = useState<string[]>(["Akademik", "Medinfo", "PSDM", "Humas"]);
-  const [headlineWords, setHeadlineWordsState] = useState<string[]>(INITIAL_HEADLINE_WORDS);
-  const [badgeWords, setBadgeWordsState] = useState<string[]>(INITIAL_BADGE_WORDS);
-  const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(INITIAL_SUBHEADLINE_WORDS);
-  const [heroContent, setHeroContentState] = useState<HeroContentData>(INITIAL_HERO_CONTENT);
-  const [kasTransactions, setKasTransactionsState] = useState<KasTransaction[]>(INITIAL_KAS_TRANSACTIONS);
-  const [iuranAnggota, setIuranAnggotaState] = useState<IuranAnggota[]>(INITIAL_IURAN_ANGGOTA);
+  const [events, setEventsState] = useState<EventAdminItem[]>(INITIAL_EVENTS);
+  const [aspirasi, setAspirasiState] =
+    useState<AspirasiAdminItem[]>(INITIAL_ASPIRASI);
+  const [merchandise, setMerchandiseState] =
+    useState<MerchandiseAdminItem[]>(INITIAL_MERCHANDISE);
+  const [divisiData, setDivisiDataState] = useState<DivisiAdminItem[]>(
+    INITIAL_DIVISI_FULL.filter(
+      (d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph",
+    ),
+  );
+  const [visiMisi, setVisiMisiState] =
+    useState<VisiMisiData>(INITIAL_VISI_MISI);
+  const [anggotaDivisi, setAnggotaDivisiState] = useState<AnggotaDivisiItem[]>(
+    INITIAL_ANGGOTA_DIVISI,
+  );
+  const [divisiList, setDivisiListState] = useState<string[]>([
+    "Akademik",
+    "Medinfo",
+    "PSDM",
+    "Humas",
+  ]);
+  const [headlineWords, setHeadlineWordsState] = useState<string[]>(
+    INITIAL_HEADLINE_WORDS,
+  );
+  const [badgeWords, setBadgeWordsState] =
+    useState<string[]>(INITIAL_BADGE_WORDS);
+  const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(
+    INITIAL_SUBHEADLINE_WORDS,
+  );
+  const [heroContent, setHeroContentState] =
+    useState<HeroContentData>(INITIAL_HERO_CONTENT);
+  const [kasTransactions, setKasTransactionsState] = useState<KasTransaction[]>(
+    INITIAL_KAS_TRANSACTIONS,
+  );
+  const [iuranAnggota, setIuranAnggotaState] = useState<IuranAnggota[]>(
+    INITIAL_IURAN_ANGGOTA,
+  );
   // mounted = true setelah localStorage dibaca (bukan untuk gating render)
   const [mounted, setMounted] = useState(false);
 
@@ -535,53 +647,75 @@ export function useSharedStore() {
     // PRIMARY SYNC: Fetch latest data from Supabase (overrides localStorage)
     // This ensures cross-device/cross-browser sync when admin panel changes data
     Promise.all([
-      fetchPengurusFromDB(),     // [0] → pengurus
-      fetchEventsFromDB(),       // [1] → events
-      fetchMerchandiseFromDB(),  // [2] → merchandise
-      fetchHeroContentFromDB(),  // [3] → heroContent
-      fetchVisiMisiFromDB(),     // [4] → visiMisi
-      fetchDivisiFromDB(),       // [5] → divisi
+      fetchPengurusFromDB(), // [0] → pengurus
+      fetchEventsFromDB(), // [1] → events
+      fetchMerchandiseFromDB(), // [2] → merchandise
+      fetchHeroContentFromDB(), // [3] → heroContent
+      fetchVisiMisiFromDB(), // [4] → visiMisi
+      fetchDivisiFromDB(), // [5] → divisi
       fetchAnggotaDivisiFromDB(), // [6] → anggota
-      fetchAspirasiFromDB(),     // [7] → aspirasi
+      fetchAspirasiFromDB(), // [7] → aspirasi
       fetchKasTransactionsFromDB(), // [8] → kas
-      fetchIuranAnggotaFromDB(),    // [9] → iuran
-    ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi, kas, iuran]) => {
-      // Update localStorage and state with fresh DB data
-      store.setPengurus(pengurus);
-      setPengurusState(pengurus);
+      fetchIuranAnggotaFromDB(), // [9] → iuran
+    ])
+      .then(
+        ([
+          pengurus,
+          events,
+          merchandise,
+          heroContent,
+          visiMisi,
+          divisi,
+          anggota,
+          aspirasi,
+          kas,
+          iuran,
+        ]) => {
+          // Update localStorage and state with fresh DB data
+          store.setPengurus(pengurus);
+          setPengurusState(pengurus);
 
-      store.setEvents(events);
-      setEventsState(events);
+          store.setEvents(events);
+          setEventsState(events);
 
-      store.setMerchandise(merchandise);
-      setMerchandiseState(merchandise);
+          store.setMerchandise(merchandise);
+          setMerchandiseState(merchandise);
 
-      store.setHeroContent(heroContent);
-      setHeroContentState(heroContent);
-      if (heroContent.headlineDynamicWords) setHeadlineWordsState(heroContent.headlineDynamicWords);
-      if (heroContent.badgeDynamicWords) setBadgeWordsState(heroContent.badgeDynamicWords);
-      if (heroContent.descriptionDynamicWords) setSubheadlineWordsState(heroContent.descriptionDynamicWords);
+          store.setHeroContent(heroContent);
+          setHeroContentState(heroContent);
+          if (heroContent.headlineDynamicWords)
+            setHeadlineWordsState(heroContent.headlineDynamicWords);
+          if (heroContent.badgeDynamicWords)
+            setBadgeWordsState(heroContent.badgeDynamicWords);
+          if (heroContent.descriptionDynamicWords)
+            setSubheadlineWordsState(heroContent.descriptionDynamicWords);
 
-      store.setVisiMisi(visiMisi);
-      setVisiMisiState(visiMisi);
+          store.setVisiMisi(visiMisi);
+          setVisiMisiState(visiMisi);
 
-      store.setDivisiFull(divisi);
-      setDivisiDataState(divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph"));
+          store.setDivisiFull(divisi);
+          setDivisiDataState(
+            divisi.filter(
+              (d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph",
+            ),
+          );
 
-      store.setAnggotaDivisi(anggota);
-      setAnggotaDivisiState(anggota);
+          store.setAnggotaDivisi(anggota);
+          setAnggotaDivisiState(anggota);
 
-      store.setAspirasi(aspirasi);
-      setAspirasiState(aspirasi);
+          store.setAspirasi(aspirasi);
+          setAspirasiState(aspirasi);
 
-      store.setKasTransactions(kas);
-      setKasTransactionsState(kas);
+          store.setKasTransactions(kas);
+          setKasTransactionsState(kas);
 
-      store.setIuranAnggota(iuran);
-      setIuranAnggotaState(iuran);
-    }).catch((err) => {
-      console.warn("[HIMASI Store] Supabase primary sync error:", err);
-    });
+          store.setIuranAnggota(iuran);
+          setIuranAnggotaState(iuran);
+        },
+      )
+      .catch((err) => {
+        console.warn("[HIMASI Store] Supabase primary sync error:", err);
+      });
 
     const handleUpdate = () => {
       reloadAll();
@@ -591,7 +725,6 @@ export function useSharedStore() {
     window.addEventListener("storage", handleUpdate);
 
     return () => {
-      clearTimeout(timerId);
       window.removeEventListener(STORE_EVENT_NAME, handleUpdate);
       window.removeEventListener("storage", handleUpdate);
     };
@@ -617,75 +750,75 @@ export function useSharedStore() {
       store.setPengurus(data);
       setPengurusState(data);
       // Sync to Supabase DB (fire-and-forget) — ensures cross-device real-time update
-      syncPengurusToDB(data).catch(() => { });
-      triggerRevalidatePengurus().catch(() => { });
+      syncPengurusToDB(data).catch(() => {});
+      triggerRevalidatePengurus().catch(() => {});
     },
     setEvents: (data: EventAdminItem[]) => {
       store.setEvents(data);
       setEventsState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncEventsToDB(data).catch(() => { });
-      triggerRevalidateEvent().catch(() => { });
+      syncEventsToDB(data).catch(() => {});
+      triggerRevalidateEvent().catch(() => {});
     },
     setAspirasi: (data: AspirasiAdminItem[]) => {
       store.setAspirasi(data);
       setAspirasiState(data);
-      triggerRevalidateAspirasi().catch(() => { });
+      triggerRevalidateAspirasi().catch(() => {});
     },
     setMerchandise: (data: MerchandiseAdminItem[]) => {
       store.setMerchandise(data);
       setMerchandiseState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncMerchandiseToDB(data).catch(() => { });
-      triggerRevalidateMerchandise().catch(() => { });
+      syncMerchandiseToDB(data).catch(() => {});
+      triggerRevalidateMerchandise().catch(() => {});
     },
     setDivisiData: (data: DivisiAdminItem[], slug?: string) => {
       store.setDivisiFull(data);
       setDivisiDataState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncDivisiToDB(data).catch(() => { });
-      triggerRevalidateDivisi(slug).catch(() => { });
+      syncDivisiToDB(data).catch(() => {});
+      triggerRevalidateDivisi(slug).catch(() => {});
     },
     setVisiMisi: (data: VisiMisiData) => {
       store.setVisiMisi(data);
       setVisiMisiState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncVisiMisiToDB(data).catch(() => { });
-      triggerRevalidateVisiMisi().catch(() => { });
+      syncVisiMisiToDB(data).catch(() => {});
+      triggerRevalidateVisiMisi().catch(() => {});
     },
     setAnggotaDivisi: (data: AnggotaDivisiItem[], slug?: string) => {
       store.setAnggotaDivisi(data);
       setAnggotaDivisiState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncAnggotaDivisiToDB(data).catch(() => { });
-      triggerRevalidateDivisi(slug).catch(() => { });
+      syncAnggotaDivisiToDB(data).catch(() => {});
+      triggerRevalidateDivisi(slug).catch(() => {});
     },
     setDivisiList: (data: string[]) => {
       store.setDivisiList(data);
       setDivisiListState(data);
-      triggerRevalidateDivisi().catch(() => { });
+      triggerRevalidateDivisi().catch(() => {});
     },
     setHeadlineWords: (data: string[]) => {
       store.setHeadlineWords(data);
       setHeadlineWordsState(data);
-      triggerRevalidateBeranda().catch(() => { });
+      triggerRevalidateBeranda().catch(() => {});
     },
     setBadgeWords: (data: string[]) => {
       store.setBadgeWords(data);
       setBadgeWordsState(data);
-      triggerRevalidateBeranda().catch(() => { });
+      triggerRevalidateBeranda().catch(() => {});
     },
     setSubheadlineWords: (data: string[]) => {
       store.setSubheadlineWords(data);
       setSubheadlineWordsState(data);
-      triggerRevalidateBeranda().catch(() => { });
+      triggerRevalidateBeranda().catch(() => {});
     },
     setHeroContent: (data: HeroContentData) => {
       store.setHeroContent(data);
       setHeroContentState(data);
       // Sync to Supabase DB (fire-and-forget)
-      syncHeroContentToDB(data).catch(() => { });
-      triggerRevalidateBeranda().catch(() => { });
+      syncHeroContentToDB(data).catch(() => {});
+      triggerRevalidateBeranda().catch(() => {});
 
       // Keep legacy arrays in sync as well
       if (data.headlineDynamicWords) {
@@ -704,12 +837,12 @@ export function useSharedStore() {
     setKasTransactions: (data: KasTransaction[]) => {
       store.setKasTransactions(data);
       setKasTransactionsState(data);
-      syncKasTransactionsToDB(data).catch(() => { });
+      syncKasTransactionsToDB(data).catch(() => {});
     },
     setIuranAnggota: (data: IuranAnggota[]) => {
       store.setIuranAnggota(data);
       setIuranAnggotaState(data);
-      syncIuranAnggotaToDB(data).catch(() => { });
+      syncIuranAnggotaToDB(data).catch(() => {});
     },
   };
 }

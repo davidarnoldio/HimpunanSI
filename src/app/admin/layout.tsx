@@ -19,15 +19,12 @@ import {
   Layers,
   Target,
   Sparkles,
-<<<<<<< HEAD
   Wallet,
-=======
-  Loader2,
->>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { useSharedStore } from "@/lib/sharedStore";
+import { Loader2 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
