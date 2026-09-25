@@ -503,7 +503,6 @@ export function useSharedStore() {
   const [badgeWords, setBadgeWordsState] = useState<string[]>(INITIAL_BADGE_WORDS);
   const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(INITIAL_SUBHEADLINE_WORDS);
   const [heroContent, setHeroContentState] = useState<HeroContentData>(INITIAL_HERO_CONTENT);
-<<<<<<< HEAD
   const [kasTransactions, setKasTransactionsState] = useState<KasTransaction[]>(INITIAL_KAS_TRANSACTIONS);
   const [iuranAnggota, setIuranAnggotaState] = useState<IuranAnggota[]>(INITIAL_IURAN_ANGGOTA);
   // mounted = true setelah localStorage dibaca (bukan untuk gating render)
@@ -524,25 +523,6 @@ export function useSharedStore() {
     setHeroContentState(store.getHeroContent());
     setKasTransactionsState(store.getKasTransactions());
     setIuranAnggotaState(store.getIuranAnggota());
-=======
-  const [mounted, setMounted] = useState(false);
-
-  const reloadAll = () => {
-    startTransition(() => {
-      setPengurusState(store.getPengurus());
-      setEventsState(store.getEvents());
-      setAspirasiState(store.getAspirasi());
-      setMerchandiseState(store.getMerchandise());
-      setDivisiDataState(store.getDivisiFull());
-      setVisiMisiState(store.getVisiMisi());
-      setAnggotaDivisiState(store.getAnggotaDivisi());
-      setDivisiListState(store.getDivisiList());
-      setHeadlineWordsState(store.getHeadlineWords());
-      setBadgeWordsState(store.getBadgeWords());
-      setSubheadlineWordsState(store.getSubheadlineWords());
-      setHeroContentState(store.getHeroContent());
-    });
->>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293
   };
 
   useEffect(() => {
@@ -552,7 +532,6 @@ export function useSharedStore() {
       reloadAll();
     });
 
-<<<<<<< HEAD
     // PRIMARY SYNC: Fetch latest data from Supabase (overrides localStorage)
     // This ensures cross-device/cross-browser sync when admin panel changes data
     Promise.all([
@@ -603,14 +582,6 @@ export function useSharedStore() {
     }).catch((err) => {
       console.warn("[HIMASI Store] Supabase primary sync error:", err);
     });
-=======
-    // Defer client-side DB re-fetching until main thread paint is complete (eliminates TBT)
-    const timerId = setTimeout(() => {
-      triggerPrimarySync().then(() => {
-        reloadAll();
-      });
-    }, 400);
->>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293
 
     const handleUpdate = () => {
       reloadAll();
