@@ -26,6 +26,20 @@ import { BrandLogo } from "@/components/ui/BrandLogo";
 import { useSharedStore } from "@/lib/sharedStore";
 import { Loader2 } from "lucide-react";
 
+import { logoutAdminAction } from "@/app/actions/adminAuthActions";
+
+// Module-level constant — stable reference, won't trigger ESLint exhaustive-deps
+const PREFETCH_HREFS = [
+  "/admin/dashboard",
+  "/admin/beranda",
+  "/admin/visimisi",
+  "/admin/pengurus",
+  "/admin/divisi",
+  "/admin/event",
+  "/admin/merchandise",
+  "/admin/aspirasi",
+];
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -33,10 +47,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const { aspirasi } = useSharedStore();
 
-  const handleLogout = () => {
-    // Clear session cookie
-    document.cookie = "HIMASI_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-    router.push("/admin/login");
+  const handleLogout = async () => {
+    try {
+      await logoutAdminAction();
+      // Clear client fallback cookie if any
+      document.cookie = "HIMASI_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+      document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+    } catch (e) {
+      console.error("Logout error:", e);
+    }
+    // Hard navigation after logout: memastikan cookie HttpOnly sudah bersih
+    window.location.href = "/admin/login";
   };
 
   const unreadAspirasiCount = aspirasi.filter((a) => a.status === "Baru").length;
@@ -60,9 +81,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Prefetch all admin routes in background for instant subsecond tab switching
   useEffect(() => {
-    SIDEBAR_ITEMS.forEach((item) => {
+    PREFETCH_HREFS.forEach((href) => {
       try {
-        router.prefetch(item.href);
+        router.prefetch(href);
       } catch {
         // ignore prefetch errors
       }

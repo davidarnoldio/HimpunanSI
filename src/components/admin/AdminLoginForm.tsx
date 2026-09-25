@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Mail, ArrowRight, AlertCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +11,6 @@ import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 import { loginAdminAction } from "@/app/actions/adminAuthActions";
 
 export function AdminLoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,12 +31,13 @@ export function AdminLoginForm() {
         return;
       }
 
-      router.push("/admin/dashboard");
-      router.refresh();
+      // Hard navigation: menghindari RSC reconciliation overhead dari router.push + router.refresh
+      // Cookie sudah di-set server-side — middleware akan valid langsung setelah hard reload
+      window.location.href = "/admin/dashboard";
+      // Jangan set loading(false) — biarkan spinner aktif selama navigasi berlangsung
     } catch (err) {
       console.error("[AdminLogin] Error:", err);
       setError("Terjadi kesalahan sistem saat proses login.");
-    } finally {
       setLoading(false);
     }
   };
