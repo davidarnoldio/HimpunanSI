@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -126,6 +126,14 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
   const [formData, setFormData] = useState<HeroContentData>(activeHero);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (heroContent) {
+      setFormData(heroContent);
+    } else if (initialHeroContent) {
+      setFormData(initialHeroContent);
+    }
+  }, [initialHeroContent, heroContent]);
 
   const handleHeroPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

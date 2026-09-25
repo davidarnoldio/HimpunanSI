@@ -106,12 +106,12 @@ export async function fetchSettingJSON<T>(key: string, fallback: T): Promise<T> 
  */
 export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/settings`;
+    const url = `${SUPABASE_URL}/rest/v1/settings?on_conflict=key`;
     const res = await fetch(url, {
       method: "POST",
       headers: {
         ...COMMON_HEADERS,
-        Prefer: "resolution=merge-duplicates",
+        Prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify({
         key,

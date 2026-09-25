@@ -153,25 +153,7 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
 
             {/* Editorial Photograph */}
             {(() => {
-              const rawUrl = content.heroImageUrl;
-              const isDefault = !rawUrl || rawUrl === "/hero-editorial.jpg" || rawUrl === "/hero-editorial.webp";
-              if (isDefault) {
-                return (
-                  <picture className="absolute inset-0 w-full h-full">
-                    <source srcSet="/hero-editorial-mobile.webp" media="(max-width: 640px)" type="image/webp" />
-                    <source srcSet="/hero-editorial.webp" type="image/webp" />
-                    <img
-                      src="/hero-editorial.webp"
-                      alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                      fetchPriority="high"
-                      decoding="async"
-                      width={800}
-                      height={600}
-                    />
-                  </picture>
-                );
-              }
+              const rawUrl = content.heroImageUrl || "/hero-editorial.webp";
               return (
                 <img
                   src={rawUrl}
