@@ -6,6 +6,25 @@ export const revalidate = 0;
 
 export async function POST(req: NextRequest) {
   try {
+    // 🔒 Security Check: Must provide REVALIDATE_SECRET token or possess active admin session
+    const authHeader = req.headers.get("authorization");
+    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : null;
+    const querySecret = req.nextUrl.searchParams.get("secret");
+    const token = bearerToken || querySecret;
+
+    const expectedSecret = process.env.REVALIDATE_SECRET || process.env.ADMIN_PASSWORD;
+    const isSecretValid = expectedSecret ? token === expectedSecret : false;
+
+    const adminSessionCookie = req.cookies.get("HIMASI_admin_session")?.value;
+    const isAdminSessionValid = adminSessionCookie === "authenticated";
+
+    if (!isSecretValid && !isAdminSessionValid) {
+      return NextResponse.json(
+        { error: "Unauthorized. Missing or invalid revalidate secret / admin session." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const { path, paths, type } = body || {};
 

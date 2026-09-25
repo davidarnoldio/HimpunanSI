@@ -3,6 +3,7 @@ import {
   HeroSection,
   KabinetSection,
   DivisiSection,
+  LegalitasSection,
   EventSection,
   Footer,
 } from "@/components/landing";
@@ -16,8 +17,8 @@ import {
   fetchHeroContentFromDB,
 } from "@/lib/supabaseData";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Revalidate homepage every 60s + On-demand revalidation via revalidatePath("/") in Admin Actions
+export const revalidate = 60;
 
 /**
  * Halaman Utama — Portal Landing Page HIMASI UG
@@ -52,6 +53,9 @@ export default async function HomePage() {
 
         {/* 3. Overview Divisi */}
         <DivisiSection divisiData={divisiData} anggotaDivisi={anggotaDivisi} />
+
+        {/* 3.5 Surat Legalitas Himpunan */}
+        <LegalitasSection visiMisi={visiMisi} />
 
         {/* 4. Upcoming Events & Proker */}
         <EventSection events={events} />

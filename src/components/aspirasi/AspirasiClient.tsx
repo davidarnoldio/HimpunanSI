@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Sparkles, Flame } from "lucide-react";
 import { Navbar, Footer } from "@/components/landing";
 import { FormAspirasi } from "./FormAspirasi";
+import { RuangAmanWidget } from "./RuangAmanWidget";
 import { HackerMatrixBackground } from "@/components/ui/HackerMatrixBackground";
 
 export function AspirasiClient() {
@@ -66,6 +67,9 @@ export function AspirasiClient() {
           >
             <FormAspirasi />
           </motion.div>
+
+          {/* RUANG AMAN & DEEP TALK WIDGET / BANNER */}
+          <RuangAmanWidget />
         </div>
 
         {/* MARQUEE LIVE TEXT (FULL WIDTH EDGE TO EDGE) */}

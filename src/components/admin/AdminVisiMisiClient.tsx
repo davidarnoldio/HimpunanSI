@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, Compass, CheckCircle2, Plus, Trash2, Save } from "lucide-react";
+import { Target, Compass, CheckCircle2, Plus, Trash2, Save, FileText, Upload, Image as ImageIcon, AlertCircle } from "lucide-react";
 import { useSharedStore } from "@/lib/sharedStore";
 import { type VisiMisiData } from "@/data/adminMockData";
 import { saveVisiMisiAction } from "@/app/actions/adminActions";
@@ -21,6 +21,10 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
     activeVisiMisi?.pilar ||
     "Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."
   );
+  const [suratLegalitasUrl, setSuratLegalitasUrl] = useState(
+    activeVisiMisi?.suratLegalitasUrl || ""
+  );
+  const [legalitasWarning, setLegalitasWarning] = useState("");
   const [newMisi, setNewMisi] = useState("");
   const [toastMsg, setToastMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +44,23 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
     setMisiList(misiList.filter((_, i) => i !== index));
   };
 
+  const handleLegalitasFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      setLegalitasWarning("⚠️ Ukuran berkas melebihi 3 MB. Harap gunakan gambar yang lebih kecil.");
+      return;
+    }
+    setLegalitasWarning("");
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSuratLegalitasUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (isLoading) return;
@@ -50,13 +71,14 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
         visi: visiText,
         misi: misiList,
         pilar: pilarText,
+        suratLegalitasUrl: suratLegalitasUrl,
       };
       setVisiMisi(payload);
       await saveVisiMisiAction(payload);
-      showToast("Visi, Misi & Pilar Kabinet Himpunan berhasil disimpan dan diperbarui di landing page.");
+      showToast("Visi, Misi, Pilar & Surat Legalitas berhasil disimpan.");
     } catch (err) {
       console.error("[AdminVisiMisi] Save error:", err);
-      alert("Gagal menyimpan Visi & Misi ke database.");
+      alert("Gagal menyimpan Visi, Misi & Legalitas ke database.");
     } finally {
       setIsLoading(false);
     }
@@ -236,6 +258,103 @@ export function AdminVisiMisiClient({ initialVisiMisi }: AdminVisiMisiClientProp
               placeholder="Setiap gerakan HIMASI berpusat pada 3 pilar: Inovasi Digital, Kolaborasi Strategis, dan Integritas Akademik."
               className="w-full p-4 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs sm:text-sm font-medium text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E] leading-relaxed resize-none font-sans"
             />
+          </div>
+        </div>
+
+        {/* Form Box SURAT LEGALITAS HIMPUNAN SISTEM INFORMASI */}
+        <div className="p-7 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-5">
+          <div className="flex items-center gap-3 pb-3 border-b-2 border-slate-950 dark:border-white/20">
+            <div className="p-2.5 bg-[#C8102E] text-white border border-slate-950">
+              <FileText size={22} />
+            </div>
+            <div>
+              <h2 className="font-black font-heading text-base uppercase text-slate-950 dark:text-white">
+                SURAT LEGALITAS HIMPUNAN SISTEM INFORMASI
+              </h2>
+              <p className="text-[11px] font-mono font-bold text-slate-500">
+                Masukkan URL / Unggah Berkas Gambar Surat SK Legalitas Himpunan untuk ditampilkan di landing page.
+              </p>
+            </div>
+          </div>
+
+          {legalitasWarning && (
+            <div className="p-3 bg-amber-500/10 border-2 border-amber-500 text-amber-600 dark:text-amber-400 font-mono text-xs font-bold flex items-center gap-2">
+              <AlertCircle size={16} />
+              {legalitasWarning}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-black font-mono uppercase tracking-wider text-slate-950 dark:text-white mb-2">
+                SRC IMAGE FILE / URL SURAT LEGALITAS
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={suratLegalitasUrl}
+                  onChange={(e) => setSuratLegalitasUrl(e.target.value)}
+                  placeholder="https://... atau /images/surat-legalitas-himsi.jpg"
+                  className="flex-1 p-3 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20 text-xs font-mono text-slate-950 dark:text-white focus:outline-none focus:border-[#C8102E]"
+                />
+
+                <label className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-950 dark:bg-slate-100 text-white dark:text-slate-950 font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 cursor-pointer hover:bg-[#C8102E] dark:hover:bg-[#E31B3B] dark:hover:text-white transition-colors shrink-0">
+                  <Upload size={16} />
+                  <span>UNGGAH FOTO</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLegalitasFileChange}
+                    className="hidden"
+                  />
+                </label>
+
+                {suratLegalitasUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setSuratLegalitasUrl("")}
+                    className="px-4 py-3 bg-rose-600 text-white font-black font-mono text-xs uppercase tracking-wider border-2 border-slate-950 hover:bg-slate-950 transition-colors shrink-0 cursor-pointer"
+                  >
+                    HAPUS SURAT
+                  </button>
+                )}
+              </div>
+              <p className="mt-1.5 text-[11px] font-mono text-slate-500">
+                * Input hanya butuh file image src. Jika dikosongkan, landing page akan menampilkan status: <strong className="text-amber-600 dark:text-amber-400">&quot;Belum ada surat yang dimasukkan, harap ditunggu.&quot;</strong>
+              </p>
+            </div>
+
+            {/* PREVIEW CONTAINER */}
+            <div className="p-4 bg-white dark:bg-slate-950 border-2 border-slate-950 dark:border-white/20">
+              <div className="text-[11px] font-mono font-black uppercase text-slate-500 mb-3 flex items-center gap-2">
+                <ImageIcon size={14} /> PREVIEW STATUS SURAT LEGALITAS LANDING PAGE
+              </div>
+
+              {suratLegalitasUrl ? (
+                <div className="relative border-2 border-slate-950 dark:border-white/20 overflow-hidden bg-slate-100 dark:bg-slate-900 max-w-xl mx-auto p-2">
+                  <img
+                    src={suratLegalitasUrl}
+                    alt="Surat Legalitas HIMASI UG"
+                    className="w-full h-auto object-contain max-h-[400px]"
+                  />
+                  <div className="mt-2 text-center p-2 bg-emerald-600 text-white font-mono font-black text-xs uppercase">
+                    ✓ SURAT LEGALITAS TER-INPUT & siap tampil
+                  </div>
+                </div>
+              ) : (
+                <div className="p-6 border-2 border-dashed border-slate-300 dark:border-slate-800 text-center bg-slate-50 dark:bg-slate-900/50">
+                  <div className="inline-flex items-center justify-center p-3 bg-amber-500/10 text-amber-500 border border-amber-500/30 rounded-full mb-2">
+                    <AlertCircle size={24} />
+                  </div>
+                  <p className="font-mono font-black text-xs text-amber-600 dark:text-amber-400">
+                    Belum ada surat yang dimasukkan, harap ditunggu.
+                  </p>
+                  <p className="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                    (Teks di atas adalah tampilan persis yang akan dilihat oleh pengunjung website)
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </form>

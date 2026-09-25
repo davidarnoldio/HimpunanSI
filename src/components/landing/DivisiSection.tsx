@@ -69,9 +69,11 @@ export function DivisiSection({
               const realMemberCount = anggotaDivisi.filter((a) => a.divisiId === divisi.id).length;
 
               return (
-                <div
+                <Link
                   key={divisi.id}
-                  className="group bg-slate-50 dark:bg-slate-900/80 border-2 border-slate-950 dark:border-white/20 p-7 flex flex-col justify-between gap-6 hover:bg-slate-950 hover:text-white dark:hover:bg-slate-950 hover:border-[#C8102E] transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]"
+                  href={`/divisi/${divisi.id}`}
+                  prefetch={true}
+                  className="group bg-slate-50 dark:bg-slate-900/80 border-2 border-slate-950 dark:border-white/20 p-7 flex flex-col justify-between gap-6 hover:bg-slate-950 hover:text-white dark:hover:bg-slate-950 hover:border-[#C8102E] transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] cursor-pointer"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -96,15 +98,13 @@ export function DivisiSection({
                     <span className="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 group-hover:text-slate-400 uppercase tracking-wider">
                       {realMemberCount} ANGGOTA STAFF
                     </span>
-                    <Link
-                      href={`/divisi/${divisi.id}`}
+                    <span
                       className="p-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 group-hover:bg-[#C8102E] group-hover:text-white transition-colors border border-slate-950 flex items-center gap-1 font-mono text-xs font-black uppercase"
-                      aria-label={`Lihat detail divisi ${divisi.nama}`}
                     >
                       DETAIL <ArrowRight size={14} />
-                    </Link>
+                    </span>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

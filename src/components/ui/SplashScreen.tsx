@@ -168,7 +168,7 @@ export function SplashScreen() {
             transition={{ duration: 0.4, delay: 0.4 }}
             className="w-full max-w-5xl flex items-center justify-between z-10 font-mono text-[11px] text-slate-500 border-t border-white/10 pt-4"
           >
-            <span>KABINET FORMASI • PERIODE 2025/2026</span>
+            <span>KABINET FORMASI • PERIODE 2026/2027</span>
             <span>VERIFIED PORTAL • HIMASI UG</span>
           </motion.div>
         </motion.div>

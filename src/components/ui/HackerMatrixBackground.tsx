@@ -40,7 +40,7 @@ export function HackerMatrixBackground({ className = "" }: { className?: string 
       <style dangerouslySetInnerHTML={{ __html: matrixKeyframes }} />
 
       <div
-        className={`absolute inset-0 pointer-events-none select-none overflow-hidden font-mono text-[11px] sm:text-xs leading-relaxed tracking-widest opacity-[0.06] text-slate-900 dark:text-slate-100 transition-opacity duration-300 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_85%)] ${className}`}
+        className={`absolute inset-0 pointer-events-none select-none overflow-hidden font-mono text-[11px] sm:text-xs leading-relaxed tracking-widest opacity-[0.05] text-slate-900 dark:text-slate-100 transition-opacity duration-300 ${className}`}
         aria-hidden="true"
       >
         {/* Grid Kolom Vertikal */}

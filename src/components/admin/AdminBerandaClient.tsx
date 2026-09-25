@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -20,13 +20,13 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
-import { useSharedStore } from "@/lib/sharedStore";
+import { useSharedStore, convertFileToBase64 } from "@/lib/sharedStore";
 import {
   INITIAL_HERO_CONTENT,
   type HeroContentData,
   type HeroStatItem,
 } from "@/data/adminMockData";
-import { saveHeroContentAction } from "@/app/actions/adminActions";
+import { saveHeroContentAction, uploadFotoStorageAction } from "@/app/actions/adminActions";
 
 interface WordTagInputProps {
   title: string;
@@ -127,18 +127,40 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleHeroPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (heroContent) {
+      setFormData(heroContent);
+    } else if (initialHeroContent) {
+      setFormData(initialHeroContent);
+    }
+  }, [initialHeroContent, heroContent]);
+
+  const handleHeroPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      if (base64) {
+    const maxBytes = 3 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 3 MB.`);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const base64 = await convertFileToBase64(file);
+      const uploadRes = await uploadFotoStorageAction(base64, "hero-editorial");
+      if (uploadRes.success && uploadRes.url) {
+        setFormData((prev) => ({ ...prev, heroImageUrl: uploadRes.url }));
+      } else {
         setFormData((prev) => ({ ...prev, heroImageUrl: base64 }));
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Gagal mengunggah foto hero:", err);
+      alert("Gagal membaca foto hero dari perangkat.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -149,8 +171,21 @@ export function AdminBerandaClient({ initialHeroContent }: AdminBerandaClientPro
     setSaveSuccess(false);
 
     try {
-      setHeroContent(formData);
-      await saveHeroContentAction(formData);
+      const payload = { ...formData };
+      if (payload.heroImageUrl && payload.heroImageUrl.startsWith("data:")) {
+        try {
+          const uploadRes = await uploadFotoStorageAction(payload.heroImageUrl, "hero-editorial");
+          if (uploadRes.success && uploadRes.url) {
+            payload.heroImageUrl = uploadRes.url;
+            setFormData(payload);
+          }
+        } catch (uploadErr) {
+          console.warn("Client storage upload failed for hero image, using payload:", uploadErr);
+        }
+      }
+
+      setHeroContent(payload);
+      await saveHeroContentAction(payload);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err) {

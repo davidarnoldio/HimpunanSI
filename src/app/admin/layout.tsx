@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,7 +19,11 @@ import {
   Layers,
   Target,
   Sparkles,
+<<<<<<< HEAD
   Wallet,
+=======
+  Loader2,
+>>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
@@ -29,6 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const { aspirasi } = useSharedStore();
 
   const handleLogout = () => {
@@ -55,6 +60,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       badge: unreadAspirasiCount > 0 ? `${unreadAspirasiCount} Baru` : undefined,
     },
   ];
+
+  // Prefetch all admin routes in background for instant subsecond tab switching
+  useEffect(() => {
+    SIDEBAR_ITEMS.forEach((item) => {
+      try {
+        router.prefetch(item.href);
+      } catch {
+        // ignore prefetch errors
+      }
+    });
+  }, [router]);
 
   // If viewing admin login page, omit sidebar layout
   if (pathname === "/admin/login") {
@@ -87,28 +103,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </span>
           {SIDEBAR_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pendingHref === item.href;
+            const isPending = pendingHref === item.href && pathname !== item.href;
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center justify-between px-3.5 py-3 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 transition-colors ${isActive
+                onClick={() => setPendingHref(item.href)}
+                className={`group flex items-center justify-between px-3.5 py-3 text-xs font-black font-mono uppercase tracking-wider border-2 border-slate-950 transition-colors ${
+                  isActive
                     ? "bg-[#C8102E] dark:bg-[#E31B3B] text-white shadow-[3px_3px_0px_0px_rgba(10,10,10,1)]"
                     : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
-                  }`}
+                }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon size={16} className={isActive ? "text-white" : "text-slate-950 dark:text-white"} />
+                  {isPending ? (
+                    <Loader2 size={16} className="text-white animate-spin" />
+                  ) : (
+                    <Icon size={16} className={isActive ? "text-white" : "text-slate-950 dark:text-white"} />
+                  )}
                   <span>{item.label}</span>
                 </div>
 
                 {item.badge && (
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-black font-mono uppercase border border-slate-950 ${isActive
-                        ? "bg-slate-950 text-white"
-                        : "bg-[#C8102E] text-white"
-                      }`}
+                    className={`px-2 py-0.5 text-[10px] font-black font-mono uppercase border border-slate-950 ${
+                      isActive ? "bg-slate-950 text-white" : "bg-[#C8102E] text-white"
+                    }`}
                   >
                     {item.badge}
                   </span>

@@ -218,7 +218,7 @@ export function AdminEventClient({ initialEvents }: AdminEventClientProps) {
                   <img
                     src={getValidImageUrl(item.bannerUrl, item.title)}
                     alt={item.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                    className="w-full h-full object-cover transition-all duration-300"
                   />
 
                   <div className="absolute top-3 left-3">

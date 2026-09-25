@@ -56,13 +56,21 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      try {
-        const base64 = await convertFileToBase64(file);
-        setFormData((prev) => ({ ...prev, image: base64 }));
-      } catch (err) {
-        console.error("Gagal mengunggah gambar:", err);
-      }
+    if (!file) return;
+
+    const maxBytes = 2 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`Ukuran foto terlalu besar (${sizeMB} MB). Ukuran maksimal foto adalah 2 MB.`);
+      return;
+    }
+
+    try {
+      const base64 = await convertFileToBase64(file);
+      setFormData((prev) => ({ ...prev, image: base64 }));
+    } catch (err) {
+      console.error("Gagal mengunggah gambar:", err);
+      alert("Gagal membaca foto produk dari perangkat.");
     }
   };
 
@@ -219,7 +227,7 @@ export function AdminMerchandiseClient({ initialMerchandise }: AdminMerchandiseC
                     <img
                       src={getValidImageUrl(item.image, item.title)}
                       alt={item.title}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                      className="w-full h-full object-cover transition-all duration-300"
                     />
 
                     <div className="absolute top-3 left-3 flex items-center gap-1.5">

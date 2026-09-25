@@ -33,7 +33,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2a2ZldmF2amRnY2JmbGVxeG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDY0MjksImV4cCI6MjEwMDgyMjQyOX0.Ds5dLTviUjvQOfaeDK3zur3K0zl5i_Qjd-Dsp7KT79g";
+  "";
 
 const COMMON_HEADERS = {
   apikey: SUPABASE_KEY,
@@ -43,8 +43,8 @@ const COMMON_HEADERS = {
   Pragma: "no-cache",
 };
 
-const FETCH_NO_STORE: RequestInit = {
-  cache: "no-store",
+const FETCH_ISR_60S: RequestInit = {
+  next: { revalidate: 60 },
   headers: COMMON_HEADERS,
 };
 
@@ -61,6 +61,26 @@ const SETTINGS_KEYS = {
 
 // ─── GENERIC SETTINGS JSON HELPERS ───────────────────────────────────────────
 
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = 2500
+): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
 /**
  * Fetch a JSON blob from the `settings` table by key.
  * Falls back to `fallback` if key not found or on error.
@@ -68,13 +88,17 @@ const SETTINGS_KEYS = {
 export async function fetchSettingJSON<T>(key: string, fallback: T): Promise<T> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/settings?select=value&key=eq.${encodeURIComponent(key)}`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_ISR_60S, 2500);
     if (!res.ok) return fallback;
     const rows: { value: unknown }[] = await res.json();
     if (!rows || rows.length === 0) return fallback;
-    return rows[0].value as T;
+    const val = rows[0].value;
+    if (Array.isArray(val) && val.length === 0 && Array.isArray(fallback) && fallback.length > 0) {
+      return fallback;
+    }
+    return val as T;
   } catch (err) {
-    console.warn(`[supabaseData] fetchSettingJSON(${key}) error:`, err);
+    console.warn(`[supabaseData] fetchSettingJSON(${key}) error/timeout:`, err);
     return fallback;
   }
 }
@@ -84,12 +108,12 @@ export async function fetchSettingJSON<T>(key: string, fallback: T): Promise<T> 
  */
 export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/settings`;
+    const url = `${SUPABASE_URL}/rest/v1/settings?on_conflict=key`;
     const res = await fetch(url, {
       method: "POST",
       headers: {
         ...COMMON_HEADERS,
-        Prefer: "resolution=merge-duplicates",
+        Prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify({
         key,
@@ -116,10 +140,19 @@ export async function upsertSettingJSON<T>(key: string, data: T): Promise<void> 
  * Filter dilakukan di sisi aplikasi setelah fetch agar tidak bergantung
  * pada nilai enum yang tepat di database.
  */
+function sanitizeFotoUrl(fotoUrl?: string | null): string {
+  if (!fotoUrl) return "";
+  // Truncate malformed or excessively huge Base64 data URLs over 3MB length
+  if (fotoUrl.startsWith("data:") && fotoUrl.length > 3000000) {
+    return "";
+  }
+  return fotoUrl;
+}
+
 export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/Pengurus?order=urutan.asc,createdAt.asc&select=id,nama,jabatan,divisi,periode,fotoUrl,linkedin,instagram`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_ISR_60S, 2500);
     if (!res.ok) {
       const errText = await res.text().catch(() => res.status.toString());
       console.warn("[supabaseData] fetchPengurusFromDB failed:", res.status, errText);
@@ -145,8 +178,8 @@ export async function fetchPengurusFromDB(): Promise<PengurusItem[]> {
       nama: row.nama,
       jabatan: row.jabatan,
       divisi: "BPH", // Normalize to strict upper-case "BPH"
-      periode: row.periode ?? "2025/2026",
-      fotoUrl: row.fotoUrl ?? "",
+      periode: row.periode ?? "2026/2027",
+      fotoUrl: sanitizeFotoUrl(row.fotoUrl),
       linkedin: row.linkedin ?? "",
       instagram: row.instagram ?? "",
     }));
@@ -171,7 +204,7 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
   try {
     // Step 1: Get existing BPH ids dari database (fetch id & divisi, filter in JS agar aman untuk PostgreSQL Enum)
     const fetchExistingUrl = `${SUPABASE_URL}/rest/v1/Pengurus?select=id,divisi`;
-    const existingRes = await fetch(fetchExistingUrl, FETCH_NO_STORE);
+    const existingRes = await fetch(fetchExistingUrl, FETCH_ISR_60S);
     const existingRows: { id: string; divisi?: string | null }[] = existingRes.ok
       ? await existingRes.json()
       : [];
@@ -199,7 +232,7 @@ export async function syncPengurusToDB(data: PengurusItem[]): Promise<void> {
       nama: p.nama,
       jabatan: p.jabatan,
       divisi: "BPH",
-      periode: p.periode ?? "2025/2026",
+      periode: p.periode ?? "2026/2027",
       fotoUrl: p.fotoUrl ?? null,
       linkedin: p.linkedin ?? null,
       instagram: p.instagram ?? null,
@@ -251,7 +284,7 @@ const EVENT_STATUS_REVERSE: Record<string, string> = {
 export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
   try {
     const url = `${SUPABASE_URL}/rest/v1/Event?order=createdAt.desc&select=id,title,kategori,tanggal,waktu,lokasi,isOnline,status,deskripsi,bannerUrl,linkPendaftaran`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const res = await fetchWithTimeout(url, FETCH_ISR_60S, 2500);
     if (!res.ok) {
       console.warn("[supabaseData] fetchEventsFromDB failed:", res.status);
       return INITIAL_EVENTS;
@@ -294,15 +327,24 @@ export async function fetchEventsFromDB(): Promise<EventAdminItem[]> {
  */
 export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
   try {
-    // Step 1: Delete existing events
-    await fetch(`${SUPABASE_URL}/rest/v1/Event?id=not.is.null`, {
-      method: "DELETE",
-      headers: COMMON_HEADERS,
-    });
+    // Step 1: Fetch existing event IDs
+    const existingRes = await fetch(`${SUPABASE_URL}/rest/v1/Event?select=id`, FETCH_ISR_60S);
+    const existingRows: { id: string }[] = existingRes.ok ? await existingRes.json() : [];
+    const existingIds = existingRows.map((r) => r.id);
+
+    // Step 2: Delete IDs that were removed by admin
+    const newIds = data.map((e) => e.id);
+    const idsToDelete = existingIds.filter((id) => !newIds.includes(id));
+    if (idsToDelete.length > 0) {
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/Event?id=in.(${idsToDelete.map((id) => `"${id}"`).join(",")})`,
+        { method: "DELETE", headers: COMMON_HEADERS }
+      );
+    }
 
     if (data.length === 0) return;
 
-    // Step 2: Insert new list
+    // Step 3: Upsert events list cleanly (no blank DB window)
     const rows = data.map((e) => ({
       id: e.id,
       title: e.title,
@@ -323,13 +365,13 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
       method: "POST",
       headers: {
         ...COMMON_HEADERS,
-        Prefer: "return=minimal",
+        Prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify(rows),
     });
     if (!res.ok) {
       const text = await res.text();
-      console.warn("[supabaseData] syncEventsToDB insert failed:", text);
+      console.warn("[supabaseData] syncEventsToDB upsert failed:", text);
     }
   } catch (err) {
     console.warn("[supabaseData] syncEventsToDB error:", err);
@@ -340,14 +382,15 @@ export async function syncEventsToDB(data: EventAdminItem[]): Promise<void> {
 
 export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,email,status,createdAt`;
-    const res = await fetch(url, FETCH_NO_STORE);
+    const url = `${SUPABASE_URL}/rest/v1/Aspirasi?order=createdAt.desc&select=id,pesan,isAnonim,nama,npm,email,status,createdAt`;
+    const res = await fetchWithTimeout(url, FETCH_ISR_60S, 2500);
     if (!res.ok) return INITIAL_ASPIRASI;
     const rows: Array<{
       id: string;
       pesan: string;
       isAnonim: boolean;
       nama?: string | null;
+      npm?: string | null;
       email?: string | null;
       status: string;
       createdAt: string;
@@ -358,6 +401,7 @@ export async function fetchAspirasiFromDB(): Promise<AspirasiAdminItem[]> {
       pesan: row.pesan,
       isAnonim: row.isAnonim,
       nama: row.nama ?? undefined,
+      npm: row.npm ?? undefined,
       email: row.email ?? undefined,
       tanggal: row.createdAt ? row.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
       status: (row.status === "BARU"
@@ -379,6 +423,7 @@ export async function insertAspirasiToDB(item: AspirasiAdminItem): Promise<boole
       pesan: item.pesan,
       isAnonim: item.isAnonim,
       nama: item.isAnonim ? null : item.nama ?? null,
+      npm: item.isAnonim ? null : item.npm ?? null,
       email: item.email ?? null,
       status: "BARU",
     };

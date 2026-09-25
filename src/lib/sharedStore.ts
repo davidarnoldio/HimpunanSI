@@ -1,7 +1,7 @@
 // Shared Data Store with Permanent LocalStorage Persistence and Real-time Event Bus
 // Keeps Admin CMS & Public Pages in sync live
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import {
   triggerRevalidateDivisi,
   triggerRevalidateMerchandise,
@@ -80,8 +80,11 @@ const STORAGE_KEYS = {
  * Increment this number every time a breaking schema change is deployed.
  * On mismatch, all stored keys are wiped and re-seeded from INITIAL data.
  */
-const DATA_SCHEMA_VERSION = 4; // bumped: semua data dummy dihapus
+const DATA_SCHEMA_VERSION = 9; // bumped: strip base64 from localStorage and eliminate QuotaExceededError & lag
 const SCHEMA_VERSION_KEY = "HIMASI_data_schema_version";
+
+// In-memory reference cache for zero-lag 0ms data access
+const memoryCache: Record<string, unknown> = {};
 
 /**
  * Runs once at startup. Detects stale localStorage data from a previous schema
@@ -92,11 +95,16 @@ function runStoreMigration(): void {
   try {
     const storedVersion = parseInt(localStorage.getItem(SCHEMA_VERSION_KEY) ?? "0", 10);
     if (storedVersion < DATA_SCHEMA_VERSION) {
-      // Wipe all managed keys so stale data is replaced by fresh INITIAL defaults
-      Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+      // Wipe all managed keys so stale bloated data is replaced by fresh INITIAL defaults
+      Object.values(STORAGE_KEYS).forEach((key) => {
+        try {
+          localStorage.removeItem(key);
+        } catch {}
+      });
+      Object.keys(memoryCache).forEach((key) => delete memoryCache[key]);
       localStorage.setItem(SCHEMA_VERSION_KEY, String(DATA_SCHEMA_VERSION));
       console.info(
-        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset to defaults.`
+        `[HIMASI Store] Schema upgraded v${storedVersion}→v${DATA_SCHEMA_VERSION}. LocalStorage reset & sanitized.`
       );
     }
   } catch (e) {
@@ -138,29 +146,198 @@ export function formatWhatsAppUrl(input?: string | null, defaultMessage?: string
  * Convert selected File from file input into Base64 string for persistent storage
  */
 export function convertFileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
+  return compressAndConvertFileToBase64(file, 2);
+}
+
+/**
+ * Rotates an image (Base64 data URL or HTTP URL) by specified degrees (default 90 deg clockwise)
+ */
+export function rotateBase64Image(imageUrl: string, degrees = 90): Promise<string> {
+  return new Promise((resolve) => {
+    if (!imageUrl || typeof imageUrl !== "string") return resolve(imageUrl);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return resolve(imageUrl);
+
+      const normalizedDeg = ((degrees % 360) + 360) % 360;
+      if (normalizedDeg === 90 || normalizedDeg === 270) {
+        canvas.width = img.height;
+        canvas.height = img.width;
+      } else {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      }
+
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((normalizedDeg * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+      const rotatedBase64 = canvas.toDataURL("image/jpeg", 0.88);
+      resolve(rotatedBase64);
+    };
+    img.onerror = () => resolve(imageUrl);
+    img.src = imageUrl;
+  });
+}
+
+/**
+ * Convert selected File from device file picker into Base64 with canvas compression (Max 2 MB guarantee)
+ */
+export function compressAndConvertFileToBase64(file: File, maxMB = 2): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    const maxBytes = maxMB * 1024 * 1024;
+
+    if (file.size > maxBytes && !file.type.startsWith("image/")) {
+      return reject(new Error(`Ukuran file melebihi batas maksimal ${maxMB} MB.`));
+    }
+
+    // Try createImageBitmap for automatic EXIF orientation normalization
+    if (typeof createImageBitmap === "function") {
+      try {
+        let bitmap: ImageBitmap | null = null;
+        try {
+          bitmap = await createImageBitmap(file, { imageOrientation: "from-image" } as ImageBitmapOptions);
+        } catch {
+          bitmap = await createImageBitmap(file);
+        }
+
+        if (bitmap) {
+          const maxDim = 1200;
+          let width = bitmap.width;
+          let height = bitmap.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+
+          if (ctx) {
+            ctx.drawImage(bitmap, 0, 0, width, height);
+            bitmap.close();
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+            return resolve(compressedBase64);
+          }
+          bitmap.close();
+        }
+      } catch (e) {
+        console.warn("createImageBitmap failed, falling back to FileReader:", e);
+      }
+    }
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = (event) => {
+      const src = event.target?.result as string;
+      if (!src) return reject(new Error("Gagal membaca file gambar dari perangkat."));
+
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1200;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(src);
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+        resolve(compressedBase64);
+      };
+      img.onerror = () => resolve(src);
+    };
     reader.onerror = (error) => reject(error);
   });
 }
 
 /**
- * Read item from LocalStorage with permanent persistence guarantee
+ * Strips raw base64 data URLs before writing to LocalStorage
+ * to guarantee LocalStorage usage stays under 50KB and never throws QuotaExceededError.
+ */
+function stripBase64ForStorage<T>(data: T): T {
+  if (!data) return data;
+  try {
+    const jsonStr = JSON.stringify(data, (key, value) => {
+      if (
+        typeof value === "string" &&
+        value.startsWith("data:") &&
+        value.length > 300
+      ) {
+        return "";
+      }
+      return value;
+    });
+    return JSON.parse(jsonStr) as T;
+  } catch {
+    return data;
+  }
+}
+
+/**
+ * Read item from memory or LocalStorage with permanent persistence guarantee
  */
 function getStoredData<T>(key: string, initialData: T): T {
   if (typeof window === "undefined") return initialData;
+  if (memoryCache[key] !== undefined) {
+    return memoryCache[key] as T;
+  }
   try {
     const item = localStorage.getItem(key);
     if (item !== null) {
-      return JSON.parse(item);
+      const parsed = JSON.parse(item);
+      memoryCache[key] = parsed;
+      return parsed;
     }
-    localStorage.setItem(key, JSON.stringify(initialData));
+    const cleanInitial = stripBase64ForStorage(initialData);
+    try {
+      localStorage.setItem(key, JSON.stringify(cleanInitial));
+    } catch {}
+    memoryCache[key] = initialData;
     return initialData;
   } catch (e) {
-    console.error(`Error reading ${key} from localStorage:`, e);
+    console.warn(`[sharedStore] Error reading ${key} from localStorage:`, e);
+    memoryCache[key] = initialData;
     return initialData;
+  }
+}
+
+function setStoredDataSilent<T>(key: string, data: T): void {
+  const cleanData = stripBase64ForStorage(data);
+  memoryCache[key] = data; // Keep full object (with HTTP URLs) in memory
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(key, JSON.stringify(cleanData));
+  } catch (e) {
+    console.warn(`[sharedStore] QuotaExceededError writing ${key} to localStorage:`, e);
+    try {
+      localStorage.removeItem(key);
+    } catch {}
   }
 }
 
@@ -168,20 +345,27 @@ function getStoredData<T>(key: string, initialData: T): T {
  * Save item to LocalStorage and notify all open tabs/pages
  */
 function setStoredData<T>(key: string, data: T): void {
+  const cleanData = stripBase64ForStorage(data);
+  memoryCache[key] = data;
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(key, JSON.stringify(data));
-    window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
+    localStorage.setItem(key, JSON.stringify(cleanData));
   } catch (e) {
-    console.error(`Error writing ${key} to localStorage:`, e);
+    console.warn(`[sharedStore] QuotaExceededError writing ${key} to localStorage:`, e);
+    try {
+      localStorage.removeItem(key);
+    } catch {}
   }
+  window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
 }
 
 // Low-level sync functions
 export const store = {
   getPengurus: (): PengurusItem[] => {
     const data = getStoredData(STORAGE_KEYS.PENGURUS, INITIAL_PENGURUS);
-    return data.filter((p) => p.divisi === "BPH");
+    return data
+      .map((p) => (!p.periode || p.periode === "2025/2026" ? { ...p, periode: "2026/2027" } : p))
+      .filter((p) => p.divisi === "BPH");
   },
   setPengurus: (data: PengurusItem[]) => {
     const cleaned = data.filter((p) => p.divisi === "BPH");
@@ -210,7 +394,10 @@ export const store = {
   getVisiMisi: (): VisiMisiData => getStoredData(STORAGE_KEYS.VISI_MISI, INITIAL_VISI_MISI),
   setVisiMisi: (data: VisiMisiData) => setStoredData(STORAGE_KEYS.VISI_MISI, data),
 
-  getAnggotaDivisi: (): AnggotaDivisiItem[] => getStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, INITIAL_ANGGOTA_DIVISI),
+  getAnggotaDivisi: (): AnggotaDivisiItem[] => {
+    const data = getStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, INITIAL_ANGGOTA_DIVISI);
+    return data.map((a) => (!a.periode || a.periode === "2025/2026" ? { ...a, periode: "2026/2027" } : a));
+  },
   setAnggotaDivisi: (data: AnggotaDivisiItem[]) => setStoredData(STORAGE_KEYS.ANGGOTA_DIVISI, data),
 
   getDivisiList: (): string[] => getStoredData(STORAGE_KEYS.DIVISI, ["Akademik", "Medinfo", "PSDM", "Humas"]),
@@ -235,13 +422,73 @@ export const store = {
   setIuranAnggota: (data: IuranAnggota[]) => setStoredData(STORAGE_KEYS.IURAN_ANGGOTA, data),
 };
 
+let primarySyncPromise: Promise<void> | null = null;
+let lastPrimarySyncTime = 0;
+const SYNC_COOLDOWN_MS = 30000; // 30 seconds request deduplication
+
+function triggerPrimarySync(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+
+  const now = Date.now();
+  if (primarySyncPromise) {
+    return primarySyncPromise;
+  }
+
+  if (now - lastPrimarySyncTime < SYNC_COOLDOWN_MS) {
+    return Promise.resolve();
+  }
+
+  lastPrimarySyncTime = now;
+  primarySyncPromise = Promise.all([
+    fetchPengurusFromDB(),     // [0] → pengurus
+    fetchEventsFromDB(),       // [1] → events
+    fetchMerchandiseFromDB(),  // [2] → merchandise
+    fetchHeroContentFromDB(),  // [3] → heroContent
+    fetchVisiMisiFromDB(),     // [4] → visiMisi
+    fetchDivisiFromDB(),       // [5] → divisi
+    fetchAnggotaDivisiFromDB(), // [6] → anggota
+    fetchAspirasiFromDB(),     // [7] → aspirasi
+  ])
+    .then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
+      const filteredPengurus = pengurus.filter((p) => p.divisi === "BPH");
+      const filteredDivisi = divisi.filter((d) => d.id !== "bph" && d.singkatan.toLowerCase() !== "bph");
+
+      memoryCache[STORAGE_KEYS.PENGURUS] = filteredPengurus;
+      memoryCache[STORAGE_KEYS.EVENTS] = events;
+      memoryCache[STORAGE_KEYS.MERCHANDISE] = merchandise;
+      memoryCache[STORAGE_KEYS.HERO_CONTENT] = heroContent;
+      memoryCache[STORAGE_KEYS.VISI_MISI] = visiMisi;
+      memoryCache[STORAGE_KEYS.DIVISI_FULL] = filteredDivisi;
+      memoryCache[STORAGE_KEYS.ANGGOTA_DIVISI] = anggota;
+      memoryCache[STORAGE_KEYS.ASPIRASI] = aspirasi;
+
+      // Use silent updates to write sanitized data to LocalStorage without throwing QuotaExceededError
+      setStoredDataSilent(STORAGE_KEYS.PENGURUS, filteredPengurus);
+      setStoredDataSilent(STORAGE_KEYS.EVENTS, events);
+      setStoredDataSilent(STORAGE_KEYS.MERCHANDISE, merchandise);
+      setStoredDataSilent(STORAGE_KEYS.HERO_CONTENT, heroContent);
+      setStoredDataSilent(STORAGE_KEYS.VISI_MISI, visiMisi);
+      setStoredDataSilent(STORAGE_KEYS.DIVISI_FULL, filteredDivisi);
+      setStoredDataSilent(STORAGE_KEYS.ANGGOTA_DIVISI, anggota);
+      setStoredDataSilent(STORAGE_KEYS.ASPIRASI, aspirasi);
+
+      // Dispatch single consolidated update event
+      window.dispatchEvent(new CustomEvent(STORE_EVENT_NAME));
+    })
+    .catch((err) => {
+      console.warn("[HIMASI Store] Supabase primary sync error:", err);
+    })
+    .finally(() => {
+      primarySyncPromise = null;
+    });
+
+  return primarySyncPromise;
+}
+
 /**
  * React Hook for automatically syncing public & admin pages with shared store
  */
 export function useSharedStore() {
-  // Initialize with INITIAL constants (not empty arrays!) so the first SSR/CSR
-  // render already has meaningful content — no blank flash while waiting for useEffect.
-  // When useEffect runs, localStorage data overwrites these defaults.
   const [pengurus, setPengurusState] = useState<PengurusItem[]>(INITIAL_PENGURUS.filter((p) => p.divisi === "BPH"));
   const [events, setEventsState] = useState<EventAdminItem[]>(INITIAL_EVENTS);
   const [aspirasi, setAspirasiState] = useState<AspirasiAdminItem[]>(INITIAL_ASPIRASI);
@@ -256,6 +503,7 @@ export function useSharedStore() {
   const [badgeWords, setBadgeWordsState] = useState<string[]>(INITIAL_BADGE_WORDS);
   const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(INITIAL_SUBHEADLINE_WORDS);
   const [heroContent, setHeroContentState] = useState<HeroContentData>(INITIAL_HERO_CONTENT);
+<<<<<<< HEAD
   const [kasTransactions, setKasTransactionsState] = useState<KasTransaction[]>(INITIAL_KAS_TRANSACTIONS);
   const [iuranAnggota, setIuranAnggotaState] = useState<IuranAnggota[]>(INITIAL_IURAN_ANGGOTA);
   // mounted = true setelah localStorage dibaca (bukan untuk gating render)
@@ -276,16 +524,35 @@ export function useSharedStore() {
     setHeroContentState(store.getHeroContent());
     setKasTransactionsState(store.getKasTransactions());
     setIuranAnggotaState(store.getIuranAnggota());
+=======
+  const [mounted, setMounted] = useState(false);
+
+  const reloadAll = () => {
+    startTransition(() => {
+      setPengurusState(store.getPengurus());
+      setEventsState(store.getEvents());
+      setAspirasiState(store.getAspirasi());
+      setMerchandiseState(store.getMerchandise());
+      setDivisiDataState(store.getDivisiFull());
+      setVisiMisiState(store.getVisiMisi());
+      setAnggotaDivisiState(store.getAnggotaDivisi());
+      setDivisiListState(store.getDivisiList());
+      setHeadlineWordsState(store.getHeadlineWords());
+      setBadgeWordsState(store.getBadgeWords());
+      setSubheadlineWordsState(store.getSubheadlineWords());
+      setHeroContentState(store.getHeroContent());
+    });
+>>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293
   };
 
   useEffect(() => {
-    // Run migration check first — ensures stale localStorage data is wiped
     runStoreMigration();
     queueMicrotask(() => {
       setMounted(true);
       reloadAll();
     });
 
+<<<<<<< HEAD
     // PRIMARY SYNC: Fetch latest data from Supabase (overrides localStorage)
     // This ensures cross-device/cross-browser sync when admin panel changes data
     Promise.all([
@@ -336,6 +603,14 @@ export function useSharedStore() {
     }).catch((err) => {
       console.warn("[HIMASI Store] Supabase primary sync error:", err);
     });
+=======
+    // Defer client-side DB re-fetching until main thread paint is complete (eliminates TBT)
+    const timerId = setTimeout(() => {
+      triggerPrimarySync().then(() => {
+        reloadAll();
+      });
+    }, 400);
+>>>>>>> 2cacfe1a678d155c1ea3c9d84be36ee786de4293
 
     const handleUpdate = () => {
       reloadAll();
@@ -345,6 +620,7 @@ export function useSharedStore() {
     window.addEventListener("storage", handleUpdate);
 
     return () => {
+      clearTimeout(timerId);
       window.removeEventListener(STORE_EVENT_NAME, handleUpdate);
       window.removeEventListener("storage", handleUpdate);
     };

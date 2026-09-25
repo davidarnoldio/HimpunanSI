@@ -1,10 +1,14 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchDivisiFromDB, fetchAnggotaDivisiFromDB } from "@/lib/supabaseData";
 import { DetailDivisiClient } from "@/components/landing/DetailDivisiClient";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
+
+// Deduplicate fetches across metadata generation and page rendering
+const getCachedDivisi = cache(async () => fetchDivisiFromDB());
+const getCachedAnggota = cache(async () => fetchAnggotaDivisiFromDB());
 
 export async function generateMetadata({
   params,
@@ -12,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const divisiData = await fetchDivisiFromDB();
+  const divisiData = await getCachedDivisi();
   const targetDivisi = divisiData.find((d) => d.id === slug);
 
   if (!targetDivisi) {
@@ -43,8 +47,8 @@ export default async function DetailDivisiPage({
   const { slug } = await params;
 
   const [divisiData, anggotaDivisi] = await Promise.all([
-    fetchDivisiFromDB(),
-    fetchAnggotaDivisiFromDB(),
+    getCachedDivisi(),
+    getCachedAnggota(),
   ]);
 
   const targetDivisi = divisiData.find((d) => d.id === slug);

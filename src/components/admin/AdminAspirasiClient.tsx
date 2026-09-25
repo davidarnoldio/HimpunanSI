@@ -47,7 +47,8 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
   const filteredItems = aspirasi.filter((item) => {
     const matchSearch =
       item.pesan.toLowerCase().includes(search.toLowerCase()) ||
-      (item.nama && item.nama.toLowerCase().includes(search.toLowerCase()));
+      (item.nama && item.nama.toLowerCase().includes(search.toLowerCase())) ||
+      (item.npm && item.npm.toLowerCase().includes(search.toLowerCase()));
     const matchStatus = filterStatus === "Semua" || item.status === filterStatus;
     return matchSearch && matchStatus;
   });
@@ -158,10 +159,15 @@ export function AdminAspirasiClient({ initialAspirasi }: AdminAspirasiClientProp
                 className="p-5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-950 dark:border-white/20 space-y-4 hover:shadow-[4px_4px_0px_0px_rgba(200,16,46,1)] transition-all"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-slate-950/20 dark:border-white/20 pb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-black font-mono text-xs uppercase text-slate-950 dark:text-white">
                       {item.isAnonim ? "🔒 KIRIM ANONIM" : item.nama || "MAHASISWA SI"}
                     </span>
+                    {!item.isAnonim && item.npm && (
+                      <span className="text-[11px] font-mono font-bold text-[#C8102E] dark:text-[#E31B3B] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 border border-slate-950 dark:border-white/20">
+                        NPM: {item.npm}
+                      </span>
+                    )}
                     {item.email && !item.isAnonim && (
                       <span className="text-xs font-mono text-slate-500">({item.email})</span>
                     )}

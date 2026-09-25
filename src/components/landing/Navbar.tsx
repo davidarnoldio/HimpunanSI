@@ -4,11 +4,9 @@ import { useState, useEffect, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NAV_LINKS } from "@/data/landingPage";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-
-import { BrandLogo } from "@/components/ui/BrandLogo";
 
 const emptySubscribe = () => () => { };
 
@@ -22,6 +20,12 @@ export function Navbar() {
   );
   const [activeSection, setActiveSection] = useState("beranda");
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Prefetch home page so subpage navigation to / is 100% instant from memory
+    router.prefetch("/");
+  }, [router]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -37,7 +41,7 @@ export function Navbar() {
   useEffect(() => {
     if (pathname !== "/") return;
 
-    const sections = ["beranda", "kabinet", "divisi", "event"];
+    const sections = ["beranda", "kabinet", "divisi", "legalitas", "event"];
     const observerOptions = {
       root: null,
       rootMargin: "-20% 0px -40% 0px",
@@ -72,14 +76,21 @@ export function Navbar() {
           const yOffset = -80;
           const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
-          const windowLenis = (window as unknown as Record<string, { scrollTo: (y: number, opts?: { duration: number }) => void }>).lenis;
+          const windowLenis = (window as unknown as Record<string, { scrollTo: (y: number, opts?: { immediate?: boolean }) => void }>).lenis;
           if (windowLenis && typeof windowLenis.scrollTo === "function") {
-            windowLenis.scrollTo(y, { duration: 1.2 });
+            windowLenis.scrollTo(y, { immediate: true });
           } else {
-            window.scrollTo({ top: y, behavior: "smooth" });
+            window.scrollTo({ top: y, behavior: "instant" as ScrollBehavior });
           }
         }
         setIsOpen(false);
+      } else {
+        e.preventDefault();
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("HIMASI_pending_scroll", targetId);
+        }
+        setIsOpen(false);
+        router.push("/");
       }
     }
   };
@@ -106,19 +117,24 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Left: HMSI / Universitas Gunadarma Branding */}
+          {/* Left: HIMASI Student Community Branding */}
           <Link
             href="/"
+            onClick={(e) => handleNavClick(e, "/#beranda")}
             className="flex items-center gap-3 group"
             aria-label="HIMASI UG — Kembali ke beranda"
           >
-            <BrandLogo size="md" />
-            <div className="flex flex-col leading-none hidden sm:flex">
-              <span className="text-slate-950 dark:text-white font-black font-heading text-base sm:text-lg tracking-tight uppercase group-hover:text-[#c8102e] dark:group-hover:text-[#e31b3b] transition-colors">
-                HIMASI <span className="text-[#c8102e] dark:text-[#e31b3b]">•</span> GUNADARMA
+            <img
+              src="/himsigundar.webp"
+              alt="Logo HIMASI UG"
+              className="h-8 sm:h-9 w-auto object-contain drop-shadow-md"
+            />
+            <div className="flex flex-col leading-tight hidden sm:flex">
+              <span className="text-slate-950 dark:text-white font-black font-heading text-xs sm:text-sm tracking-tight uppercase group-hover:text-[#c8102e] dark:group-hover:text-[#e31b3b] transition-colors">
+                HIMPUNAN MAHASISWA
               </span>
-              <span className="text-slate-500 dark:text-slate-400 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest uppercase">
-                STUDENT COMMUNITY & TECH
+              <span className="text-[#c8102e] dark:text-[#e31b3b] text-[10px] sm:text-[11px] font-mono font-extrabold tracking-wider uppercase">
+                SISTEM INFORMASI
               </span>
             </div>
           </Link>
@@ -153,16 +169,25 @@ export function Navbar() {
             })}
           </nav>
 
-          {/* Desktop Right CTA + Theme Toggle */}
+          {/* Desktop Right: Theme Toggle + Gunadarma Logo & Branding */}
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
 
-            <Link
-              href="/#event"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#c8102e] dark:bg-[#e31b3b] hover:bg-[#a00c24] dark:hover:bg-[#ff2d4d] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all border border-slate-950 dark:border-transparent"
-            >
-              Jelajahi Event →
-            </Link>
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/logogundar.webp"
+                alt="Logo Universitas Gunadarma"
+                className="h-8 sm:h-9 w-auto object-contain drop-shadow-md"
+              />
+              <div className="flex flex-col leading-tight hidden lg:flex">
+                <span className="text-slate-950 dark:text-white font-black font-heading text-xs sm:text-sm tracking-tight uppercase">
+                  UNIVERSITAS
+                </span>
+                <span className="text-[#c8102e] dark:text-[#e31b3b] text-[10px] sm:text-[11px] font-mono font-extrabold tracking-wider uppercase">
+                  GUNADARMA
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Mobile Actions */}

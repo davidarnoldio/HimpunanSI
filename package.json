@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "test:crud": "node scripts/test-crud-suite.js"
+    "lint": "eslint"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.4",
