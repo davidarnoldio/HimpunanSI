@@ -24,7 +24,6 @@ export const NAV_LINKS = [
   { label: "Event & Proker", href: "/#event" },
   { label: "Merchandise", href: "/merchandise" },
   { label: "Aspirasi", href: "/aspirasi" },
-  { label: "BPH", href: "/divisi/bendahara" },
 ] as const;
 
 // ─────────────────────────────
