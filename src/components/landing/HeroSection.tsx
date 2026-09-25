@@ -15,10 +15,18 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" as const },
+  },
 };
 
-export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) {
+export function HeroSection({
+  heroContent,
+}: {
+  heroContent?: HeroContentData;
+}) {
   const { heroContent: sharedHero } = useSharedStore();
   const content = sharedHero || heroContent || INITIAL_HERO_CONTENT;
 
@@ -33,12 +41,15 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
       : INITIAL_HERO_CONTENT.headlineDynamicWords;
 
   const descriptionWords =
-    content.descriptionDynamicWords && content.descriptionDynamicWords.length > 0
+    content.descriptionDynamicWords &&
+    content.descriptionDynamicWords.length > 0
       ? content.descriptionDynamicWords
       : INITIAL_HERO_CONTENT.descriptionDynamicWords;
 
   const statsList =
-    content.stats && content.stats.length > 0 ? content.stats : INITIAL_HERO_CONTENT.stats;
+    content.stats && content.stats.length > 0
+      ? content.stats
+      : INITIAL_HERO_CONTENT.stats;
 
   return (
     <section
@@ -62,7 +73,11 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#c8102e] dark:bg-[#e31b3b] text-white text-xs font-bold font-mono uppercase tracking-widest border border-slate-950 dark:border-transparent">
               <span className="w-2 h-2 rounded-none bg-white animate-pulse" />
               {content.badgePrefix || "HIMPUNAN MAHASISWA "}
-              <FlipWords words={badgeWords} duration={2000} className="font-bold font-mono text-white" />
+              <FlipWords
+                words={badgeWords}
+                duration={2000}
+                className="font-bold font-mono text-white"
+              />
             </span>
           </motion.div>
 
@@ -75,9 +90,11 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             <FlipWords
               words={headlineWords}
               duration={2000}
-              className="text-[#c8102e] dark:text-[#e31b3b]"
+              className="inline-block text-left min-w-[11ch] sm:min-w-[12ch] text-[#c8102e] dark:text-[#e31b3b]"
             />{" "}
-            <span className="block">{content.headlineSuffix || "SISTEM INFORMASI."}</span>
+            <span className="block">
+              {content.headlineSuffix || "SISTEM INFORMASI."}
+            </span>
           </motion.h1>
 
           {/* Subheadline Copywriting */}
@@ -85,7 +102,8 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             variants={itemVariants}
             className="text-slate-700 dark:text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed font-medium"
           >
-            {content.descriptionBefore || "HIMASI UG adalah gerakan mahasiswa yang "}
+            {content.descriptionBefore ||
+              "HIMASI UG adalah gerakan mahasiswa yang "}
             <FlipWords
               words={descriptionWords}
               duration={2000}
@@ -95,7 +113,10 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
           </motion.p>
 
           {/* Action Buttons */}
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-2">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-wrap items-center gap-3 pt-2"
+          >
             <motion.a
               href="/#event"
               whileHover={{ scale: 1.02 }}
@@ -154,12 +175,21 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
             {/* Editorial Photograph */}
             {(() => {
               const rawUrl = content.heroImageUrl;
-              const desktopImg = !rawUrl || rawUrl === "/hero-editorial.jpg" ? "/hero-editorial.webp" : rawUrl;
-              const mobileImg = !rawUrl || rawUrl === "/hero-editorial.jpg" ? "/hero-editorial-mobile.webp" : desktopImg;
+
+              // Cek apakah rawUrl kosong, string base64, atau masih menyimpan path gambar lama
+              const isOldImage =
+                !rawUrl ||
+                rawUrl.startsWith("data:image") ||
+                rawUrl === "/hero-editorial.jpg" ||
+                rawUrl === "/hero-editorial.webp";
+
+              const desktopImg = isOldImage ? "/Fotbar.avif" : rawUrl;
+              const mobileImg = desktopImg;
+
               return (
                 <picture className="absolute inset-0 w-full h-full">
-                  <source srcSet={mobileImg} media="(max-width: 640px)" type="image/webp" />
-                  <source srcSet={desktopImg} type="image/webp" />
+                  <source srcSet={mobileImg} media="(max-width: 640px)" />
+                  <source srcSet={desktopImg} />
                   <img
                     src={desktopImg}
                     alt="Indonesian Information Systems Students Collaborating — HIMASI UG"
@@ -198,7 +228,10 @@ export function HeroSection({ heroContent }: { heroContent?: HeroContentData }) 
       {/* Bottom Scroll Indicator */}
       <div className="mt-4 flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs font-mono font-bold uppercase tracking-widest">
         <span>SCROLL DOWN</span>
-        <motion.div animate={{ y: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+        <motion.div
+          animate={{ y: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
           <ChevronDown size={14} />
         </motion.div>
       </div>

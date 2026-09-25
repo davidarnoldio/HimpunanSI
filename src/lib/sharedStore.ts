@@ -27,6 +27,10 @@ import {
   fetchDivisiFromDB,
   fetchAnggotaDivisiFromDB,
   fetchAspirasiFromDB,
+  fetchKasTransactionsFromDB,
+  fetchIuranAnggotaFromDB,
+  syncKasTransactionsToDB,
+  syncIuranAnggotaToDB,
 } from "@/lib/supabaseData";
 import {
   INITIAL_PENGURUS,
@@ -40,6 +44,8 @@ import {
   INITIAL_BADGE_WORDS,
   INITIAL_SUBHEADLINE_WORDS,
   INITIAL_HERO_CONTENT,
+  INITIAL_KAS_TRANSACTIONS,
+  INITIAL_IURAN_ANGGOTA,
   type PengurusItem,
   type EventAdminItem,
   type AspirasiAdminItem,
@@ -48,6 +54,8 @@ import {
   type VisiMisiData,
   type AnggotaDivisiItem,
   type HeroContentData,
+  type KasTransaction,
+  type IuranAnggota,
 } from "@/data/adminMockData";
 
 const STORAGE_KEYS = {
@@ -63,6 +71,8 @@ const STORAGE_KEYS = {
   BADGE_WORDS: "HIMASI_badge_words_v3",
   SUBHEADLINE_WORDS: "HIMASI_subheadline_words_v3",
   HERO_CONTENT: "HIMASI_hero_content_v3",
+  KAS_TRANSACTIONS: "HIMASI_kas_transactions_v3",
+  IURAN_ANGGOTA: "HIMASI_iuran_anggota_v3",
 };
 
 /**
@@ -217,6 +227,12 @@ export const store = {
 
   getHeroContent: (): HeroContentData => getStoredData(STORAGE_KEYS.HERO_CONTENT, INITIAL_HERO_CONTENT),
   setHeroContent: (data: HeroContentData) => setStoredData(STORAGE_KEYS.HERO_CONTENT, data),
+
+  getKasTransactions: (): KasTransaction[] => getStoredData(STORAGE_KEYS.KAS_TRANSACTIONS, INITIAL_KAS_TRANSACTIONS),
+  setKasTransactions: (data: KasTransaction[]) => setStoredData(STORAGE_KEYS.KAS_TRANSACTIONS, data),
+
+  getIuranAnggota: (): IuranAnggota[] => getStoredData(STORAGE_KEYS.IURAN_ANGGOTA, INITIAL_IURAN_ANGGOTA),
+  setIuranAnggota: (data: IuranAnggota[]) => setStoredData(STORAGE_KEYS.IURAN_ANGGOTA, data),
 };
 
 /**
@@ -240,6 +256,8 @@ export function useSharedStore() {
   const [badgeWords, setBadgeWordsState] = useState<string[]>(INITIAL_BADGE_WORDS);
   const [subheadlineWords, setSubheadlineWordsState] = useState<string[]>(INITIAL_SUBHEADLINE_WORDS);
   const [heroContent, setHeroContentState] = useState<HeroContentData>(INITIAL_HERO_CONTENT);
+  const [kasTransactions, setKasTransactionsState] = useState<KasTransaction[]>(INITIAL_KAS_TRANSACTIONS);
+  const [iuranAnggota, setIuranAnggotaState] = useState<IuranAnggota[]>(INITIAL_IURAN_ANGGOTA);
   // mounted = true setelah localStorage dibaca (bukan untuk gating render)
   const [mounted, setMounted] = useState(false);
 
@@ -256,6 +274,8 @@ export function useSharedStore() {
     setBadgeWordsState(store.getBadgeWords());
     setSubheadlineWordsState(store.getSubheadlineWords());
     setHeroContentState(store.getHeroContent());
+    setKasTransactionsState(store.getKasTransactions());
+    setIuranAnggotaState(store.getIuranAnggota());
   };
 
   useEffect(() => {
@@ -277,7 +297,9 @@ export function useSharedStore() {
       fetchDivisiFromDB(),       // [5] → divisi
       fetchAnggotaDivisiFromDB(), // [6] → anggota
       fetchAspirasiFromDB(),     // [7] → aspirasi
-    ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi]) => {
+      fetchKasTransactionsFromDB(), // [8] → kas
+      fetchIuranAnggotaFromDB(),    // [9] → iuran
+    ]).then(([pengurus, events, merchandise, heroContent, visiMisi, divisi, anggota, aspirasi, kas, iuran]) => {
       // Update localStorage and state with fresh DB data
       store.setPengurus(pengurus);
       setPengurusState(pengurus);
@@ -305,6 +327,12 @@ export function useSharedStore() {
 
       store.setAspirasi(aspirasi);
       setAspirasiState(aspirasi);
+
+      store.setKasTransactions(kas);
+      setKasTransactionsState(kas);
+
+      store.setIuranAnggota(iuran);
+      setIuranAnggotaState(iuran);
     }).catch((err) => {
       console.warn("[HIMASI Store] Supabase primary sync error:", err);
     });
@@ -336,6 +364,8 @@ export function useSharedStore() {
     badgeWords,
     subheadlineWords,
     heroContent,
+    kasTransactions,
+    iuranAnggota,
     setPengurus: (data: PengurusItem[]) => {
       store.setPengurus(data);
       setPengurusState(data);
@@ -423,6 +453,16 @@ export function useSharedStore() {
         store.setSubheadlineWords(data.descriptionDynamicWords);
         setSubheadlineWordsState(data.descriptionDynamicWords);
       }
+    },
+    setKasTransactions: (data: KasTransaction[]) => {
+      store.setKasTransactions(data);
+      setKasTransactionsState(data);
+      syncKasTransactionsToDB(data).catch(() => { });
+    },
+    setIuranAnggota: (data: IuranAnggota[]) => {
+      store.setIuranAnggota(data);
+      setIuranAnggotaState(data);
+      syncIuranAnggotaToDB(data).catch(() => { });
     },
   };
 }

@@ -8,6 +8,8 @@ import {
   syncVisiMisiToDB,
   syncDivisiToDB,
   syncAnggotaDivisiToDB,
+  syncKasTransactionsToDB,
+  syncIuranAnggotaToDB,
 } from "@/lib/supabaseData";
 import { revalidatePath } from "next/cache";
 import type {
@@ -18,6 +20,8 @@ import type {
   VisiMisiData,
   DivisiAdminItem,
   AnggotaDivisiItem,
+  KasTransaction,
+  IuranAnggota,
 } from "@/data/adminMockData";
 
 export async function savePengurusAction(data: PengurusItem[]): Promise<{ success: boolean }> {
@@ -104,6 +108,28 @@ export async function saveAnggotaDivisiAction(data: AnggotaDivisiItem[]): Promis
     return { success: true };
   } catch (err) {
     console.error("[adminActions] saveAnggotaDivisiAction error:", err);
+    return { success: false };
+  }
+}
+
+export async function saveKasTransactionsAction(data: KasTransaction[]): Promise<{ success: boolean }> {
+  try {
+    await syncKasTransactionsToDB(data);
+    revalidatePath("/admin/bendahara");
+    return { success: true };
+  } catch (err) {
+    console.error("[adminActions] saveKasTransactionsAction error:", err);
+    return { success: false };
+  }
+}
+
+export async function saveIuranAnggotaAction(data: IuranAnggota[]): Promise<{ success: boolean }> {
+  try {
+    await syncIuranAnggotaToDB(data);
+    revalidatePath("/admin/bendahara");
+    return { success: true };
+  } catch (err) {
+    console.error("[adminActions] saveIuranAnggotaAction error:", err);
     return { success: false };
   }
 }

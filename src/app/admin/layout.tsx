@@ -19,6 +19,7 @@ import {
   Layers,
   Target,
   Sparkles,
+  Wallet,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandLogo } from "@/components/ui/BrandLogo";
@@ -44,6 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Kelola Visi & Misi", href: "/admin/visimisi", icon: Target },
     { label: "Kelola Pengurus (BPH)", href: "/admin/pengurus", icon: Users },
     { label: "Kelola Divisi & Anggota", href: "/admin/divisi", icon: Layers },
+    { label: "Kelola Bendahara", href: "/admin/bendahara", icon: Wallet },
     { label: "Kelola Event", href: "/admin/event", icon: Calendar },
     { label: "Kelola Merchandise", href: "/admin/merchandise", icon: ShoppingBag },
     {

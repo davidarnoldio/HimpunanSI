@@ -137,15 +137,44 @@ export const INITIAL_HERO_CONTENT: HeroContentData = {
     " dalam menggerakkan potensi mahasiswa Sistem Informasi Universitas Gunadarma melalui program kerja unggulan & inovasi digital.",
   stats: [
     { value: "1.200+", label: "Mahasiswa SI Aktif" },
-    { value: "4", label: "Divisi Operasional" },
+    { value: "7", label: "Divisi Operasional" },
     { value: "20+", label: "Proker / Tahun" },
     { value: "3", label: "Kampus Gunadarma" },
   ],
-  heroImageUrl: "/hero-editorial.webp",
+  heroImageUrl: "/Fotbar.avif", // Default image, bisa diubah via Admin Panel
 };
 
 export const INITIAL_HEADLINE_WORDS: string[] = INITIAL_HERO_CONTENT.headlineDynamicWords;
 export const INITIAL_BADGE_WORDS: string[] = INITIAL_HERO_CONTENT.badgeDynamicWords;
 export const INITIAL_SUBHEADLINE_WORDS: string[] = INITIAL_HERO_CONTENT.descriptionDynamicWords;
+
+// ─── BENDAHARA MODULE ────────────────────────────────────────────────────────
+export type TransactionType = "Masuk" | "Keluar";
+export type PaymentMethod = "QRIS" | "Tunai" | "Transfer Bank";
+
+export interface KasTransaction {
+  id: string;
+  tanggal: string;
+  kategori: string;
+  nominal: number;
+  keterangan: string;
+  tipe: TransactionType;
+  metodePembayaran: PaymentMethod;
+  statusVerifikasi: "Verified" | "Pending" | "Rejected";
+}
+
+export interface IuranAnggota {
+  id: string;
+  nama: string;
+  npm: string;
+  divisi: string;
+  statusBayar: boolean;
+  bulan: string;
+  tanggalBayar?: string;
+  nominal: number;
+}
+
+export const INITIAL_KAS_TRANSACTIONS: KasTransaction[] = [];
+export const INITIAL_IURAN_ANGGOTA: IuranAnggota[] = [];
 
 

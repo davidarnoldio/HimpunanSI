@@ -55,6 +55,8 @@ const SETTINGS_KEYS = {
   VISI_MISI: "cms_visi_misi",
   DIVISI_DATA: "cms_divisi_data",
   ANGGOTA_DIVISI: "cms_anggota_divisi",
+  KAS_TRANSACTIONS: "cms_kas_transactions",
+  IURAN_ANGGOTA: "cms_iuran_anggota",
 } as const;
 
 // ─── GENERIC SETTINGS JSON HELPERS ───────────────────────────────────────────
@@ -493,4 +495,29 @@ export async function fetchAnggotaDivisiFromDB(): Promise<AnggotaDivisiItem[]> {
 
 export async function syncAnggotaDivisiToDB(data: AnggotaDivisiItem[]): Promise<void> {
   return upsertSettingJSON(SETTINGS_KEYS.ANGGOTA_DIVISI, data);
+}
+
+// ─── BENDAHARA ────────────────────────────────────────────────────────────────
+
+import {
+  type KasTransaction,
+  type IuranAnggota,
+  INITIAL_KAS_TRANSACTIONS,
+  INITIAL_IURAN_ANGGOTA,
+} from "@/data/adminMockData";
+
+export async function fetchKasTransactionsFromDB(): Promise<KasTransaction[]> {
+  return fetchSettingJSON<KasTransaction[]>(SETTINGS_KEYS.KAS_TRANSACTIONS, INITIAL_KAS_TRANSACTIONS);
+}
+
+export async function syncKasTransactionsToDB(data: KasTransaction[]): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.KAS_TRANSACTIONS, data);
+}
+
+export async function fetchIuranAnggotaFromDB(): Promise<IuranAnggota[]> {
+  return fetchSettingJSON<IuranAnggota[]>(SETTINGS_KEYS.IURAN_ANGGOTA, INITIAL_IURAN_ANGGOTA);
+}
+
+export async function syncIuranAnggotaToDB(data: IuranAnggota[]): Promise<void> {
+  return upsertSettingJSON(SETTINGS_KEYS.IURAN_ANGGOTA, data);
 }

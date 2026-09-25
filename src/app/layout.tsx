@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inconsolata } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { SmoothScrolling } from "@/components/providers/SmoothScrolling";
@@ -15,12 +16,14 @@ const inconsolata = Inconsolata({
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://himsigundar.vercel.app";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://himsigundar.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "HIMASI UG — Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma",
+    default:
+      "HIMASI UG — Himpunan Mahasiswa Sistem Informasi Universitas Gunadarma",
     template: "%s | HIMASI UG",
   },
   description:
@@ -62,7 +65,7 @@ export const metadata: Metadata = {
     siteName: "HIMASI UG",
     images: [
       {
-        url: "/hero-editorial.webp",
+        url: "/Fotbar.avif",
         width: 1200,
         height: 630,
         alt: "HIMASI UG — Himpunan Mahasiswa Sistem Informasi Gunadarma",
@@ -76,7 +79,7 @@ export const metadata: Metadata = {
     title: "HIMASI UG — Official Website",
     description:
       "Informasi kabinet, event & proker, merchandise JAHIM, serta layanan aspirasi mahasiswa Sistem Informasi Gunadarma.",
-    images: ["/hero-editorial.webp"],
+    images: ["/Fotbar.avif"],
     creator: "@himasi_gunadarma",
   },
   verification: {
@@ -103,7 +106,8 @@ const jsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/himsigundar.webp`,
   image: `${SITE_URL}/hero-editorial.webp`,
-  description: "Website resmi Himpunan Mahasiswa Sistem Informasi (HIMASI) Universitas Gunadarma.",
+  description:
+    "Website resmi Himpunan Mahasiswa Sistem Informasi (HIMASI) Universitas Gunadarma.",
   sameAs: [
     "https://instagram.com/himasi_gunadarma",
     "https://linkedin.com",
@@ -112,7 +116,8 @@ const jsonLd = {
   ],
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Sekretariat HIMASI UG, Kampus E Universitas Gunadarma, Jl. Akses UI No.9, Kelapa Dua",
+    streetAddress:
+      "Sekretariat HIMASI UG, Kampus E Universitas Gunadarma, Jl. Akses UI No.9, Kelapa Dua",
     addressLocality: "Depok",
     addressRegion: "Jawa Barat",
     postalCode: "16951",
@@ -132,21 +137,47 @@ export default function RootLayout({
       className={`${inconsolata.variable} h-full antialiased`}
     >
       <head>
-        <meta name="google-site-verification" content="oSzct-941h5G252FAV04J6ni32gAC7x2UyGqb_9AIL0" />
-        <link rel="preload" as="image" href="/hero-editorial-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchPriority="high" />
-        <link rel="preload" as="image" href="/hero-editorial.webp" type="image/webp" media="(min-width: 641px)" fetchPriority="high" />
-        <link rel="preload" as="image" href="/himsigundar.webp" type="image/webp" />
-        <link rel="preload" as="image" href="/logogundar.webp" type="image/webp" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        <meta
+          name="google-site-verification"
+          content="oSzct-941h5G252FAV04J6ni32gAC7x2UyGqb_9AIL0"
+        />
+
+        <link
+          rel="preload"
+          as="image"
+          href="/Fotbar.avif"
+          type="image/avif"
+          fetchPriority="high"
+        />
+
+        <link
+          rel="preload"
+          as="image"
+          href="/himsigundar.webp"
+          type="image/webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/logogundar.webp"
+          type="image/webp"
         />
       </head>
       <body
         suppressHydrationWarning
         className={`${inconsolata.className} min-h-full bg-slate-50 dark:bg-[#0a0e1f] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300`}
       >
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        {/* JSON-LD structured data — harus di luar <head> saat menggunakan next/script */}
+        <Script
+          id="json-ld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+        >
           <SplashScreen />
           <SmoothScrolling>{children}</SmoothScrolling>
         </ThemeProvider>

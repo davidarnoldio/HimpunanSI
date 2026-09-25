@@ -23,6 +23,7 @@ export const NAV_LINKS = [
   { label: "Event & Proker", href: "/#event" },
   { label: "Merchandise", href: "/merchandise" },
   { label: "Aspirasi", href: "/aspirasi" },
+  { label: "BPH", href: "/divisi/bendahara" },
 ] as const;
 
 // ─────────────────────────────
@@ -30,7 +31,7 @@ export const NAV_LINKS = [
 // ─────────────────────────────
 export const HERO_STATS = [
   { value: "1.200+", label: "Mahasiswa SI Aktif" },
-  { value: "4", label: "Divisi Operasional" },
+  { value: "7", label: "Divisi Operasional" },
   { value: "20+", label: "Proker / Tahun" },
   { value: "3", label: "Kampus Gunadarma" },
 ] as const;
@@ -118,7 +119,8 @@ export const DIVISI_LIST: DivisiItem[] = [
       "Mendukung prestasi akademik mahasiswa SI melalui tutoring, bimbingan belajar, dan fasilitas pengembangan potensi keilmuan serta kompetensi lomba.",
     icon: Users,
     colorTheme: "blue",
-    accentColor: "text-blue-600 dark:text-blue-400 border-blue-500/40 hover:border-blue-400",
+    accentColor:
+      "text-blue-600 dark:text-blue-400 border-blue-500/40 hover:border-blue-400",
     tugas: [
       "Tutoring & Bimbingan Belajar",
       "Sharing Session Matkul SI",
@@ -134,7 +136,8 @@ export const DIVISI_LIST: DivisiItem[] = [
       "Mengelola identitas digital HIMASI UG: pengolahan media sosial, desain grafis, dokumentasi kegiatan, serta penyebaran informasi kampus.",
     icon: Megaphone,
     colorTheme: "violet",
-    accentColor: "text-violet-600 dark:text-violet-400 border-violet-500/40 hover:border-violet-400",
+    accentColor:
+      "text-violet-600 dark:text-violet-400 border-violet-500/40 hover:border-violet-400",
     tugas: [
       "Pengelolaan Instagram & TikTok",
       "Desain Grafis & Visual Branding",
@@ -150,7 +153,8 @@ export const DIVISI_LIST: DivisiItem[] = [
       "Membentuk karakter, kepemimpinan, dan solidaritas internal himpunan melalui pelatihan soft-skills, pengkaderan, serta bonding kepengurusan.",
     icon: Users,
     colorTheme: "emerald",
-    accentColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/40 hover:border-emerald-400",
+    accentColor:
+      "text-emerald-600 dark:text-emerald-400 border-emerald-500/40 hover:border-emerald-400",
     tugas: [
       "Pengkaderan & Orientasi Maba",
       "Pelatihan Leadership & Soft-Skills",
@@ -166,7 +170,8 @@ export const DIVISI_LIST: DivisiItem[] = [
       "Membangun dan memelihara hubungan baik dengan pihak eksternal, alumni, birokrasi kampus, serta organisasi mahasiswa lainnya di Universitas Gunadarma.",
     icon: Globe,
     colorTheme: "amber",
-    accentColor: "text-amber-600 dark:text-amber-400 border-amber-500/40 hover:border-amber-400",
+    accentColor:
+      "text-amber-600 dark:text-amber-400 border-amber-500/40 hover:border-amber-400",
     tugas: [
       "Humas & Network Eksternal",
       "Kemitraan & Sponsorship",
@@ -180,7 +185,11 @@ export const DIVISI_LIST: DivisiItem[] = [
 // EVENT & PROKER
 // ─────────────────────────────
 export type EventKategori = "Workshop" | "Lomba" | "Event Himpunan" | "Webinar";
-export type EventStatus = "Pendaftaran Dibuka" | "Segera Hadir" | "Berlangsung" | "Selesai";
+export type EventStatus =
+  | "Pendaftaran Dibuka"
+  | "Segera Hadir"
+  | "Berlangsung"
+  | "Selesai";
 
 export interface EventItem {
   id: string;
@@ -205,7 +214,8 @@ export const EVENT_LIST: EventItem[] = [
     lokasi: "Zoom Meeting",
     isOnline: true,
     status: "Pendaftaran Dibuka",
-    deskripsi: "Workshop intensif belajar proses Design Thinking, Figma prototyping, dan user research bersama praktisi UX dari industri.",
+    deskripsi:
+      "Workshop intensif belajar proses Design Thinking, Figma prototyping, dan user research bersama praktisi UX dari industri.",
     link: "#daftar",
   },
   {
@@ -217,7 +227,8 @@ export const EVENT_LIST: EventItem[] = [
     lokasi: "Online Submission",
     isOnline: true,
     status: "Pendaftaran Dibuka",
-    deskripsi: "Kompetisi essay tingkat nasional bertema 'Peran SI dalam Transformasi Digital Indonesia'. Hadiah total Rp 5 Juta.",
+    deskripsi:
+      "Kompetisi essay tingkat nasional bertema 'Peran SI dalam Transformasi Digital Indonesia'. Hadiah total Rp 5 Juta.",
     link: "#daftar",
   },
   {
@@ -229,7 +240,8 @@ export const EVENT_LIST: EventItem[] = [
     lokasi: "Auditorium Kampus E Gunadarma",
     isOnline: false,
     status: "Segera Hadir",
-    deskripsi: "Pelantikan resmi pengurus kabinet HIMASI UG periode 2025/2026. Disertai rangkaian acara budaya dan networking.",
+    deskripsi:
+      "Pelantikan resmi pengurus kabinet HIMASI UG periode 2025/2026. Disertai rangkaian acara budaya dan networking.",
     link: "#detail",
   },
   {
@@ -241,16 +253,21 @@ export const EVENT_LIST: EventItem[] = [
     lokasi: "Google Meet",
     isOnline: true,
     status: "Segera Hadir",
-    deskripsi: "Ngobrol bareng alumni SI Gunadarma yang kini berkarir di perusahaan tech unicorn. Sesi Q&A terbuka untuk semua mahasiswa.",
+    deskripsi:
+      "Ngobrol bareng alumni SI Gunadarma yang kini berkarir di perusahaan tech unicorn. Sesi Q&A terbuka untuk semua mahasiswa.",
     link: "#detail",
   },
 ];
 
 export const EVENT_STATUS_STYLE: Record<EventStatus, string> = {
-  "Pendaftaran Dibuka": "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
-  "Segera Hadir": "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
-  "Berlangsung": "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30",
-  "Selesai": "bg-slate-500/15 text-slate-600 dark:text-slate-400 border-slate-500/30",
+  "Pendaftaran Dibuka":
+    "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+  "Segera Hadir":
+    "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+  Berlangsung:
+    "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30",
+  Selesai:
+    "bg-slate-500/15 text-slate-600 dark:text-slate-400 border-slate-500/30",
 };
 
 // ─────────────────────────────
@@ -277,7 +294,8 @@ export const LAYANAN_ITEMS: LayananItem[] = [
       "Ikuti berbagai kegiatan seru, workshop teknologi, seminar karir, dan kompetisi tingkat nasional persembahan HIMASI UG.",
     icon: Calendar,
     color: "from-blue-900/30 to-blue-950/50",
-    accentColor: "text-blue-600 dark:text-blue-400 border-blue-500/40 group-hover:border-blue-400",
+    accentColor:
+      "text-blue-600 dark:text-blue-400 border-blue-500/40 group-hover:border-blue-400",
     href: "/#event",
     ctaLabel: "Lihat Event Proker",
   },
@@ -288,7 +306,8 @@ export const LAYANAN_ITEMS: LayananItem[] = [
       "Hoodie, kaos, totebag, lanyard, dan stiker eksklusif HIMASI UG. Tampil bangga dengan identitas SI Gunadarma!",
     icon: Award,
     color: "from-red-900/30 to-red-950/50",
-    accentColor: "text-red-600 dark:text-red-400 border-red-500/40 group-hover:border-red-400",
+    accentColor:
+      "text-red-600 dark:text-red-400 border-red-500/40 group-hover:border-red-400",
     badgeText: "Pre-Order Open",
     href: "/merchandise",
     ctaLabel: "Lihat Katalog",
@@ -300,7 +319,8 @@ export const LAYANAN_ITEMS: LayananItem[] = [
       "Sampaikan aspirasi, kritik, dan saranmu ke pengurus HIMASI. Tersedia mode anonim untuk keamanan privasi kamu.",
     icon: Megaphone,
     color: "from-violet-900/30 to-violet-950/50",
-    accentColor: "text-violet-600 dark:text-violet-400 border-violet-500/40 group-hover:border-violet-400",
+    accentColor:
+      "text-violet-600 dark:text-violet-400 border-violet-500/40 group-hover:border-violet-400",
     href: "/aspirasi",
     ctaLabel: "Sampaikan Aspirasi",
   },
@@ -311,7 +331,8 @@ export const LAYANAN_ITEMS: LayananItem[] = [
       "Jalin kerjasama event, media partner, atau sponsorship dengan HIMASI UG. Tim Humas siap merespons dalam 24 jam.",
     icon: BarChart3,
     color: "from-emerald-900/30 to-emerald-950/50",
-    accentColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/40 group-hover:border-emerald-400",
+    accentColor:
+      "text-emerald-600 dark:text-emerald-400 border-emerald-500/40 group-hover:border-emerald-400",
     href: "/#divisi",
     ctaLabel: "Hubungi Humas",
   },
@@ -321,14 +342,35 @@ export const LAYANAN_ITEMS: LayananItem[] = [
 // FOOTER
 // ─────────────────────────────
 export const FOOTER_SOCIAL = [
-  { platform: "instagram", icon: "instagram", label: "@himasi.ug", href: "https://instagram.com/himasi_gunadarma" },
-  { platform: "linkedin", icon: "linkedin", label: "HIMASI UG", href: "https://linkedin.com" },
-  { platform: "youtube", icon: "youtube", label: "HIMASI Channel", href: "https://youtube.com" },
-  { platform: "tiktok", icon: "tiktok", label: "@HIMASI.ug", href: "https://tiktok.com" },
+  {
+    platform: "instagram",
+    icon: "instagram",
+    label: "@himasi.ug",
+    href: "https://instagram.com/himasi_gunadarma",
+  },
+  {
+    platform: "linkedin",
+    icon: "linkedin",
+    label: "HIMASI UG",
+    href: "https://linkedin.com",
+  },
+  {
+    platform: "youtube",
+    icon: "youtube",
+    label: "HIMASI Channel",
+    href: "https://youtube.com",
+  },
+  {
+    platform: "tiktok",
+    icon: "tiktok",
+    label: "@HIMASI.ug",
+    href: "https://tiktok.com",
+  },
 ];
 
 export const FOOTER_INFO = {
-  sekretariat: "Sekretariat HIMASI UG, Kampus E Universitas Gunadarma, Jl. Akses UI No.9, Kelapa Dua, Depok, Jawa Barat 16951",
+  sekretariat:
+    "Sekretariat HIMASI UG, Kampus E Universitas Gunadarma, Jl. Akses UI No.9, Kelapa Dua, Depok, Jawa Barat 16951",
   email: "HIMASIug.official@gmail.com",
   jamKerja: "Senin - Jumat (09:00 - 17:00 WIB)",
 };
